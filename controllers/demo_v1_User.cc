@@ -7,6 +7,7 @@
 #include "../utils/CryptoHelper.hpp"
 #include "../utils/JwtHelper.hpp"
 #include "../errors/ResourceNotFoundException.hpp"
+#include "../utils/ApiResponse.hpp"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ using UserModel = drogon_model::test::UserLogin;
 void User::login(const HttpRequestPtr &req,
                  std::function<void(const HttpResponsePtr &)> &&callback)
 {
-
+    app_helpers::api_res_helper::ApiResponse::Builder builderRes = app_helpers::api_res_helper::ApiResponse::create();
     Json::Value ret;
 
     try

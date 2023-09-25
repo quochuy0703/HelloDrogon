@@ -7,23 +7,26 @@ namespace app_helpers::api_res_helper
     {
     private:
         /* data */
+        std::string data_;
+        std::string message_;
+        std::string statusCode_;
+        std::string success_;
+
+    public:
         class Builder
         {
         private:
-            app_helpers::api_res_helper::ApiResponse api;
-            std::string data_;
-            std::string message_;
-            std::string statusCode_;
-            std::string success_;
+            app_helpers::api_res_helper::ApiResponse *api;
 
         public:
-            void message(const std::string &message);
-            void data(const std::string &data);
-            void statusCode(const std::string &statusCode);
-            void success(const std::string &success);
+            Builder &message(const std::string &message);
+            Builder &data(const std::string &data);
+            Builder &statusCode(const std::string &statusCode);
+            Builder &success(const std::string &success);
+            app_helpers::api_res_helper::ApiResponse *build();
         };
 
-    public:
+        static Builder create();
         Json::Value toJson();
     };
 
