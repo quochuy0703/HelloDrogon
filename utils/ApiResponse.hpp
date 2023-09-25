@@ -1,22 +1,34 @@
 #include <iostream>
-#include <jsoncpp/json/json.h>
+#include <drogon/orm/Mapper.h>
 
-
-namespace app_helpers::api_res_helper{
+namespace app_helpers::api_res_helper
+{
     class ApiResponse
     {
+    private:
+        /* data */
+        std::string data_;
+        std::string message_;
+        std::string statusCode_;
+        std::string success_;
+
+    public:
+        class Builder
+        {
         private:
-            /* data */
-            std::string data_;
-            std::string message_;
-            std::string statusCode_;
-            std::string success_;
+            app_helpers::api_res_helper::ApiResponse *api;
+
         public:
-            void message(const std::string &message);
-            void data(const std::string &data);
-            void statusCode(const std::string &statusCode);
-            void success(const std::string &success);
-            Json::Value toJson();
+            Builder();
+            Builder &message(const std::string &message);
+            Builder &data(const std::string &data);
+            Builder &statusCode(const std::string &statusCode);
+            Builder &success(const std::string &success);
+            app_helpers::api_res_helper::ApiResponse *build();
         };
-         
+
+        static Builder create();
+        Json::Value toJson();
+    };
+
 }
