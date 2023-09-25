@@ -19,6 +19,7 @@ namespace app_helpers::api_res_helper
             app_helpers::api_res_helper::ApiResponse *api;
 
         public:
+            Builder();
             Builder &message(const std::string &message);
             Builder &data(const std::string &data);
             Builder &statusCode(const std::string &statusCode);

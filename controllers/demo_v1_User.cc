@@ -21,6 +21,7 @@ void User::login(const HttpRequestPtr &req,
                  std::function<void(const HttpResponsePtr &)> &&callback)
 {
     app_helpers::api_res_helper::ApiResponse::Builder builderRes = app_helpers::api_res_helper::ApiResponse::create();
+    std::string data = "", message = "";
     Json::Value ret;
 
     try
@@ -56,6 +57,9 @@ void User::login(const HttpRequestPtr &req,
         ret["token"] = accessToken;
         //   auto resp = HttpResponse::newHttpJsonResponse(ret);
         //   callback(resp);
+
+        data = accessToken;
+        message = "OK";
     }
     catch (orm::UnexpectedRows &ex)
     {
@@ -65,16 +69,21 @@ void User::login(const HttpRequestPtr &req,
         ret["token"] = ex.what();
         // auto resp = HttpResponse::newHttpJsonResponse(ret);
         // callback(resp);
+
+        message = ex.what();
     }
     catch (ResourceNotFoundException &ex)
     {
         cout << "Error: " << ex.what() << endl;
+        message = ex.what();
     }
     catch (exception &ex)
     {
         cout << "Error: " << ex.what() << endl;
+        message = ex.what();
     }
 
+    ret = builderRes.data(data).message(message).statusCode("200").success("ok").build()->toJson();
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
 }

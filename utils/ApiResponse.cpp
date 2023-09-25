@@ -16,6 +16,11 @@ Json::Value app_helpers::api_res_helper::ApiResponse::toJson()
     return ret;
 }
 
+app_helpers::api_res_helper::ApiResponse::Builder::Builder()
+{
+    this->api = new app_helpers::api_res_helper::ApiResponse();
+}
+
 app_helpers::api_res_helper::ApiResponse::Builder &app_helpers::api_res_helper::ApiResponse::Builder::message(const std::string &message)
 {
     this->api->message_ = message;
