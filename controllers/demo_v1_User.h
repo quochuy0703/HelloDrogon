@@ -18,7 +18,7 @@ class User : public drogon::HttpController<User>
     // ADD_METHOD_TO(User::your_method_name, "/absolute/path/{1}/{2}/list", Get); // path is /absolute/path/{arg1}/{arg2}/list
 
     METHOD_ADD(User::login, "/auth/login", Post);
-    METHOD_ADD(User::getInfo, "/{1}/info?token{2}", Get);
+    METHOD_ADD(User::getInfo, "/{1}/info?token={2}", Get, "AuthFilter");
     METHOD_LIST_END
     // your declaration of processing function maybe like this:
     // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);

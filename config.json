@@ -321,5 +321,10 @@
         }
     ],
     //custom_config: custom configuration for users. This object can be get by the app().getCustomConfig() method. 
-    "custom_config": {}
+    "custom_config": {
+        "jwt-secret":"nRvyYC4soFxBdZ-F-5Nnzz5USXstR1YylsTd-mA0aKtI9HUlriGrtkf-TiuDapkLiUCogO3JOK7kwZisrHp6wA",
+        "jwt-accessTime":180,
+        "jwt-refreshTime":86400,
+        "jwt-issuer":"huymq"
+    }
 }
