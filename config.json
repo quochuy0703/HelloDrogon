@@ -325,6 +325,10 @@
         "jwt-secret":"nRvyYC4soFxBdZ-F-5Nnzz5USXstR1YylsTd-mA0aKtI9HUlriGrtkf-TiuDapkLiUCogO3JOK7kwZisrHp6wA",
         "jwt-accessTime":180,
         "jwt-refreshTime":86400,
-        "jwt-issuer":"huymq"
+        "jwt-issuer":"huymq",
+        "FTP_SERVER":"localhost",
+        "FTP_PORT":"21",
+        "FTP_USER":"quochuy0703",
+        "FTP_PWD":"100293"
     }
 }
