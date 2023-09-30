@@ -322,6 +322,8 @@
     ],
     //custom_config: custom configuration for users. This object can be get by the app().getCustomConfig() method. 
     "custom_config": {
+        "ACCESS_TOKEN_SECRET":"9809a167ab0f8141ccdf14a83534860277c891ca1677aee92a6c1aee1a5e0980",
+        "REFRESH_TOKEN_SECRET":"738841d097fe88a15c6d9d8f3df187c1c6c72cba8753f10360a50575bcd9b1ae",
         "jwt-secret":"nRvyYC4soFxBdZ-F-5Nnzz5USXstR1YylsTd-mA0aKtI9HUlriGrtkf-TiuDapkLiUCogO3JOK7kwZisrHp6wA",
         "jwt-accessTime":180,
         "jwt-refreshTime":86400,
