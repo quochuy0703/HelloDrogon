@@ -8,6 +8,8 @@
 #include "../utils/JwtHelper.hpp"
 #include "../errors/ResourceNotFoundException.hpp"
 #include "../utils/ApiResponse.hpp"
+#include "../utils/FtpHelper.hpp"
+#include "../utils/FileHelper.hpp"
 
 using namespace std;
 
@@ -86,6 +88,46 @@ void User::login(const HttpRequestPtr &req,
 
     ret = builderRes.data(data).message(message).statusCode("200").success("ok").build()->toJson();
     auto resp = HttpResponse::newHttpJsonResponse(ret);
+    callback(resp);
+}
+
+void demo::v1::User::upload(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    MultiPartParser mpp;
+    std::string ftpDir = drogon::app().getCustomConfig()["FTP_UPLOAD_DIR"].asString();
+    try
+    {
+        if (mpp.parse(req) != 0)
+        {
+            throw std::runtime_error("Error");
+        }
+    }
+    catch (std::exception &ex)
+    {
+        std::cout << "Error upload file: " << ex.what() << std::endl;
+    }
+
+    auto &params = mpp.getParameters();
+    auto Files = mpp.getFiles();
+    Json::Value ret;
+    ret["status"] = "ok";
+    std::string message = "";
+    for (auto i : params)
+        message = message + i.first + " " + i.second;
+    std::string fileUpload;
+    for (auto i : Files)
+    {
+        message.append(i.getFileName());
+        fileUpload = drogon::utils::getUuid().append(".").append(i.getFileExtension());
+        i.saveAs(fileUpload);
+        app_helpers::ftp_helper::FtpHelper ftpClient{};
+        ftpClient.connect();
+        ftpClient.uploadFile("./uploads/" + fileUpload, ftpDir + fileUpload);
+        ftpClient.close();
+        app_helpers::file_helper::removeFile("uploads/" + fileUpload);
+    }
+    ret["message"] = message;
+    auto resp(HttpResponse::newHttpJsonResponse(ret));
     callback(resp);
 }
 

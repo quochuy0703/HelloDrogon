@@ -331,6 +331,7 @@
         "FTP_SERVER":"localhost",
         "FTP_PORT":"21",
         "FTP_USER":"quochuy0703",
-        "FTP_PWD":"100293"
+        "FTP_PWD":"100293",
+        "FTP_UPLOAD_DIR":"/ftp_upload/Hello/"
     }
 }

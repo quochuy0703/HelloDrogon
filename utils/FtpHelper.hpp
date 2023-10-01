@@ -12,6 +12,7 @@ namespace app_helpers::ftp_helper
     public:
         FtpHelper();
         ftplib *connect();
+        void close();
         void uploadFile(const std::string &localFile, const std::string &remoteFile);
         void downloadFile(const std::string &pathFile, const std::string &outputFile);
     };
