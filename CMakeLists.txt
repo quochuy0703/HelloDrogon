@@ -30,7 +30,8 @@ add_executable(${PROJECT_NAME} main.cc)
 #
 # and comment out the following lines
 find_package(Drogon CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon cryptopp ftp)
+include_directories(${PROJECT_NAME} "C:\\SoftwareVNN\\msys64\\usr\\local\\include" "C:\\SoftwareVNN\\LT\\lib\\libftp\\include")
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libcryptopp.a" ws2_32 "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libftp.dll.a")
 
 # ##############################################################################
 

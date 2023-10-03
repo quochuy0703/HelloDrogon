@@ -30,8 +30,6 @@ using CryptoPP::HexEncoder;
 
 #include <drogon/drogon.h>
 
-using namespace std;
-
 namespace app_helpers::crypto_helper
 {
 
@@ -46,7 +44,7 @@ namespace app_helpers::crypto_helper
         // prng.GenerateBlock( iv, sizeof(iv) );
 
         // string plain = "0000000"; //c5ab3c6700c8939f670d3a954f81b609
-        string cipher, encoded;
+        std::string cipher, encoded;
 
         /*********************************\
         \*********************************/
@@ -54,12 +52,12 @@ namespace app_helpers::crypto_helper
         try
         {
             // string encoded = "FFEEDDCCBBAA99887766554433221100";
-            string token = tokenHash;
+            std::string token = tokenHash;
             if (token.compare("") == 0)
                 token = drogon::app().getCustomConfig()["ACCESS_TOKEN_SECRET"].asString();
             // std::string token = "632c4dfa61af1dd6ca5b80f3152d6a6f3c4a8b0fda39fa2a4945e7a7c775110e";
             // 632c4dfa61af1dd6ca5b80f3152d6a6f3c4a8b0fda39fa2a4945e7a7c775110e
-            string decoded;
+            std::string decoded;
 
             // StringSource ff(encoded, true,
             //     new HexDecoder(
@@ -73,9 +71,9 @@ namespace app_helpers::crypto_helper
             byte byteString[token.length()];
             memcpy(byteString, token.data(), token.length());
 
-            cout << (int)byteString[15] << endl;
+            std::cout << (int)byteString[15] << std::endl;
             CryptoPP::SecByteBlock derived(32);
-            string salt = "GfG";
+            std::string salt = "GfG";
             byte saltBytes[salt.length()];
             memcpy(saltBytes, salt.data(), salt.length());
 
@@ -84,7 +82,7 @@ namespace app_helpers::crypto_helper
 
             byte temp[32];
             memcpy(temp, derived, 32);
-            string s((const char *)temp, 32);
+            std::string s((const char *)temp, 32);
 
             encoded.clear();
             StringSource tt(s, true, new HexEncoder(new StringSink(encoded))); // StringSource
@@ -103,11 +101,11 @@ namespace app_helpers::crypto_helper
             encoded.clear();
             // Pretty print cipher text
             StringSource cc(cipher, true, new HexEncoder(new StringSink(encoded))); // StringSource
-            cout << "cipher " << encoded << endl;
+            std::cout << "cipher " << encoded << std::endl;
         }
         catch (const CryptoPP::Exception &e)
         {
-            cerr << e.what() << endl;
+            std::cerr << e.what() << std::endl;
             exit(1);
         }
         return encoded;
