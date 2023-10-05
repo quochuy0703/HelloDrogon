@@ -91,6 +91,59 @@ void User::login(const HttpRequestPtr &req,
     callback(resp);
 }
 
+void demo::v1::User::loginView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    try
+    {
+        std::string userId = req->getParameter("userId");
+        std::string passwd = req->getParameter("password");
+        cout << "User: " << userId << endl;
+
+        auto db = drogon::app().getDbClient();
+
+        drogon::orm::Mapper<UserModel> usr(db);
+
+        UserModel user;
+        try
+        {
+            user = usr.findOne(drogon::orm::Criteria(UserModel::Cols::_email, userId));
+        }
+        catch (orm::UnexpectedRows &ex)
+        {
+            throw ResourceNotFoundException("User not found!");
+        };
+
+        bool match = app_helpers::crypto_helper::matches(passwd, *(user.getPassword()), *(user.getSecurityStamp()));
+
+        cout << "User: " << user.toJson() << *(user.getPassword()) << endl;
+
+        if (match != true)
+        {
+            throw ResourceNotFoundException("Password not match");
+        };
+
+        Json::Value tokenPayload;
+        tokenPayload["uid"] = userId;
+        tokenPayload["cid"] = "nok.com.vn";
+
+        Json::FastWriter writer;
+        string accessToken = app_helpers::jwt_helper::generateAccessToken(writer.write(tokenPayload));
+
+        Cookie cookie("token", accessToken);
+
+        HttpViewData data;
+        data["name"] = req->getParameter("name");
+        auto resp = HttpResponse::newHttpViewResponse("views::HelloView", data);
+        resp->addCookie(cookie);
+        callback(resp);
+    }
+    catch (ResourceNotFoundException &ex)
+    {
+        auto resp = HttpResponse::newHttpViewResponse("views::user::login");
+        callback(resp);
+    }
+}
+
 void demo::v1::User::upload(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
 {
     MultiPartParser mpp;
@@ -131,6 +184,14 @@ void demo::v1::User::upload(const HttpRequestPtr &req, std::function<void(const 
     callback(resp);
 }
 
+void demo::v1::User::helloView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    HttpViewData data;
+    data["name"] = req->getParameter("name");
+    auto resp = HttpResponse::newHttpViewResponse("views::HelloView", data);
+    callback(resp);
+}
+
 void User::getInfo(const HttpRequestPtr &req,
                    std::function<void(const HttpResponsePtr &)> &&callback,
                    std::string userId,
@@ -143,6 +204,5 @@ void User::getInfo(const HttpRequestPtr &req,
     ret["user_id"] = userId;
     ret["gender"] = 1;
     auto resp = HttpResponse::newHttpJsonResponse(ret);
-
     callback(resp);
 }

@@ -19,6 +19,8 @@ namespace demo
 
       METHOD_ADD(User::login, "/auth/login", Post);
       METHOD_ADD(User::getInfo, "/{1}/info?token={2}", Get, "AuthFilter");
+      METHOD_ADD(User::helloView, "/view", Get, "AuthViewFilter");
+      METHOD_ADD(User::loginView, "/login", Post, drogon::Options);
       METHOD_ADD(User::upload, "/upload", Post);
       METHOD_LIST_END
       // your declaration of processing function maybe like this:
@@ -26,8 +28,12 @@ namespace demo
       // void your_method_name(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, double p1, int p2) const;
       void login(const HttpRequestPtr &req,
                  std::function<void(const HttpResponsePtr &)> &&callback);
+      void loginView(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback);
       void upload(const HttpRequestPtr &req,
                   std::function<void(const HttpResponsePtr &)> &&callback);
+      void helloView(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback);
       void getInfo(const HttpRequestPtr &req,
                    std::function<void(const HttpResponsePtr &)> &&callback,
                    std::string userId,
