@@ -112,6 +112,67 @@ namespace app_helpers::crypto_helper
         }
         return encoded;
     }
+    std::string decrypt(const std::string &hashData, const std::string &tokenHash = "")
+    {
+
+        CryptoPP::byte iv[AES::BLOCKSIZE] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        std::string cipher, encoded, decoded;
+
+        /*********************************\
+        \*********************************/
+
+        try
+        {
+            std::string token = tokenHash;
+            if (token.compare("") == 0)
+                token = drogon::app().getCustomConfig()["ACCESS_TOKEN_SECRET"].asString();
+
+            byte byteString[token.length()];
+            memcpy(byteString, token.data(), token.length());
+
+            std::cout << (int)byteString[15] << std::endl;
+            CryptoPP::SecByteBlock derived(32);
+            std::string salt = "GfG";
+            byte saltBytes[salt.length()];
+            memcpy(saltBytes, salt.data(), salt.length());
+
+            CryptoPP::Scrypt scrypt;
+            scrypt.DeriveKey(derived, derived.size(), (CryptoPP::byte *)byteString, token.length(), (CryptoPP::byte *)saltBytes, salt.length(), 16384, 8, 1);
+
+            byte temp[32];
+            memcpy(temp, derived, 32);
+            std::string s((const char *)temp, 32);
+
+            encoded.clear();
+            StringSource tt(s, true, new HexEncoder(new StringSink(encoded))); // StringSource
+
+            // Decrypt
+            CBC_Mode<AES>::Decryption e;
+            e.SetKeyWithIV(derived, derived.size(), iv);
+
+            // convert to byte
+            encoded.clear();
+            StringSource ssk(hashData, true /*pumpAll*/,
+                             new HexDecoder(
+                                 new StringSink(encoded)) // HexDecoder
+            );                                            // StringSource
+
+            // The StreamTransformationFilter adds padding
+            //  as required. ECB and CBC Mode must be padded
+            //  to the block size of the cipher.
+            StringSource ss(encoded, true,
+                            new StreamTransformationFilter(e,
+                                                           new StringSink(decoded)) // StreamTransformationFilter
+            );                                                                      // StringSource
+            std::cout << "cipher " << decoded << std::endl;
+        }
+        catch (const CryptoPP::Exception &e)
+        {
+            std::cerr << e.what() << std::endl;
+            exit(1);
+        }
+        return decoded;
+    }
     bool matches(const std::string &rawPassword, const std::string &hashPassword, const std::string &hashToken = "")
     {
         return boost::algorithm::to_lower_copy(encrypt(rawPassword, hashToken)).compare(boost::algorithm::to_lower_copy(hashPassword)) == 0;
