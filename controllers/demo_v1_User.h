@@ -22,12 +22,15 @@ namespace demo
       METHOD_ADD(User::getInfo, "/{1}/info?token={2}", Get, "AuthFilter");
       METHOD_ADD(User::upload, "/upload", Post);
       METHOD_ADD(User::helloView, "/view", Get);
+      METHOD_ADD(User::loginView, "/login", Post);
       METHOD_LIST_END
       // your declaration of processing function maybe like this:
       // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);
       // void your_method_name(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, double p1, int p2) const;
       void login(const HttpRequestPtr &req,
                  std::function<void(const HttpResponsePtr &)> &&callback);
+      void loginView(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback);
       void loginAccount(const HttpRequestPtr &req,
                         std::function<void(const HttpResponsePtr &)> &&callback);
       void upload(const HttpRequestPtr &req,

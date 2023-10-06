@@ -50,11 +50,11 @@ aux_source_directory(models MODEL_SRC)
 aux_source_directory(utils UTIL_SRC)
 aux_source_directory(errors ERROR_SRC)
 
-drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
-                    ${CMAKE_CURRENT_BINARY_DIR})
-# use the following line to create views with namespaces.
 # drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
-#                     ${CMAKE_CURRENT_BINARY_DIR} TRUE)
+#                     ${CMAKE_CURRENT_BINARY_DIR})
+# use the following line to create views with namespaces.
+drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
+                    ${CMAKE_CURRENT_BINARY_DIR} TRUE)
 # use the following line to create views with namespace CHANGE_ME prefixed
 # and path namespaces.
 # drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
