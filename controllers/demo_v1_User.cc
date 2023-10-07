@@ -192,6 +192,161 @@ void demo::v1::User::helloView(const HttpRequestPtr &req, std::function<void(con
     callback(resp);
 }
 
+void demo::v1::User::listUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    try
+    {
+        auto db = drogon::app().getDbClient();
+
+        drogon::orm::Mapper<UserModel> usr(db);
+
+        vector<UserModel> users;
+        try
+        {
+            users = usr.findAll();
+        }
+        catch (orm::UnexpectedRows &ex)
+        {
+            throw ResourceNotFoundException("User not found!");
+        };
+        
+        HttpViewData data = HttpViewData();
+        data["users"] = users;
+        auto resp = HttpResponse::newHttpViewResponse("views::user::user_list", data);
+        callback(resp);
+    }
+    catch (ResourceNotFoundException &ex)
+    {
+        std::cout << ex.what() << std::endl;
+    }
+}
+
+void demo::v1::User::newUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    try
+    {
+        HttpViewData data = HttpViewData();
+        UserModel user;
+        data["user"] = user;
+        auto resp = HttpResponse::newHttpViewResponse("views::user::user_form", data);
+        callback(resp);
+    }
+    catch (std::exception &ex)
+    {
+        std::cout << ex.what() << std::endl;
+    }
+    
+}
+
+void demo::v1::User::insertUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    auto nameUser = req->getParameter("name");
+    auto emailUser = req->getParameter("email");
+
+
+    auto db = drogon::app().getDbClient();
+    drogon::orm::Mapper<UserModel> usr(db);
+
+    UserModel user;
+    user.setEmail(emailUser);
+    user.setName(nameUser);
+    usr.insert(user);
+
+    auto resp = HttpResponse::newRedirectionResponse("list");
+    callback(resp);
+}
+
+void demo::v1::User::editUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback, std::string userId)
+{
+    try
+    {
+        auto db = drogon::app().getDbClient();
+
+        drogon::orm::Mapper<UserModel> usr(db);
+
+        UserModel user;
+        try
+        {
+            user = usr.findOne(drogon::orm::Criteria(UserModel::Cols::_id, userId));
+        }
+        catch (orm::UnexpectedRows &ex)
+        {
+            throw ResourceNotFoundException("User not found!");
+        };
+        HttpViewData data = HttpViewData();
+        data["user"] = user;
+        auto resp = HttpResponse::newHttpViewResponse("views::user::user_form", data);
+        callback(resp);
+    }
+    catch (std::exception &ex)
+    {
+        std::cout << ex.what() << std::endl;
+    }
+    
+}
+
+void demo::v1::User::updateUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    auto idUser = req->getParameter("id");
+    auto nameUser = req->getParameter("name");
+    auto emailUser = req->getParameter("email");
+
+
+    auto db = drogon::app().getDbClient();
+    drogon::orm::Mapper<UserModel> usr(db);
+
+    UserModel user;
+
+    int idPrimaryKey = stoi(idUser);
+
+    try
+    {
+        user = usr.findByPrimaryKey(idPrimaryKey);
+    }
+    catch (orm::UnexpectedRows &ex)
+    {
+        throw ResourceNotFoundException("User not found!");
+    };
+
+    user.setEmail(emailUser);
+    user.setName(nameUser);
+    usr.update(user);
+
+    auto resp = HttpResponse::newRedirectionResponse("list");
+    callback(resp);
+
+}
+
+void demo::v1::User::deleteUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback, std::string userId)
+{
+    try
+    {
+        auto db = drogon::app().getDbClient();
+
+        drogon::orm::Mapper<UserModel> usr(db);
+
+        UserModel user;
+        try
+        {
+            user = usr.findOne(drogon::orm::Criteria(UserModel::Cols::_id, userId));
+        }
+        catch (orm::UnexpectedRows &ex)
+        {
+            throw ResourceNotFoundException("User not found!");
+        };
+
+        usr.deleteByPrimaryKey(user.getPrimaryKey());
+
+        auto resp = HttpResponse::newRedirectionResponse("../list");
+        callback(resp);
+    }
+    catch (std::exception &ex)
+    {
+        std::cout << ex.what() << std::endl;
+    }
+    
+}
+
 void User::getInfo(const HttpRequestPtr &req,
                    std::function<void(const HttpResponsePtr &)> &&callback,
                    std::string userId,

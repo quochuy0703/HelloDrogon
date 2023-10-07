@@ -1,0 +1,67 @@
+<%inc #include "../models/User.h" 
+#include <drogon/orm/Mapper.h> 
+#include <drogon/orm/Exception.h> 
+%>
+
+<html>
+<%c++
+    using UserModel = drogon_model::drogon_test::User;
+    auto user=@@.get<UserModel>("user");
+	
+%>
+  <head>
+    <%view views::user::head %>
+    <!-- Custom styles for this template -->
+    
+  </head>
+
+  <body>
+    <%view views::user::header_user %>
+    <br />
+
+    <div class="container col-md-5">
+                <div class="card">
+                    <div class="card-body">
+                    
+                    <%c++ 
+                    std::string action;
+                    if(user.getId() != nullptr) {
+                      action = "../update";
+                    }else{
+                      action = "insert";
+                    };
+                      %>
+                      <form action="{%action%}" method="post">
+                       
+                            
+                        <caption>
+                            <h2>
+                            <%c++ 
+                          if(user.getId() != nullptr) {
+                            $$<<"Edit User";
+                          }else{
+                            $$<<"Add New User";
+                          };
+                            %>
+                            </h2>
+                        </caption>
+
+                        <%c++ if(user.getId() != nullptr) { %>
+                         <input type="hidden" name="id" value=<%c++ $$<<"\"" +std::to_string(*user.getId()) + "\"";%> />
+                        <%c++ } %>
+
+                        <fieldset class="form-group">
+                            <label>User Name</label> <input type="text" value=<%c++ $$<<"\"" +(user.getName() == nullptr ? "" : *user.getName()) + "\"";%> class="form-control" name="name" required="required">
+                        </fieldset>
+
+                        <fieldset class="form-group">
+                            <label>User Email</label> <input type="text" value=<%c++ $$<<"\"" +(  user.getEmail() == nullptr ? "" : *user.getEmail())  + "\"";%> class="form-control" name="email">
+                        </fieldset>
+
+                        <button type="submit" class="btn btn-success">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+  </body>
+</html>

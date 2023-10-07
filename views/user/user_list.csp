@@ -1,0 +1,68 @@
+<%inc #include "../models/User.h" 
+#include <drogon/orm/Mapper.h> 
+#include <drogon/orm/Exception.h> 
+%>
+
+<html>
+<%c++
+    using UserModel = drogon_model::drogon_test::User;
+    auto users=@@.get<std::vector<UserModel>>("users");
+	
+%>
+  <head>
+    <%view views::user::head %>
+    <!-- Custom styles for this template -->
+    
+  </head>
+
+  <body>
+    <%view views::user::header_user %>
+    <br />
+
+    <div class="row">
+
+      <div class="container">
+        <h3 class="text-center">List of Users</h3>
+        <hr />
+        <div class="container text-left">
+          <a href="new" class="btn btn-success"
+            >Add New User</a
+          >
+        </div>
+        <br />
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <%c++ for(auto user : users) {%>
+              <tr>
+                <td>
+                  <%c++  $$<<*user.getId(); %>
+                </td>
+                <td>
+                  <%c++  $$<<*user.getName() ;%>
+                </td>
+                <td>
+                  <%c++  $$<<*user.getEmail(); %>
+                </td>
+                <td>
+                   <a href=<%c++ $$<<"\"edit/" +  std::to_string(*user.getId()) + "\"" ;%> >Edit</a>
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                  <a href=<%c++  $$<<"\"delete/" +  std::to_string(*user.getId()) +"\"" ;%> >Delete</a> 
+                </td>
+              </tr>
+            <%c++ } %>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

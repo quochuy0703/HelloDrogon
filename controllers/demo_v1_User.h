@@ -22,6 +22,12 @@ namespace demo
       METHOD_ADD(User::helloView, "/view", Get, "AuthViewFilter");
       METHOD_ADD(User::loginView, "/login", Post, drogon::Options);
       METHOD_ADD(User::upload, "/upload", Post);
+      METHOD_ADD(User::listUserView, "/list", Get);
+      METHOD_ADD(User::newUserView, "/new", Get);
+      METHOD_ADD(User::insertUserView, "/insert", Post);
+      METHOD_ADD(User::editUserView, "/edit/{1}", Get);
+      METHOD_ADD(User::updateUserView, "/update", Post);
+      METHOD_ADD(User::deleteUserView, "/delete/{1}", Get);
       METHOD_LIST_END
       // your declaration of processing function maybe like this:
       // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);
@@ -34,6 +40,18 @@ namespace demo
                   std::function<void(const HttpResponsePtr &)> &&callback);
       void helloView(const HttpRequestPtr &req,
                      std::function<void(const HttpResponsePtr &)> &&callback);
+      void listUserView(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback);
+      void newUserView(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback);
+      void insertUserView(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback);
+      void editUserView(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback, std::string userId);               
+      void updateUserView(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback);
+      void deleteUserView(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback, std::string userId);
       void getInfo(const HttpRequestPtr &req,
                    std::function<void(const HttpResponsePtr &)> &&callback,
                    std::string userId,

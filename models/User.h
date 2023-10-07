@@ -45,6 +45,7 @@ class User
     struct Cols
     {
         static const std::string _id;
+        static const std::string _name;
         static const std::string _email;
         static const std::string _password;
         static const std::string _security_stamp;
@@ -107,6 +108,16 @@ class User
     ///Set the value of the column id
     void setId(const int32_t &pId) noexcept;
 
+    /**  For column name  */
+    ///Get the value of the column name, returns the default value if the column is null
+    const std::string &getValueOfName() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getName() const noexcept;
+    ///Set the value of the column name
+    void setName(const std::string &pName) noexcept;
+    void setName(std::string &&pName) noexcept;
+    void setNameToNull() noexcept;
+
     /**  For column email  */
     ///Get the value of the column email, returns the default value if the column is null
     const std::string &getValueOfEmail() const noexcept;
@@ -138,7 +149,7 @@ class User
     void setSecurityStampToNull() noexcept;
 
 
-    static size_t getColumnNumber() noexcept {  return 4;  }
+    static size_t getColumnNumber() noexcept {  return 5;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
     Json::Value toJson() const;
@@ -160,6 +171,7 @@ class User
     ///For mysql or sqlite3
     void updateId(const uint64_t id);
     std::shared_ptr<int32_t> id_;
+    std::shared_ptr<std::string> name_;
     std::shared_ptr<std::string> email_;
     std::shared_ptr<std::string> password_;
     std::shared_ptr<std::string> securityStamp_;
@@ -174,7 +186,7 @@ class User
         const bool notNull_;
     };
     static const std::vector<MetaData> metaData_;
-    bool dirtyFlag_[4]={ false };
+    bool dirtyFlag_[5]={ false };
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
@@ -196,15 +208,20 @@ class User
             ++parametersCount;
         if(dirtyFlag_[1])
         {
-            sql += "email,";
+            sql += "name,";
             ++parametersCount;
         }
         if(dirtyFlag_[2])
         {
-            sql += "password,";
+            sql += "email,";
             ++parametersCount;
         }
         if(dirtyFlag_[3])
+        {
+            sql += "password,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[4])
         {
             sql += "security_stamp,";
             ++parametersCount;
@@ -230,6 +247,11 @@ class User
 
         }
         if(dirtyFlag_[3])
+        {
+            sql.append("?,");
+
+        }
+        if(dirtyFlag_[4])
         {
             sql.append("?,");
 

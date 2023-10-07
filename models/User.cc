@@ -14,6 +14,7 @@ using namespace drogon::orm;
 using namespace drogon_model::drogon_test;
 
 const std::string User::Cols::_id = "id";
+const std::string User::Cols::_name = "name";
 const std::string User::Cols::_email = "email";
 const std::string User::Cols::_password = "password";
 const std::string User::Cols::_security_stamp = "security_stamp";
@@ -23,6 +24,7 @@ const std::string User::tableName = "user";
 
 const std::vector<typename User::MetaData> User::metaData_={
 {"id","int32_t","int(11)",4,1,1,1},
+{"name","std::string","varchar(100)",100,0,0,0},
 {"email","std::string","varchar(45)",45,0,0,0},
 {"password","std::string","varchar(64)",64,0,0,0},
 {"security_stamp","std::string","longtext",0,0,0,0}
@@ -40,6 +42,10 @@ User::User(const Row &r, const ssize_t indexOffset) noexcept
         {
             id_=std::make_shared<int32_t>(r["id"].as<int32_t>());
         }
+        if(!r["name"].isNull())
+        {
+            name_=std::make_shared<std::string>(r["name"].as<std::string>());
+        }
         if(!r["email"].isNull())
         {
             email_=std::make_shared<std::string>(r["email"].as<std::string>());
@@ -56,7 +62,7 @@ User::User(const Row &r, const ssize_t indexOffset) noexcept
     else
     {
         size_t offset = (size_t)indexOffset;
-        if(offset + 4 > r.size())
+        if(offset + 5 > r.size())
         {
             LOG_FATAL << "Invalid SQL result for this model";
             return;
@@ -70,14 +76,19 @@ User::User(const Row &r, const ssize_t indexOffset) noexcept
         index = offset + 1;
         if(!r[index].isNull())
         {
-            email_=std::make_shared<std::string>(r[index].as<std::string>());
+            name_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 2;
         if(!r[index].isNull())
         {
-            password_=std::make_shared<std::string>(r[index].as<std::string>());
+            email_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 3;
+        if(!r[index].isNull())
+        {
+            password_=std::make_shared<std::string>(r[index].as<std::string>());
+        }
+        index = offset + 4;
         if(!r[index].isNull())
         {
             securityStamp_=std::make_shared<std::string>(r[index].as<std::string>());
@@ -88,7 +99,7 @@ User::User(const Row &r, const ssize_t indexOffset) noexcept
 
 User::User(const Json::Value &pJson, const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 4)
+    if(pMasqueradingVector.size() != 5)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
@@ -106,7 +117,7 @@ User::User(const Json::Value &pJson, const std::vector<std::string> &pMasqueradi
         dirtyFlag_[1] = true;
         if(!pJson[pMasqueradingVector[1]].isNull())
         {
-            email_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
+            name_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
@@ -114,7 +125,7 @@ User::User(const Json::Value &pJson, const std::vector<std::string> &pMasqueradi
         dirtyFlag_[2] = true;
         if(!pJson[pMasqueradingVector[2]].isNull())
         {
-            password_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
+            email_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
@@ -122,7 +133,15 @@ User::User(const Json::Value &pJson, const std::vector<std::string> &pMasqueradi
         dirtyFlag_[3] = true;
         if(!pJson[pMasqueradingVector[3]].isNull())
         {
-            securityStamp_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            password_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+        }
+    }
+    if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
+    {
+        dirtyFlag_[4] = true;
+        if(!pJson[pMasqueradingVector[4]].isNull())
+        {
+            securityStamp_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
 }
@@ -137,9 +156,17 @@ User::User(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<int32_t>((int32_t)pJson["id"].asInt64());
         }
     }
-    if(pJson.isMember("email"))
+    if(pJson.isMember("name"))
     {
         dirtyFlag_[1]=true;
+        if(!pJson["name"].isNull())
+        {
+            name_=std::make_shared<std::string>(pJson["name"].asString());
+        }
+    }
+    if(pJson.isMember("email"))
+    {
+        dirtyFlag_[2]=true;
         if(!pJson["email"].isNull())
         {
             email_=std::make_shared<std::string>(pJson["email"].asString());
@@ -147,7 +174,7 @@ User::User(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("password"))
     {
-        dirtyFlag_[2]=true;
+        dirtyFlag_[3]=true;
         if(!pJson["password"].isNull())
         {
             password_=std::make_shared<std::string>(pJson["password"].asString());
@@ -155,7 +182,7 @@ User::User(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("security_stamp"))
     {
-        dirtyFlag_[3]=true;
+        dirtyFlag_[4]=true;
         if(!pJson["security_stamp"].isNull())
         {
             securityStamp_=std::make_shared<std::string>(pJson["security_stamp"].asString());
@@ -166,7 +193,7 @@ User::User(const Json::Value &pJson) noexcept(false)
 void User::updateByMasqueradedJson(const Json::Value &pJson,
                                             const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 4)
+    if(pMasqueradingVector.size() != 5)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
@@ -183,7 +210,7 @@ void User::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[1] = true;
         if(!pJson[pMasqueradingVector[1]].isNull())
         {
-            email_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
+            name_=std::make_shared<std::string>(pJson[pMasqueradingVector[1]].asString());
         }
     }
     if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
@@ -191,7 +218,7 @@ void User::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[2] = true;
         if(!pJson[pMasqueradingVector[2]].isNull())
         {
-            password_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
+            email_=std::make_shared<std::string>(pJson[pMasqueradingVector[2]].asString());
         }
     }
     if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
@@ -199,7 +226,15 @@ void User::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[3] = true;
         if(!pJson[pMasqueradingVector[3]].isNull())
         {
-            securityStamp_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            password_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+        }
+    }
+    if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
+    {
+        dirtyFlag_[4] = true;
+        if(!pJson[pMasqueradingVector[4]].isNull())
+        {
+            securityStamp_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
 }
@@ -213,9 +248,17 @@ void User::updateByJson(const Json::Value &pJson) noexcept(false)
             id_=std::make_shared<int32_t>((int32_t)pJson["id"].asInt64());
         }
     }
-    if(pJson.isMember("email"))
+    if(pJson.isMember("name"))
     {
         dirtyFlag_[1] = true;
+        if(!pJson["name"].isNull())
+        {
+            name_=std::make_shared<std::string>(pJson["name"].asString());
+        }
+    }
+    if(pJson.isMember("email"))
+    {
+        dirtyFlag_[2] = true;
         if(!pJson["email"].isNull())
         {
             email_=std::make_shared<std::string>(pJson["email"].asString());
@@ -223,7 +266,7 @@ void User::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("password"))
     {
-        dirtyFlag_[2] = true;
+        dirtyFlag_[3] = true;
         if(!pJson["password"].isNull())
         {
             password_=std::make_shared<std::string>(pJson["password"].asString());
@@ -231,7 +274,7 @@ void User::updateByJson(const Json::Value &pJson) noexcept(false)
     }
     if(pJson.isMember("security_stamp"))
     {
-        dirtyFlag_[3] = true;
+        dirtyFlag_[4] = true;
         if(!pJson["security_stamp"].isNull())
         {
             securityStamp_=std::make_shared<std::string>(pJson["security_stamp"].asString());
@@ -261,6 +304,33 @@ const typename User::PrimaryKeyType & User::getPrimaryKey() const
     return *id_;
 }
 
+const std::string &User::getValueOfName() const noexcept
+{
+    const static std::string defaultValue = std::string();
+    if(name_)
+        return *name_;
+    return defaultValue;
+}
+const std::shared_ptr<std::string> &User::getName() const noexcept
+{
+    return name_;
+}
+void User::setName(const std::string &pName) noexcept
+{
+    name_ = std::make_shared<std::string>(pName);
+    dirtyFlag_[1] = true;
+}
+void User::setName(std::string &&pName) noexcept
+{
+    name_ = std::make_shared<std::string>(std::move(pName));
+    dirtyFlag_[1] = true;
+}
+void User::setNameToNull() noexcept
+{
+    name_.reset();
+    dirtyFlag_[1] = true;
+}
+
 const std::string &User::getValueOfEmail() const noexcept
 {
     const static std::string defaultValue = std::string();
@@ -275,17 +345,17 @@ const std::shared_ptr<std::string> &User::getEmail() const noexcept
 void User::setEmail(const std::string &pEmail) noexcept
 {
     email_ = std::make_shared<std::string>(pEmail);
-    dirtyFlag_[1] = true;
+    dirtyFlag_[2] = true;
 }
 void User::setEmail(std::string &&pEmail) noexcept
 {
     email_ = std::make_shared<std::string>(std::move(pEmail));
-    dirtyFlag_[1] = true;
+    dirtyFlag_[2] = true;
 }
 void User::setEmailToNull() noexcept
 {
     email_.reset();
-    dirtyFlag_[1] = true;
+    dirtyFlag_[2] = true;
 }
 
 const std::string &User::getValueOfPassword() const noexcept
@@ -302,17 +372,17 @@ const std::shared_ptr<std::string> &User::getPassword() const noexcept
 void User::setPassword(const std::string &pPassword) noexcept
 {
     password_ = std::make_shared<std::string>(pPassword);
-    dirtyFlag_[2] = true;
+    dirtyFlag_[3] = true;
 }
 void User::setPassword(std::string &&pPassword) noexcept
 {
     password_ = std::make_shared<std::string>(std::move(pPassword));
-    dirtyFlag_[2] = true;
+    dirtyFlag_[3] = true;
 }
 void User::setPasswordToNull() noexcept
 {
     password_.reset();
-    dirtyFlag_[2] = true;
+    dirtyFlag_[3] = true;
 }
 
 const std::string &User::getValueOfSecurityStamp() const noexcept
@@ -329,17 +399,17 @@ const std::shared_ptr<std::string> &User::getSecurityStamp() const noexcept
 void User::setSecurityStamp(const std::string &pSecurityStamp) noexcept
 {
     securityStamp_ = std::make_shared<std::string>(pSecurityStamp);
-    dirtyFlag_[3] = true;
+    dirtyFlag_[4] = true;
 }
 void User::setSecurityStamp(std::string &&pSecurityStamp) noexcept
 {
     securityStamp_ = std::make_shared<std::string>(std::move(pSecurityStamp));
-    dirtyFlag_[3] = true;
+    dirtyFlag_[4] = true;
 }
 void User::setSecurityStampToNull() noexcept
 {
     securityStamp_.reset();
-    dirtyFlag_[3] = true;
+    dirtyFlag_[4] = true;
 }
 
 void User::updateId(const uint64_t id)
@@ -350,6 +420,7 @@ void User::updateId(const uint64_t id)
 const std::vector<std::string> &User::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
+        "name",
         "email",
         "password",
         "security_stamp"
@@ -361,6 +432,17 @@ void User::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
     if(dirtyFlag_[1])
     {
+        if(getName())
+        {
+            binder << getValueOfName();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[2])
+    {
         if(getEmail())
         {
             binder << getValueOfEmail();
@@ -370,7 +452,7 @@ void User::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[2])
+    if(dirtyFlag_[3])
     {
         if(getPassword())
         {
@@ -381,7 +463,7 @@ void User::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[3])
+    if(dirtyFlag_[4])
     {
         if(getSecurityStamp())
         {
@@ -409,12 +491,27 @@ const std::vector<std::string> User::updateColumns() const
     {
         ret.push_back(getColumnName(3));
     }
+    if(dirtyFlag_[4])
+    {
+        ret.push_back(getColumnName(4));
+    }
     return ret;
 }
 
 void User::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
     if(dirtyFlag_[1])
+    {
+        if(getName())
+        {
+            binder << getValueOfName();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
+    if(dirtyFlag_[2])
     {
         if(getEmail())
         {
@@ -425,7 +522,7 @@ void User::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[2])
+    if(dirtyFlag_[3])
     {
         if(getPassword())
         {
@@ -436,7 +533,7 @@ void User::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[3])
+    if(dirtyFlag_[4])
     {
         if(getSecurityStamp())
         {
@@ -458,6 +555,14 @@ Json::Value User::toJson() const
     else
     {
         ret["id"]=Json::Value();
+    }
+    if(getName())
+    {
+        ret["name"]=getValueOfName();
+    }
+    else
+    {
+        ret["name"]=Json::Value();
     }
     if(getEmail())
     {
@@ -490,7 +595,7 @@ Json::Value User::toMasqueradedJson(
     const std::vector<std::string> &pMasqueradingVector) const
 {
     Json::Value ret;
-    if(pMasqueradingVector.size() == 4)
+    if(pMasqueradingVector.size() == 5)
     {
         if(!pMasqueradingVector[0].empty())
         {
@@ -505,9 +610,9 @@ Json::Value User::toMasqueradedJson(
         }
         if(!pMasqueradingVector[1].empty())
         {
-            if(getEmail())
+            if(getName())
             {
-                ret[pMasqueradingVector[1]]=getValueOfEmail();
+                ret[pMasqueradingVector[1]]=getValueOfName();
             }
             else
             {
@@ -516,9 +621,9 @@ Json::Value User::toMasqueradedJson(
         }
         if(!pMasqueradingVector[2].empty())
         {
-            if(getPassword())
+            if(getEmail())
             {
-                ret[pMasqueradingVector[2]]=getValueOfPassword();
+                ret[pMasqueradingVector[2]]=getValueOfEmail();
             }
             else
             {
@@ -527,13 +632,24 @@ Json::Value User::toMasqueradedJson(
         }
         if(!pMasqueradingVector[3].empty())
         {
-            if(getSecurityStamp())
+            if(getPassword())
             {
-                ret[pMasqueradingVector[3]]=getValueOfSecurityStamp();
+                ret[pMasqueradingVector[3]]=getValueOfPassword();
             }
             else
             {
                 ret[pMasqueradingVector[3]]=Json::Value();
+            }
+        }
+        if(!pMasqueradingVector[4].empty())
+        {
+            if(getSecurityStamp())
+            {
+                ret[pMasqueradingVector[4]]=getValueOfSecurityStamp();
+            }
+            else
+            {
+                ret[pMasqueradingVector[4]]=Json::Value();
             }
         }
         return ret;
@@ -546,6 +662,14 @@ Json::Value User::toMasqueradedJson(
     else
     {
         ret["id"]=Json::Value();
+    }
+    if(getName())
+    {
+        ret["name"]=getValueOfName();
+    }
+    else
+    {
+        ret["name"]=Json::Value();
     }
     if(getEmail())
     {
@@ -581,19 +705,24 @@ bool User::validateJsonForCreation(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
+    if(pJson.isMember("name"))
+    {
+        if(!validJsonOfField(1, "name", pJson["name"], err, true))
+            return false;
+    }
     if(pJson.isMember("email"))
     {
-        if(!validJsonOfField(1, "email", pJson["email"], err, true))
+        if(!validJsonOfField(2, "email", pJson["email"], err, true))
             return false;
     }
     if(pJson.isMember("password"))
     {
-        if(!validJsonOfField(2, "password", pJson["password"], err, true))
+        if(!validJsonOfField(3, "password", pJson["password"], err, true))
             return false;
     }
     if(pJson.isMember("security_stamp"))
     {
-        if(!validJsonOfField(3, "security_stamp", pJson["security_stamp"], err, true))
+        if(!validJsonOfField(4, "security_stamp", pJson["security_stamp"], err, true))
             return false;
     }
     return true;
@@ -602,7 +731,7 @@ bool User::validateMasqueradedJsonForCreation(const Json::Value &pJson,
                                               const std::vector<std::string> &pMasqueradingVector,
                                               std::string &err)
 {
-    if(pMasqueradingVector.size() != 4)
+    if(pMasqueradingVector.size() != 5)
     {
         err = "Bad masquerading vector";
         return false;
@@ -640,6 +769,14 @@ bool User::validateMasqueradedJsonForCreation(const Json::Value &pJson,
                   return false;
           }
       }
+      if(!pMasqueradingVector[4].empty())
+      {
+          if(pJson.isMember(pMasqueradingVector[4]))
+          {
+              if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
+                  return false;
+          }
+      }
     }
     catch(const Json::LogicError &e)
     {
@@ -660,19 +797,24 @@ bool User::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
+    if(pJson.isMember("name"))
+    {
+        if(!validJsonOfField(1, "name", pJson["name"], err, false))
+            return false;
+    }
     if(pJson.isMember("email"))
     {
-        if(!validJsonOfField(1, "email", pJson["email"], err, false))
+        if(!validJsonOfField(2, "email", pJson["email"], err, false))
             return false;
     }
     if(pJson.isMember("password"))
     {
-        if(!validJsonOfField(2, "password", pJson["password"], err, false))
+        if(!validJsonOfField(3, "password", pJson["password"], err, false))
             return false;
     }
     if(pJson.isMember("security_stamp"))
     {
-        if(!validJsonOfField(3, "security_stamp", pJson["security_stamp"], err, false))
+        if(!validJsonOfField(4, "security_stamp", pJson["security_stamp"], err, false))
             return false;
     }
     return true;
@@ -681,7 +823,7 @@ bool User::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
                                             const std::vector<std::string> &pMasqueradingVector,
                                             std::string &err)
 {
-    if(pMasqueradingVector.size() != 4)
+    if(pMasqueradingVector.size() != 5)
     {
         err = "Bad masquerading vector";
         return false;
@@ -710,6 +852,11 @@ bool User::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
       if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
       {
           if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
+              return false;
+      }
+      if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
+      {
+          if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
               return false;
       }
     }
@@ -756,6 +903,26 @@ bool User::validJsonOfField(size_t index,
                 return false;
             }
             // asString().length() creates a string object, is there any better way to validate the length?
+            if(pJson.isString() && pJson.asString().length() > 100)
+            {
+                err="String length exceeds limit for the " +
+                    fieldName +
+                    " field (the maximum value is 100)";
+                return false;
+            }
+
+            break;
+        case 2:
+            if(pJson.isNull())
+            {
+                return true;
+            }
+            if(!pJson.isString())
+            {
+                err="Type error in the "+fieldName+" field";
+                return false;
+            }
+            // asString().length() creates a string object, is there any better way to validate the length?
             if(pJson.isString() && pJson.asString().length() > 45)
             {
                 err="String length exceeds limit for the " +
@@ -765,7 +932,7 @@ bool User::validJsonOfField(size_t index,
             }
 
             break;
-        case 2:
+        case 3:
             if(pJson.isNull())
             {
                 return true;
@@ -785,7 +952,7 @@ bool User::validJsonOfField(size_t index,
             }
 
             break;
-        case 3:
+        case 4:
             if(pJson.isNull())
             {
                 return true;
