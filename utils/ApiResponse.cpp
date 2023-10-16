@@ -27,7 +27,7 @@ app_helpers::api_res_helper::ApiResponse::Builder &app_helpers::api_res_helper::
     return *this;
 }
 
-app_helpers::api_res_helper::ApiResponse::Builder &app_helpers::api_res_helper::ApiResponse::Builder::data(const std::string &data)
+app_helpers::api_res_helper::ApiResponse::Builder &app_helpers::api_res_helper::ApiResponse::Builder::data(const Json::Value &data)
 {
     this->api->data_ = data;
     return *this;

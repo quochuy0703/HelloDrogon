@@ -7,7 +7,7 @@ namespace app_helpers::api_res_helper
     {
     private:
         /* data */
-        std::string data_;
+        Json::Value data_;
         std::string message_;
         std::string statusCode_;
         std::string success_;
@@ -21,7 +21,7 @@ namespace app_helpers::api_res_helper
         public:
             Builder();
             Builder &message(const std::string &message);
-            Builder &data(const std::string &data);
+            Builder &data(const Json::Value &data);
             Builder &statusCode(const std::string &statusCode);
             Builder &success(const std::string &success);
             app_helpers::api_res_helper::ApiResponse *build();

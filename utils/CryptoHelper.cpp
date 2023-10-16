@@ -21,6 +21,7 @@ using CryptoPP::StringSink;
 using CryptoPP::StringSource;
 
 #include <cryptopp/hmac.h>
+using CryptoPP::HMAC;
 #include <cryptopp/filters.h>
 #include <cryptopp/secblock.h>
 #include <cryptopp/hex.h>
@@ -176,5 +177,97 @@ namespace app_helpers::crypto_helper
     bool matches(const std::string &rawPassword, const std::string &hashPassword, const std::string &hashToken = "")
     {
         return boost::algorithm::to_lower_copy(encrypt(rawPassword, hashToken)).compare(boost::algorithm::to_lower_copy(hashPassword)) == 0;
+    }
+    std::string generateHMAC(const std::string &plain, const std::string &keyPlain)
+    {
+        CryptoPP::SecByteBlock key;
+        if (keyPlain.compare("") == 0)
+        {
+            CryptoPP::byte stringKey[16];
+            key.Assign(stringKey, 16);
+            AutoSeededRandomPool prng;
+            prng.GenerateBlock(key, key.size());
+        }
+        else
+        {
+            CryptoPP::byte stringKey[keyPlain.length()];
+            memcpy(stringKey, keyPlain.data(), keyPlain.length());
+            key.Assign(stringKey, keyPlain.length());
+        }
+
+        // AutoSeededRandomPool prng;
+
+        // CryptoPP::SecByteBlock key(16);
+        // prng.GenerateBlock(key, key.size());
+
+        std::string mac, encoded;
+
+        /*********************************\
+        \*********************************/
+
+        // Pretty print key
+        encoded.clear();
+        StringSource(key, key.size(), true,
+                     new HexEncoder(
+                         new StringSink(encoded)) // HexEncoder
+        );                                        // StringSource
+        std::cout << "key: " << encoded << std::endl;
+
+        std::cout << "plain text: " << plain << std::endl;
+
+        /*********************************\
+        \*********************************/
+
+        try
+        {
+            HMAC<CryptoPP::SHA256> hmac(key, key.size());
+
+            StringSource(plain, true,
+                         new CryptoPP::HashFilter(hmac,
+                                                  new StringSink(mac)) // HashFilter
+            );                                                         // StringSource
+        }
+        catch (const CryptoPP::Exception &e)
+        {
+            std::cerr << e.what() << std::endl;
+            exit(1);
+        }
+
+        /*********************************\
+        \*********************************/
+
+        // Pretty print MAC
+        encoded.clear();
+        StringSource(mac, true,
+                     new HexEncoder(
+                         new StringSink(encoded)) // HexEncoder
+        );                                        // StringSource
+        std::cout << "hmac: " << encoded << std::endl;
+
+        // /*********************************\
+        // \*********************************/
+
+        // try
+        // {
+        //     CryptoPP::HMAC<CryptoPP::SHA256> hmac(key, key.size());
+        //     const int flags = CryptoPP::HashVerificationFilter::THROW_EXCEPTION | CryptoPP::HashVerificationFilter::HASH_AT_END;
+
+        //     // Tamper with message
+        //     // plain[0] ^= 0x01;
+
+        //     // Tamper with MAC
+        //     // mac[0] ^= 0x01;
+
+        //     StringSource(plain + mac, true,
+        //                  new CryptoPP::HashVerificationFilter(hmac, NULL, flags)); // StringSource
+
+        //     std::cout << "Verified message" << std::endl;
+        // }
+        // catch (const CryptoPP::Exception &e)
+        // {
+        //     std::cerr << e.what() << std::endl;
+        //     exit(1);
+        // }
+        return encoded;
     }
 }
