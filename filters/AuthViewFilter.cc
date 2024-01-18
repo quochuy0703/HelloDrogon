@@ -41,6 +41,6 @@ void AuthViewFilter::doFilter(const HttpRequestPtr &req,
     }
     // Check failed
 
-    auto res = drogon::HttpResponse::newHttpViewResponse("views::user::login");
+    auto res = drogon::HttpResponse::newRedirectionResponse("/demo/v1/user/login");
     fcb(res);
 }

@@ -4,6 +4,7 @@
 #include <drogon/orm/Exception.h>
 
 #include "models/User.h"
+#include "models/Systemaccounts.h"
 #include "../utils/CryptoHelper.hpp"
 #include "../utils/JwtHelper.hpp"
 #include "../errors/ResourceNotFoundException.hpp"
@@ -16,6 +17,7 @@ using namespace std;
 using namespace demo::v1;
 
 using UserModel = drogon_model::drogon_test::User;
+using UserSystemModel = drogon_model::drogon_test::Systemaccounts;
 
 // Add definition of your processing function here
 
@@ -95,6 +97,12 @@ void demo::v1::User::loginView(const HttpRequestPtr &req, std::function<void(con
 {
     try
     {
+        if (req->getMethod() == drogon::HttpMethod::Get)
+        {
+            auto res = drogon::HttpResponse::newHttpViewResponse("views::user::login");
+            callback(res);
+            return;
+        }
         std::string userId = req->getParameter("userId");
         std::string passwd = req->getParameter("password");
         cout << "User: " << userId << endl;
@@ -144,7 +152,7 @@ void demo::v1::User::loginView(const HttpRequestPtr &req, std::function<void(con
     }
 }
 
-void demo::v1::User::upload(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+drogon::AsyncTask demo::v1::User::upload(const HttpRequestPtr req, std::function<void(const HttpResponsePtr &)> callback)
 {
     MultiPartParser mpp;
     std::string ftpDir = drogon::app().getCustomConfig()["FTP_UPLOAD_DIR"].asString();
@@ -170,17 +178,125 @@ void demo::v1::User::upload(const HttpRequestPtr &req, std::function<void(const 
     std::string fileUpload;
     for (auto i : Files)
     {
+        cout << "truoc save file" << endl;
         message.append(i.getFileName());
         fileUpload = drogon::utils::getUuid().append(".").append(i.getFileExtension());
         i.saveAs(fileUpload);
+        cout << "sau save file,truoc upload" << endl;
         app_helpers::ftp_helper::FtpHelper ftpClient{};
         ftpClient.connect();
-        ftpClient.uploadFile("./uploads/" + fileUpload, ftpDir + fileUpload);
+        std::cout << "Main Thread: " << std::this_thread::get_id() << std::endl;
+        // auto func = [&]() -> drogon::Task<>
+        // {
+        //     std::cout << "Sub Thread: " << std::this_thread::get_id() << std::endl;
+        //     auto square = co_await ftpClient.uploadFile("./uploads/" + fileUpload, ftpDir + fileUpload);
+        // };
+        // co_await func();
+
+        // drogon::app().getLoop()->queueInLoop(drogon::async_func([&] -> drogon::Task<>
+        //                                                         { co_await ftpClient.uploadFile("./uploads/" + fileUpload, ftpDir + fileUpload); }));
+        // // co_await ftpClient.uploadFile("./uploads/" + fileUpload, ftpDir + fileUpload);
+
+        // co_await executeIntensiveFunction([&]()
+        //                                   {
+        //                                     std::cout << "Sub Thread: " << std::this_thread::get_id() << std::endl;
+        //         ftpClient.uploadFile0("./uploads/" + fileUpload, ftpDir + fileUpload);
+        //         return; });
+
+        co_await ftpClient.uploadFileCoro("./uploads/" + fileUpload, ftpDir + fileUpload);
+
+        cout << "sau upload file" << endl;
         ftpClient.close();
         app_helpers::file_helper::removeFile("uploads/" + fileUpload);
     }
     ret["message"] = message;
     auto resp(HttpResponse::newHttpJsonResponse(ret));
+    callback(resp);
+}
+
+void demo::v1::User::loginAccount(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    app_helpers::api_res_helper::ApiResponse::Builder builderRes = app_helpers::api_res_helper::ApiResponse::create();
+    Json::Value data;
+    std::string message = "";
+    Json::Value ret;
+
+    try
+    {
+        const auto reqBodyPtr = req->getJsonObject();
+        const auto &reqBody = *reqBodyPtr;
+        Json::Value userId = reqBody["userId"];
+        Json::Value passwd = reqBody["password"];
+        cout << "User: " << userId.asString() << endl;
+
+        auto db = drogon::app().getDbClient();
+
+        drogon::orm::Mapper<UserSystemModel> usr(db);
+
+        UserSystemModel user;
+        try
+        {
+            user = usr.findOne(drogon::orm::Criteria(UserSystemModel::Cols::_Username, userId.asString()));
+        }
+        catch (orm::UnexpectedRows &ex)
+        {
+            throw ResourceNotFoundException("User not found!");
+        };
+
+        bool match = app_helpers::crypto_helper::matches(passwd.asString(), *(user.getPasswordhash()), *(user.getSecuritystamp()));
+
+        cout << "User: " << user.toJson() << *(user.getPasswordhash()) << endl;
+
+        if (match != true)
+        {
+            throw ResourceNotFoundException("Password not match");
+        };
+
+        Json::FastWriter writer;
+
+        Json::Value tokenPayload;
+        tokenPayload["uid"] = userId.asString();
+        tokenPayload["eid"] = *(user.getEmail());
+        tokenPayload["cid"] = "nok.com.vn";
+        tokenPayload["sid"] = *(user.getSession());
+
+        string accessToken = app_helpers::jwt_helper::generateAccessToken(writer.write(tokenPayload));
+
+        Json::Value accountJson;
+        accountJson["id"] = *user.getAccountid();
+        accountJson["username"] = *user.getUsername();
+        accountJson["display_name"] = *user.getDisplayname();
+        accountJson["email"] = *user.getEmail();
+        // accountJson["avatar"] = *user.getAvatar();
+        accountJson["isFirstTimeLogin"] = *user.getIsfirsttimelogin();
+        accountJson["isHRReference"] = *user.getIshrreference();
+        accountJson["status"] = *user.getStatus();
+        accountJson["type"] = *user.getType();
+        Json::Value tokenJson;
+        tokenJson["access_token"] = accessToken;
+        tokenJson["refresh_token"] = accessToken;
+
+        Json::Value resJson;
+        resJson["Account"] = accountJson;
+        resJson["Token"] = tokenJson;
+
+        data = resJson;
+
+        message = "OK";
+    }
+    catch (ResourceNotFoundException &ex)
+    {
+        cout << "Error: " << ex.what() << endl;
+        message = ex.what();
+    }
+    catch (exception &ex)
+    {
+        cout << "Error: " << ex.what() << endl;
+        message = ex.what();
+    }
+
+    ret = builderRes.data(data).message(message).statusCode("200").success("ok").build()->toJson();
+    auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
 }
 
@@ -209,7 +325,7 @@ void demo::v1::User::listUserView(const HttpRequestPtr &req, std::function<void(
         {
             throw ResourceNotFoundException("User not found!");
         };
-        
+
         HttpViewData data = HttpViewData();
         data["users"] = users;
         auto resp = HttpResponse::newHttpViewResponse("views::user::user_list", data);
@@ -235,14 +351,12 @@ void demo::v1::User::newUserView(const HttpRequestPtr &req, std::function<void(c
     {
         std::cout << ex.what() << std::endl;
     }
-    
 }
 
 void demo::v1::User::insertUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
 {
     auto nameUser = req->getParameter("name");
     auto emailUser = req->getParameter("email");
-
 
     auto db = drogon::app().getDbClient();
     drogon::orm::Mapper<UserModel> usr(db);
@@ -282,7 +396,6 @@ void demo::v1::User::editUserView(const HttpRequestPtr &req, std::function<void(
     {
         std::cout << ex.what() << std::endl;
     }
-    
 }
 
 void demo::v1::User::updateUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
@@ -290,7 +403,6 @@ void demo::v1::User::updateUserView(const HttpRequestPtr &req, std::function<voi
     auto idUser = req->getParameter("id");
     auto nameUser = req->getParameter("name");
     auto emailUser = req->getParameter("email");
-
 
     auto db = drogon::app().getDbClient();
     drogon::orm::Mapper<UserModel> usr(db);
@@ -314,7 +426,6 @@ void demo::v1::User::updateUserView(const HttpRequestPtr &req, std::function<voi
 
     auto resp = HttpResponse::newRedirectionResponse("list");
     callback(resp);
-
 }
 
 void demo::v1::User::deleteUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback, std::string userId)
@@ -344,19 +455,45 @@ void demo::v1::User::deleteUserView(const HttpRequestPtr &req, std::function<voi
     {
         std::cout << ex.what() << std::endl;
     }
-    
 }
 
-void User::getInfo(const HttpRequestPtr &req,
-                   std::function<void(const HttpResponsePtr &)> &&callback,
-                   std::string userId,
-                   const std::string &token) const
+void demo::v1::User::csfrUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
 {
+
+    HttpViewData data = HttpViewData();
+    data["user"] = "Huy";
+    auto resp = HttpResponse::newHttpViewResponse("views::user::user_csfr", data);
+    callback(resp);
+}
+
+drogon::Task<> User::getInfo(const HttpRequestPtr req,
+                             std::function<void(const HttpResponsePtr &)> callback,
+                             std::string userId,
+                             const std::string &token) const
+{
+    auto att = req->getAttributes();
+    auto data = att->get<string>("decoded");
+
+    // auto client = drogon::HttpClient::newHttpClient("http://localhost:8000");
+    // auto httpReq = drogon::HttpRequest::newHttpRequest();
+    // // httpReq->setPath("/products/1");
+    // httpReq->setPath("/");
+    // auto result = co_await client->sendRequestCoro(httpReq);
+
+    // auto square = co_await app_helpers::coro_helper::async(app_helpers::coro_helper::square, 6);
+
+    // auto func = []() -> drogon::Task<>
+    // {
+    //     auto square = co_await app_helpers::coro_helper::async(app_helpers::coro_helper::square, 6);
+    // };
+    // co_await func();
 
     Json::Value ret;
     ret["result"] = "ok";
     ret["user_name"] = "Jack";
     ret["user_id"] = userId;
+    ret["data"] = data;
+    // ret["coro"] = square;
     ret["gender"] = 1;
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);

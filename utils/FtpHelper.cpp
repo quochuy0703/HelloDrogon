@@ -1,4 +1,7 @@
 #include "FtpHelper.hpp"
+#include <chrono>
+
+using namespace std::chrono;
 
 app_helpers::ftp_helper::FtpHelper::FtpHelper()
 {
@@ -43,7 +46,7 @@ void app_helpers::ftp_helper::FtpHelper::close()
         this->client->Quit();
 }
 
-void app_helpers::ftp_helper::FtpHelper::uploadFile(const std::string &localFile, const std::string &remoteFile)
+void app_helpers::ftp_helper::FtpHelper::uploadFile0(const std::string &localFile, const std::string &remoteFile)
 {
     try
     {
@@ -58,6 +61,19 @@ void app_helpers::ftp_helper::FtpHelper::uploadFile(const std::string &localFile
         this->client->Quit();
         throw std::runtime_error("Error FtpHelper: " + std::string(message));
     }
+}
+
+app_helpers::ftp_helper::AAwaiter app_helpers::ftp_helper::FtpHelper::uploadFile(const std::string &localFile, const std::string &remoteFile)
+{
+    return app_helpers::ftp_helper::AAwaiter(this, localFile, remoteFile);
+}
+
+app_helpers::execute_awaiter::ExecuteAwaiter app_helpers::ftp_helper::FtpHelper::uploadFileCoro(const std::string &localFile, const std::string &remoteFile)
+{
+    return app_helpers::execute_awaiter::executeIntensiveFunction([&]()
+                                                                  {
+        uploadFile0(localFile, remoteFile);
+        return; });
 }
 
 void app_helpers::ftp_helper::FtpHelper::downloadFile(const std::string &pathFile, const std::string &outputFile)

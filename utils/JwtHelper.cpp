@@ -1,5 +1,18 @@
 #include "JwtHelper.hpp"
 
+std::string app_helpers::jwt_helper::generateTokenWithDuration(const int &duration, const std::string &payload)
+{
+    const std::string secret = drogon::app().getCustomConfig()["jwt-secret"].asString();
+    const std::string issuer = drogon::app().getCustomConfig()["jwt-issuer"].asString();
+    auto tokenAcc = jwt::create()
+        .set_type("JWS")
+        .set_expires_at(std::chrono::system_clock::now() + std::chrono::seconds{duration} )
+        .set_payload_claim("Data", jwt::claim(payload))
+        .set_issuer(issuer)
+        .sign(jwt::algorithm::hs256{secret});
+
+    return tokenAcc;
+}
 
 std::string app_helpers::jwt_helper::generateAccessToken(const std::string &payload)
 {

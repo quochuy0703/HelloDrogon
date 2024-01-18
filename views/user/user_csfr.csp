@@ -1,0 +1,38 @@
+<%inc #include "../models/User.h" 
+#include <drogon/orm/Mapper.h> 
+#include <drogon/orm/Exception.h> 
+%>
+
+<html>
+<%c++
+    using UserModel = drogon_model::drogon_test::User;
+    auto users=@@.get<std::vector<UserModel>>("users");
+	
+%>
+  <head>
+    <%view views::user::head %>
+    <!-- Custom styles for this template -->
+    
+  </head>
+
+  <body>
+    <%view views::user::header_user %>
+    <br />
+
+    <div class="row">
+
+      <div class="container">
+        <h3 class="text-center">List of Users</h3>
+        <hr />
+        <div class="container text-left">
+          <a href="new" class="btn btn-success"
+            >Add New User</a
+          >
+        </div>
+        <br />
+        <h1>CSFR</h1>
+        <img height="0" width="0" src="http://localhost:5555/demo/v1/user/delete/11">
+      </div>
+    </div>
+  </body>
+</html>

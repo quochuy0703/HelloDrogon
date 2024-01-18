@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(HelloDrogon CXX)
 
-
+set(CMAKE_CXX_STANDARD 20)
 include(CheckIncludeFileCXX)
 
 check_include_file_cxx(any HAS_ANY)
