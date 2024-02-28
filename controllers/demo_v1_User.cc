@@ -12,6 +12,8 @@
 #include "../utils/FtpHelper.hpp"
 #include "../utils/FileHelper.hpp"
 
+#include "../plugins/SMTPMail.h"
+
 using namespace std;
 
 using namespace demo::v1;
@@ -381,16 +383,28 @@ void demo::v1::User::editUserView(const HttpRequestPtr &req, std::function<void(
         UserModel user;
         try
         {
-            user = usr.findOne(drogon::orm::Criteria(UserModel::Cols::_id, userId));
+            // user = usr.findOne(drogon::orm::Criteria(UserModel::Cols::_id, userId));
+            usr.findOne(
+                drogon::orm::Criteria(UserModel::Cols::_id, userId), [&](auto userReturn)
+                { 
+                    user = userReturn; 
+                    std::cout << "after in callback"  << user.getEmail()<< std::endl; 
+                    HttpViewData data = HttpViewData();
+                    data["user"] = user;
+                    auto resp = HttpResponse::newHttpViewResponse("views::user::user_form", data);
+                    callback(resp); },
+                [](auto &ex)
+                {
+                    std::cout << ex.base().what() << std::endl;
+                });
+            std::cout << "after call" << std::endl;
         }
         catch (orm::UnexpectedRows &ex)
         {
             throw ResourceNotFoundException("User not found!");
         };
-        HttpViewData data = HttpViewData();
-        data["user"] = user;
-        auto resp = HttpResponse::newHttpViewResponse("views::user::user_form", data);
-        callback(resp);
+
+        std::cout << "after try" << std::endl;
     }
     catch (std::exception &ex)
     {
@@ -466,27 +480,45 @@ void demo::v1::User::csfrUserView(const HttpRequestPtr &req, std::function<void(
     callback(resp);
 }
 
-drogon::Task<> User::getInfo(const HttpRequestPtr req,
-                             std::function<void(const HttpResponsePtr &)> callback,
-                             std::string userId,
-                             const std::string &token) const
+void User::postMail(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    auto *smtpmailPtr = app().getPlugin<SMTPMail>();
+    auto id = smtpmailPtr->sendEmail(
+        "127.0.0.1",                 // The server IP/DNS
+        1025,                        // The port
+        "mailer@something.com",      // Who send the email
+        "receiver@otherthing.com",   // Send to whom
+        "Testing SMTPMail Function", // Email Subject/Title
+        "Hello from drogon plugin",  // Content
+        "mailer@something.com",      // Login user
+        "123456",                    // User password
+        false,                       // Is HTML content
+        [](const string &msg)
+        {
+            std::cout << msg << std::endl;
+        });
+
+    Json::Value ret;
+    ret["result"] = "ok";
+    ret["user_name"] = "Jack";
+    ret["gender"] = 1;
+    auto resp = HttpResponse::newHttpJsonResponse(ret);
+    callback(resp);
+}
+
+drogon::AsyncTask User::getInfo(const HttpRequestPtr req,
+                                std::function<void(const HttpResponsePtr &)> callback,
+                                std::string userId,
+                                const std::string &token) const
 {
     auto att = req->getAttributes();
     auto data = att->get<string>("decoded");
 
-    // auto client = drogon::HttpClient::newHttpClient("http://localhost:8000");
-    // auto httpReq = drogon::HttpRequest::newHttpRequest();
-    // // httpReq->setPath("/products/1");
-    // httpReq->setPath("/");
-    // auto result = co_await client->sendRequestCoro(httpReq);
-
-    // auto square = co_await app_helpers::coro_helper::async(app_helpers::coro_helper::square, 6);
-
-    // auto func = []() -> drogon::Task<>
-    // {
-    //     auto square = co_await app_helpers::coro_helper::async(app_helpers::coro_helper::square, 6);
-    // };
-    // co_await func();
+    auto client = drogon::HttpClient::newHttpClient("http://localhost:8000");
+    auto httpReq = drogon::HttpRequest::newHttpRequest();
+    // httpReq->setPath("/products/1");
+    httpReq->setPath("/");
+    auto result = co_await client->sendRequestCoro(httpReq);
 
     Json::Value ret;
     ret["result"] = "ok";
@@ -494,6 +526,7 @@ drogon::Task<> User::getInfo(const HttpRequestPtr req,
     ret["user_id"] = userId;
     ret["data"] = data;
     // ret["coro"] = square;
+    ret["hmac"] = co_await app_helpers::crypto_helper::generateHMACCoro("HMAC test");
     ret["gender"] = 1;
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);

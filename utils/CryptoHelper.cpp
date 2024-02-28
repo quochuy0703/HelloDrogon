@@ -270,4 +270,10 @@ namespace app_helpers::crypto_helper
         // }
         return encoded;
     }
+
+    app_helpers::execute_awaiter::ExecuteAwaiterReturn<std::string> generateHMACCoro(const std::string &plain, const std::string &keyPlain)
+    {
+        return app_helpers::execute_awaiter::executeIntensiveFunctionReturn<std::string>([&]()
+                                                                                         { return app_helpers::crypto_helper::generateHMAC(plain, keyPlain); });
+    }
 }

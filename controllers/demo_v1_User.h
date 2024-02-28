@@ -30,6 +30,7 @@ namespace demo
       METHOD_ADD(User::editUserView, "/edit/{1}", Get);
       METHOD_ADD(User::updateUserView, "/update", Post);
       METHOD_ADD(User::deleteUserView, "/delete/{1}", Get);
+      METHOD_ADD(User::postMail, "/mail", Get);
       METHOD_LIST_END
       // your declaration of processing function maybe like this:
       // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);
@@ -58,10 +59,11 @@ namespace demo
                           std::function<void(const HttpResponsePtr &)> &&callback, std::string userId);
       void csfrUserView(const HttpRequestPtr &req,
                         std::function<void(const HttpResponsePtr &)> &&callback);
-      drogon::Task<> getInfo(const HttpRequestPtr req,
-                             std::function<void(const HttpResponsePtr &)> callback,
-                             std::string userId,
-                             const std::string &token) const;
+      void postMail(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback);
+      drogon::AsyncTask getInfo(const HttpRequestPtr req,
+                                std::function<void(const HttpResponsePtr &)> callback,
+                                std::string userId,
+                                const std::string &token) const;
     };
   }
 }

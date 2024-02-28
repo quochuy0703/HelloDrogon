@@ -311,6 +311,9 @@
       }
     },
     {
+      "name": "SMTPMail"
+    },
+    {
       //name: The class name of the plugin
       //"name": "drogon::plugin::SecureSSLRedirector",
       //dependencies: Plugins that the plugin depends on. It can be commented out
