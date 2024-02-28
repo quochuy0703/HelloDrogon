@@ -30,8 +30,8 @@ add_executable(${PROJECT_NAME} main.cc)
 #
 # and comment out the following lines
 find_package(Drogon CONFIG REQUIRED)
-include_directories(${PROJECT_NAME} "C:\\SoftwareVNN\\msys64\\usr\\local\\include" "C:\\SoftwareVNN\\LT\\lib\\libftp\\include" "C:\\SoftwareVNN\\LT\\lib\\mailio\\include")
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libcryptopp.a" ws2_32 "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libftp.dll.a" "C:\\SoftwareVNN\\LT\\lib\\mailio\\lib\\libmailio.dll.a")
+include_directories(${PROJECT_NAME} "C:\\SoftwareVNN\\msys64\\usr\\local\\include" "C:\\SoftwareVNN\\LT\\lib\\libftp\\include" "C:\\SoftwareVNN\\LT\\lib\\mailio\\include" "C:\\SoftwareVNN\\msys64\\mingw64\\include\\botan-3")
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon botan-3 "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libcryptopp.a" ws2_32 "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libftp.dll.a" "C:\\SoftwareVNN\\LT\\lib\\mailio\\lib\\libmailio.dll.a")
 
 # ##############################################################################
 
