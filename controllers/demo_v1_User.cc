@@ -17,6 +17,7 @@
 #include "../utils/ApiResponse.hpp"
 #include "../utils/FtpHelper.hpp"
 #include "../utils/FileHelper.hpp"
+#include "../utils/Utils.hpp"
 
 #include "../plugins/SMTPMail.h"
 
@@ -536,6 +537,8 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     auto hmac = co_await app_helpers::crypto_helper::generateHMACCoro("HMAC Test");
     ret["hmac"] = hmac;
     ret["gender"] = 1;
+    ret["format"] = app_helpers::format("{0} is {1} years old and has {2} children.", "John", 30, 2);
+    ret["formfat"] = app_helpers::ltrim("fdfdf   ");
 
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
