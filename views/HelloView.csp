@@ -9,6 +9,7 @@
 %>
 <head>
     <meta charset="UTF-8">
+	<link rel="icon" href="/static/favicons/favicon.ico" />
     <title>[[ name ]]</title>
 </head>
 <body>

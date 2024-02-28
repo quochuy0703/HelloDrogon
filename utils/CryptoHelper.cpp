@@ -178,6 +178,13 @@ namespace app_helpers::crypto_helper
     {
         return boost::algorithm::to_lower_copy(encrypt(rawPassword, hashToken)).compare(boost::algorithm::to_lower_copy(hashPassword)) == 0;
     }
+
+    app_helpers::execute_awaiter::ExecuteReturnAwaiter<bool> matchesCoro(const std::string &rawPassword, const std::string &hashPassword, const std::string &hashToken)
+    {
+        return app_helpers::execute_awaiter::executeIntensiveReturnFunction<bool>([&]() -> bool
+                                                                                  { return boost::algorithm::to_lower_copy(encrypt(rawPassword, hashToken)).compare(boost::algorithm::to_lower_copy(hashPassword)) == 0; });
+    }
+
     std::string generateHMAC(const std::string &plain, const std::string &keyPlain)
     {
         CryptoPP::SecByteBlock key;
@@ -269,5 +276,22 @@ namespace app_helpers::crypto_helper
         //     exit(1);
         // }
         return encoded;
+    }
+
+    app_helpers::execute_awaiter::ExecuteReturnAwaiter<std::string> generateHMACCoro(const std::string &plain, const std::string &keyPlain)
+    {
+        return app_helpers::execute_awaiter::executeIntensiveReturnFunction<std::string>([&]() -> std::string
+                                                                                         { return generateHMAC(plain, keyPlain); });
+    }
+
+    size_t generateBlockRandom(std::byte arr[], const size_t &length)
+    {
+        AutoSeededRandomPool prng;
+
+        CryptoPP::SecByteBlock key(length);
+        prng.GenerateBlock(key, key.size());
+        memcpy(arr, key.data(), key.size());
+
+        return length;
     }
 }

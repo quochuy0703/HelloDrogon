@@ -43,6 +43,6 @@ void AuthViewFilter::doFilter(const HttpRequestPtr &req,
     }
     // Check failed
 
-    auto resp = HttpResponse::newHttpViewResponse("views::user::login");
+    auto resp = HttpResponse::newRedirectionResponse("demo/v1/user/login");
     fcb(resp);
 }

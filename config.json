@@ -5,37 +5,37 @@
     //ssl:The global SSL settings. "key" and "cert" are the path to the SSL key and certificate. While
     //    "conf" is an array of 1 or 2-element tuples that supplies file style options for `SSL_CONF_cmd`.
     /*"ssl": {
-        "cert": "../../trantor/trantor/tests/server.crt",
-        "key": "../../trantor/trantor/tests/server.key",
+        "cert": "/cert/myselfsigned.pfx",
+        "key": "/cert/myselfsigned.pfx",
         "conf": [
             //["Options", "-SessionTicket"], 
             //["Options", "Compression"]
         ]
-    },
+    },*/
     "listeners": [
         {
             //address: Ip address,0.0.0.0 by default
             "address": "0.0.0.0",
             //port: Port number
-            "port": 80,
+            "port": 5555,
             //https: If true, use https for security,false by default
             "https": false
         },
         {
-            "address": "0.0.0.0",
-            "port": 443,
-            "https": true,
+        //     "address": "0.0.0.0",
+        //     "port": 5443,
+        //     "https": true,
             //cert,key: Cert file path and key file path, empty by default,
             //if empty, use the global setting
-            "cert": "",
-            "key": "",
+            // "cert": "./cert/clientcert.pem",
+            // "key": "./cert/clientkey.pem",
             //use_old_tls: enable the TLS1.0/1.1, false by default
-            "use_old_tls": false,
-            "ssl_conf": [
+            // "use_old_tls": false,
+            /*"ssl_conf": [
                 //["MinProtocol", "TLSv1.3"]
-            ]
+            ]*/
         }
-    ],*/
+    ],
     "db_clients": [
         {
             //name: Name of the client,'default' by default
@@ -159,10 +159,10 @@
         "locations": [
             {
                 //uri_prefix: The URI prefix of the location prefixed with "/", the default value is "" that disables the location.
-                //"uri_prefix": "/.well-known/acme-challenge/",
+                "uri_prefix": "/",
                 //default_content_type: The default content type of the static files without
                 //an extension. empty string by default.
-                "default_content_type": "text/plain",
+                "default_content_type": "",
                 //alias: The location in file system, if it is prefixed with "/", it 
                 //presents an absolute path, otherwise it presents a relative path to 
                 //the document_root path. 
@@ -175,7 +175,7 @@
                 //is_recursive: true by default. If it is set to false, files in sub directories can't be accessed.
                 "is_recursive": true,
                 //filters: string array, the filters applied to the location.
-                "filters": []
+                "filters": ["StaticFilter"]
             }
         ],
         //max_connections: maximum number of connections, 100000 by default
@@ -306,6 +306,20 @@
     //plugins: Define all plugins running in the application
     "plugins": [
         {
+            "name": "drogon::plugin::AccessLogger",
+            "config": {
+                "log_format": "$request_date $date $remote_addr $method $url $status $body_bytes_sent $processing_time $thread",
+                // "log_path": "../logs",
+                // "log_file": "access.log",
+                // "log_size_limit": 100000000,
+                // "use_local_time": true,
+                // "log_index": 0
+            }
+        },
+        {
+            "name": "SMTPMail"
+        },
+        {
             //name: The class name of the plugin
             //"name": "drogon::plugin::SecureSSLRedirector",
             //dependencies: Plugins that the plugin depends on. It can be commented out
@@ -331,7 +345,7 @@
         "FTP_SERVER":"localhost",
         "FTP_PORT":"21",
         "FTP_USER":"huymq",
-        "FTP_PWD":"12345678",
+        "FTP_PWD":"952e2b105bd188a700b33e1c15d48170", //12345678
         "FTP_UPLOAD_DIR":"/"
     }
 }

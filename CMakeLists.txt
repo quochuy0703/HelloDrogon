@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(HelloDrogon CXX)
 
-
+set(CMAKE_CXX_STANDARD 20)
 include(CheckIncludeFileCXX)
 
 check_include_file_cxx(any HAS_ANY)
@@ -30,8 +30,8 @@ add_executable(${PROJECT_NAME} main.cc)
 #
 # and comment out the following lines
 find_package(Drogon CONFIG REQUIRED)
-include_directories(${PROJECT_NAME} "C:\\SoftwareVNN\\msys64\\usr\\local\\include" "C:\\SoftwareVNN\\LT\\lib\\libftp\\include")
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libcryptopp.a" ws2_32 "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libftp.dll.a")
+include_directories(${PROJECT_NAME} "C:\\SoftwareVNN\\msys64\\usr\\local\\include" "C:\\SoftwareVNN\\LT\\lib\\libftp\\include" "C:\\SoftwareVNN\\LT\\lib\\mailio\\include")
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libcryptopp.a" ws2_32 "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libftp.dll.a" "C:\\SoftwareVNN\\LT\\lib\\mailio\\lib\\libmailio.dll.a")
 
 # ##############################################################################
 
@@ -49,6 +49,7 @@ aux_source_directory(plugins PLUGIN_SRC)
 aux_source_directory(models MODEL_SRC)
 aux_source_directory(utils UTIL_SRC)
 aux_source_directory(errors ERROR_SRC)
+aux_source_directory(plugins PLUGIN_SRC)
 
 # drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
 #                     ${CMAKE_CURRENT_BINARY_DIR})
@@ -71,7 +72,8 @@ target_sources(${PROJECT_NAME}
                ${PLUGIN_SRC}
                ${MODEL_SRC}
                ${UTIL_SRC}
-               ${ERROR_SRC})
+               ${ERROR_SRC}
+               ${PLUGIN_SRC})
 # ##############################################################################
 # uncomment the following line for dynamically loading views 
 # set_property(TARGET ${PROJECT_NAME} PROPERTY ENABLE_EXPORTS ON)
