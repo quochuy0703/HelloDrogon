@@ -11,6 +11,7 @@
 #include "../utils/ApiResponse.hpp"
 #include "../utils/FtpHelper.hpp"
 #include "../utils/FileHelper.hpp"
+#include "../utils/Utils.hpp"
 
 #include "../plugins/SMTPMail.h"
 
@@ -514,11 +515,11 @@ drogon::AsyncTask User::getInfo(const HttpRequestPtr req,
     auto att = req->getAttributes();
     auto data = att->get<string>("decoded");
 
-    auto client = drogon::HttpClient::newHttpClient("http://localhost:8000");
-    auto httpReq = drogon::HttpRequest::newHttpRequest();
-    // httpReq->setPath("/products/1");
-    httpReq->setPath("/");
-    auto result = co_await client->sendRequestCoro(httpReq);
+    // auto client = drogon::HttpClient::newHttpClient("http://localhost:8000");
+    // auto httpReq = drogon::HttpRequest::newHttpRequest();
+    // // httpReq->setPath("/products/1");
+    // httpReq->setPath("/");
+    // auto result = co_await client->sendRequestCoro(httpReq);
 
     Json::Value ret;
     ret["result"] = "ok";
@@ -528,6 +529,7 @@ drogon::AsyncTask User::getInfo(const HttpRequestPtr req,
     // ret["coro"] = square;
     ret["hmac"] = co_await app_helpers::crypto_helper::generateHMACCoro("HMAC test");
     ret["gender"] = 1;
+    ret["format"] = app_helpers::format("{0} - {1} - {2}", 1, "hello", 2.12);
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
 }

@@ -30,7 +30,8 @@ add_executable(${PROJECT_NAME} main.cc)
 #
 # and comment out the following lines
 find_package(Drogon CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon cryptopp ftp mailio)
+target_include_directories(${PROJECT_NAME} PRIVATE "/usr/include/botan-2")
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon botan-2 cryptopp ftp mailio)
 
 # ##############################################################################
 
