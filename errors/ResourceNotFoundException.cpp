@@ -1,6 +1,6 @@
 #include "ResourceNotFoundException.hpp"
 
-ResourceNotFoundException::ResourceNotFoundException(char *message)
+ResourceNotFoundException::ResourceNotFoundException(const char *message)
 {
     this->message_ = message;
 }

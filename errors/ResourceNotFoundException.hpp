@@ -5,9 +5,9 @@ class ResourceNotFoundException : public std::exception
 {
 private:
     /* data */
-    char *message_;
+    const char *message_;
 
 public:
-    ResourceNotFoundException(char *message);
+    ResourceNotFoundException(const char *message);
     const char *what();
 };
