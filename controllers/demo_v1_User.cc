@@ -28,8 +28,9 @@ void User::login(const HttpRequestPtr &req,
                  std::function<void(const HttpResponsePtr &)> &&callback)
 {
 
-    app_helpers::api_res_helper::ApiResponse::Builder builderRes = app_helpers::api_res_helper::ApiResponse::create();
+    app_helpers::api_res_helper::ApiResponse<std::string>::Builder builderRes = app_helpers::api_res_helper::ApiResponse<std::string>::create();
     std::string data = "", message = "";
+
     Json::Value ret;
 
     try
@@ -219,7 +220,7 @@ drogon::AsyncTask demo::v1::User::upload(const HttpRequestPtr req, std::function
 
 void demo::v1::User::loginAccount(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
 {
-    app_helpers::api_res_helper::ApiResponse::Builder builderRes = app_helpers::api_res_helper::ApiResponse::create();
+    app_helpers::api_res_helper::ApiResponse<Json::Value>::Builder builderRes = app_helpers::api_res_helper::ApiResponse<Json::Value>::create();
     Json::Value data;
     std::string message = "";
     Json::Value ret;

@@ -1,13 +1,16 @@
+#pragma once
+
 #include <iostream>
 #include <drogon/orm/Mapper.h>
 
 namespace app_helpers::api_res_helper
 {
+    template <typename T>
     class ApiResponse
     {
     private:
         /* data */
-        Json::Value data_;
+        T data_;
         std::string message_;
         std::string statusCode_;
         std::string success_;
@@ -16,19 +19,52 @@ namespace app_helpers::api_res_helper
         class Builder
         {
         private:
-            app_helpers::api_res_helper::ApiResponse *api;
+            ApiResponse<T> *api;
 
         public:
-            Builder();
-            Builder &message(const std::string &message);
-            Builder &data(const Json::Value &data);
-            Builder &statusCode(const std::string &statusCode);
-            Builder &success(const std::string &success);
-            app_helpers::api_res_helper::ApiResponse *build();
+            Builder()
+            {
+                this->api = new ApiResponse<T>();
+            };
+            Builder &message(const std::string &message)
+            {
+                this->api->message_ = message;
+                return *this;
+            };
+            Builder &data(const T &data)
+            {
+                this->api->data_ = data;
+                return *this;
+            };
+            Builder &statusCode(const std::string &statusCode)
+            {
+                this->api->statusCode_ = statusCode;
+                return *this;
+            };
+            Builder &success(const std::string &success)
+            {
+                this->api->success_ = success;
+                return *this;
+            };
+            ApiResponse<T> *build()
+            {
+                return this->api;
+            };
         };
+        static Builder create()
+        {
+            return Builder();
+        };
+        Json::Value toJson()
+        {
+            Json::Value ret;
+            ret["Data"] = this->data_;
+            ret["Message"] = this->message_;
+            ret["StatusCode"] = this->statusCode_;
+            ret["Success"] = this->success_;
 
-        static Builder create();
-        Json::Value toJson();
+            return ret;
+        };
     };
 
 }
