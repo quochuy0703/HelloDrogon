@@ -532,13 +532,11 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     ret["user_id"] = userId;
     Json::Value root;
     Json::Reader reader;
-    std::string re = std::string(result->getBody());
-    // ret["coro"] = reader.parse(stringstream(re), root);
+    ret["coro"] = reader.parse(std::string{result->getBody()}, root);
     auto hmac = co_await app_helpers::crypto_helper::generateHMACCoro("HMAC Test");
     ret["hmac"] = hmac;
     ret["gender"] = 1;
     ret["format"] = app_helpers::format("{0} is {1} years old and has {2} children.", "John", 30, 2);
-    ret["formfat"] = app_helpers::ltrim("fdfdf   ");
 
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
