@@ -38,7 +38,7 @@ drogon::AsyncTask User::login(HttpRequestPtr req,
                               std::function<void(const HttpResponsePtr &)> callback)
 {
 
-    app_helpers::api_res_helper::ApiResponse::Builder builderRes = app_helpers::api_res_helper::ApiResponse::create();
+    app_helpers::api_res_helper::ApiResponse<Json::Value>::Builder builderRes = app_helpers::api_res_helper::ApiResponse<Json::Value>::create();
     Json::Value data;
     std::string message = "";
     Json::Value ret;
@@ -174,7 +174,7 @@ void demo::v1::User::loginView(const HttpRequestPtr &req, std::function<void(con
 
 void demo::v1::User::loginAccount(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
 {
-    app_helpers::api_res_helper::ApiResponse::Builder builderRes = app_helpers::api_res_helper::ApiResponse::create();
+    app_helpers::api_res_helper::ApiResponse<Json::Value>::Builder builderRes = app_helpers::api_res_helper::ApiResponse<Json::Value>::create();
     Json::Value data;
     std::string message = "";
     Json::Value ret;

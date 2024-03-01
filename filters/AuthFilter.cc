@@ -17,7 +17,7 @@ void AuthFilter::doFilter(const HttpRequestPtr &req,
 {
 
     // Edit your logic here
-    app_helpers::api_res_helper::ApiResponse::Builder resBuilder = app_helpers::api_res_helper::ApiResponse::create();
+    app_helpers::api_res_helper::ApiResponse<std::string>::Builder resBuilder = app_helpers::api_res_helper::ApiResponse<std::string>::create();
     std::string data = "", message = "";
     try
     {
