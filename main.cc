@@ -3,6 +3,7 @@
 #include <chrono>
 #include "./utils/ExecuteAwaiter.hpp"
 #include "./utils/EmailHelper.hpp"
+#include "./utils/Utils.hpp"
 
 using namespace drogon;
 
@@ -86,6 +87,9 @@ int main()
 		ret["test"] = true;
 		auto resp = drogon::HttpResponse::newHttpJsonResponse(ret);
 		callback(resp); });
+
+	LOG_INFO << app_helpers::format("Server running on {0}:{1}", "0.0.0.0", 5555);
 	drogon::app().run();
+
 	return 0;
 }

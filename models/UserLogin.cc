@@ -284,7 +284,7 @@ void UserLogin::updateByJson(const Json::Value &pJson) noexcept(false)
 
 const int32_t &UserLogin::getValueOfId() const noexcept
 {
-    const static int32_t defaultValue = int32_t();
+    static const int32_t defaultValue = int32_t();
     if(id_)
         return *id_;
     return defaultValue;
@@ -306,7 +306,7 @@ const typename UserLogin::PrimaryKeyType & UserLogin::getPrimaryKey() const
 
 const std::string &UserLogin::getValueOfEmail() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(email_)
         return *email_;
     return defaultValue;
@@ -333,7 +333,7 @@ void UserLogin::setEmailToNull() noexcept
 
 const std::string &UserLogin::getValueOfPassword() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(password_)
         return *password_;
     return defaultValue;
@@ -360,7 +360,7 @@ void UserLogin::setPasswordToNull() noexcept
 
 const std::string &UserLogin::getValueOfSecurityStamp() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(securityStamp_)
         return *securityStamp_;
     return defaultValue;
@@ -387,7 +387,7 @@ void UserLogin::setSecurityStampToNull() noexcept
 
 const std::string &UserLogin::getValueOfName() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(name_)
         return *name_;
     return defaultValue;

@@ -245,7 +245,7 @@ void Instructor::updateByJson(const Json::Value &pJson) noexcept(false)
 
 const int32_t &Instructor::getValueOfId() const noexcept
 {
-    const static int32_t defaultValue = int32_t();
+    static const int32_t defaultValue = int32_t();
     if(id_)
         return *id_;
     return defaultValue;
@@ -267,7 +267,7 @@ void Instructor::setIdToNull() noexcept
 
 const std::string &Instructor::getValueOfFirstname() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(firstname_)
         return *firstname_;
     return defaultValue;
@@ -294,7 +294,7 @@ void Instructor::setFirstnameToNull() noexcept
 
 const std::string &Instructor::getValueOfLastname() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(lastname_)
         return *lastname_;
     return defaultValue;
@@ -321,7 +321,7 @@ void Instructor::setLastnameToNull() noexcept
 
 const std::string &Instructor::getValueOfEmail() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(email_)
         return *email_;
     return defaultValue;
@@ -825,27 +825,31 @@ bool Instructor::validJsonOfField(size_t index,
     }
     return true;
 }
-
-Instructordetail Instructor::getInstructordetail(const drogon::orm::DbClientPtr &clientPtr) const {
-    std::shared_ptr<std::promise<Instructordetail>> pro(new std::promise<Instructordetail>);
-    std::future<Instructordetail> f = pro->get_future();
-    getInstructordetail(clientPtr, [&pro] (Instructordetail result) {
-        try {
-            pro->set_value(result);
-        }
-        catch (...) {
-            pro->set_exception(std::current_exception());
-        }
-    }, [&pro] (const DrogonDbException &err) {
-        pro->set_exception(std::make_exception_ptr(err));
-    });
-    return f.get();
+Instructordetail Instructor::getInstructordetail(const DbClientPtr &clientPtr) const {
+    static const std::string sql = "select * from instructordetail where instructorid = $1";
+    Result r(nullptr);
+    {
+        auto binder = *clientPtr << sql;
+        binder << *id_ << Mode::Blocking >>
+            [&r](const Result &result) { r = result; };
+        binder.exec();
+    }
+    if (r.size() == 0)
+    {
+        throw UnexpectedRows("0 rows found");
+    }
+    else if (r.size() > 1)
+    {
+        throw UnexpectedRows("Found more than one row");
+    }
+    return Instructordetail(r[0]);
 }
+
 void Instructor::getInstructordetail(const DbClientPtr &clientPtr,
                                      const std::function<void(Instructordetail)> &rcb,
                                      const ExceptionCallback &ecb) const
 {
-    const static std::string sql = "select * from instructordetail where instructorid = $1";
+    static const std::string sql = "select * from instructordetail where instructorid = $1";
     *clientPtr << sql
                << *id_
                >> [rcb = std::move(rcb), ecb](const Result &r){
@@ -864,26 +868,29 @@ void Instructor::getInstructordetail(const DbClientPtr &clientPtr,
                }
                >> ecb;
 }
-std::vector<Course> Instructor::getCourse(const drogon::orm::DbClientPtr &clientPtr) const {
-    std::shared_ptr<std::promise<std::vector<Course>>> pro(new std::promise<std::vector<Course>>);
-    std::future<std::vector<Course>> f = pro->get_future();
-    getCourse(clientPtr, [&pro] (std::vector<Course> result) {
-        try {
-            pro->set_value(result);
-        }
-        catch (...) {
-            pro->set_exception(std::current_exception());
-        }
-    }, [&pro] (const DrogonDbException &err) {
-        pro->set_exception(std::make_exception_ptr(err));
-    });
-    return f.get();
+std::vector<Course> Instructor::getCourse(const DbClientPtr &clientPtr) const {
+    static const std::string sql = "select * from course where instructor_id = $1";
+    Result r(nullptr);
+    {
+        auto binder = *clientPtr << sql;
+        binder << *id_ << Mode::Blocking >>
+            [&r](const Result &result) { r = result; };
+        binder.exec();
+    }
+    std::vector<Course> ret;
+    ret.reserve(r.size());
+    for (auto const &row : r)
+    {
+        ret.emplace_back(Course(row));
+    }
+    return ret;
 }
+
 void Instructor::getCourse(const DbClientPtr &clientPtr,
                            const std::function<void(std::vector<Course>)> &rcb,
                            const ExceptionCallback &ecb) const
 {
-    const static std::string sql = "select * from course where instructor_id = $1";
+    static const std::string sql = "select * from course where instructor_id = $1";
     *clientPtr << sql
                << *id_
                >> [rcb = std::move(rcb)](const Result &r){

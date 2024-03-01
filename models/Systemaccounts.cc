@@ -1276,7 +1276,7 @@ void Systemaccounts::updateByJson(const Json::Value &pJson) noexcept(false)
 
 const std::string &Systemaccounts::getValueOfAccountid() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(accountid_)
         return *accountid_;
     return defaultValue;
@@ -1303,7 +1303,7 @@ void Systemaccounts::setAccountidToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfUsername() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(username_)
         return *username_;
     return defaultValue;
@@ -1330,7 +1330,7 @@ void Systemaccounts::setUsernameToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfPasswordhash() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(passwordhash_)
         return *passwordhash_;
     return defaultValue;
@@ -1357,7 +1357,7 @@ void Systemaccounts::setPasswordhashToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfSecuritystamp() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(securitystamp_)
         return *securitystamp_;
     return defaultValue;
@@ -1384,7 +1384,7 @@ void Systemaccounts::setSecuritystampToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfDisplayname() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(displayname_)
         return *displayname_;
     return defaultValue;
@@ -1411,7 +1411,7 @@ void Systemaccounts::setDisplaynameToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfAvatar() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(avatar_)
         return *avatar_;
     return defaultValue;
@@ -1438,7 +1438,7 @@ void Systemaccounts::setAvatarToNull() noexcept
 
 const int32_t &Systemaccounts::getValueOfType() const noexcept
 {
-    const static int32_t defaultValue = int32_t();
+    static const int32_t defaultValue = int32_t();
     if(type_)
         return *type_;
     return defaultValue;
@@ -1455,7 +1455,7 @@ void Systemaccounts::setType(const int32_t &pType) noexcept
 
 const short &Systemaccounts::getValueOfAccessfailedcount() const noexcept
 {
-    const static short defaultValue = short();
+    static const short defaultValue = short();
     if(accessfailedcount_)
         return *accessfailedcount_;
     return defaultValue;
@@ -1477,7 +1477,7 @@ void Systemaccounts::setAccessfailedcountToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfEmail() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(email_)
         return *email_;
     return defaultValue;
@@ -1504,7 +1504,7 @@ void Systemaccounts::setEmailToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfIsemailconfirmed() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(isemailconfirmed_)
         return *isemailconfirmed_;
     return defaultValue;
@@ -1531,7 +1531,7 @@ void Systemaccounts::setIsemailconfirmedToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfPhonenumber() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(phonenumber_)
         return *phonenumber_;
     return defaultValue;
@@ -1558,7 +1558,7 @@ void Systemaccounts::setPhonenumberToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfIsphonenumberconfirmed() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(isphonenumberconfirmed_)
         return *isphonenumberconfirmed_;
     return defaultValue;
@@ -1585,7 +1585,7 @@ void Systemaccounts::setIsphonenumberconfirmedToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfTwofactorenabled() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(twofactorenabled_)
         return *twofactorenabled_;
     return defaultValue;
@@ -1612,7 +1612,7 @@ void Systemaccounts::setTwofactorenabledToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfSessionid() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(sessionid_)
         return *sessionid_;
     return defaultValue;
@@ -1639,7 +1639,7 @@ void Systemaccounts::setSessionidToNull() noexcept
 
 const int32_t &Systemaccounts::getValueOfStatus() const noexcept
 {
-    const static int32_t defaultValue = int32_t();
+    static const int32_t defaultValue = int32_t();
     if(status_)
         return *status_;
     return defaultValue;
@@ -1661,7 +1661,7 @@ void Systemaccounts::setStatusToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfPrivatekey() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(privatekey_)
         return *privatekey_;
     return defaultValue;
@@ -1688,7 +1688,7 @@ void Systemaccounts::setPrivatekeyToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfIsfirsttimelogin() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(isfirsttimelogin_)
         return *isfirsttimelogin_;
     return defaultValue;
@@ -1715,7 +1715,7 @@ void Systemaccounts::setIsfirsttimeloginToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfIshrreference() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(ishrreference_)
         return *ishrreference_;
     return defaultValue;
@@ -1742,7 +1742,7 @@ void Systemaccounts::setIshrreferenceToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfSession() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(session_)
         return *session_;
     return defaultValue;
@@ -1769,7 +1769,7 @@ void Systemaccounts::setSessionToNull() noexcept
 
 const ::trantor::Date &Systemaccounts::getValueOfCreateddate() const noexcept
 {
-    const static ::trantor::Date defaultValue = ::trantor::Date();
+    static const ::trantor::Date defaultValue = ::trantor::Date();
     if(createddate_)
         return *createddate_;
     return defaultValue;
@@ -1786,7 +1786,7 @@ void Systemaccounts::setCreateddate(const ::trantor::Date &pCreateddate) noexcep
 
 const std::string &Systemaccounts::getValueOfCreatedby() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(createdby_)
         return *createdby_;
     return defaultValue;
@@ -1813,7 +1813,7 @@ void Systemaccounts::setCreatedbyToNull() noexcept
 
 const ::trantor::Date &Systemaccounts::getValueOfUpdateddate() const noexcept
 {
-    const static ::trantor::Date defaultValue = ::trantor::Date();
+    static const ::trantor::Date defaultValue = ::trantor::Date();
     if(updateddate_)
         return *updateddate_;
     return defaultValue;
@@ -1835,7 +1835,7 @@ void Systemaccounts::setUpdateddateToNull() noexcept
 
 const std::string &Systemaccounts::getValueOfUpdatedby() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(updatedby_)
         return *updatedby_;
     return defaultValue;

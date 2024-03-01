@@ -244,7 +244,7 @@ void Instructordetail::updateByJson(const Json::Value &pJson) noexcept(false)
 
 const int32_t &Instructordetail::getValueOfId() const noexcept
 {
-    const static int32_t defaultValue = int32_t();
+    static const int32_t defaultValue = int32_t();
     if(id_)
         return *id_;
     return defaultValue;
@@ -266,7 +266,7 @@ void Instructordetail::setIdToNull() noexcept
 
 const std::string &Instructordetail::getValueOfYoutubechannel() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(youtubechannel_)
         return *youtubechannel_;
     return defaultValue;
@@ -293,7 +293,7 @@ void Instructordetail::setYoutubechannelToNull() noexcept
 
 const std::string &Instructordetail::getValueOfHobby() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(hobby_)
         return *hobby_;
     return defaultValue;
@@ -320,7 +320,7 @@ void Instructordetail::setHobbyToNull() noexcept
 
 const int32_t &Instructordetail::getValueOfInstructorid() const noexcept
 {
-    const static int32_t defaultValue = int32_t();
+    static const int32_t defaultValue = int32_t();
     if(instructorid_)
         return *instructorid_;
     return defaultValue;
@@ -810,27 +810,31 @@ bool Instructordetail::validJsonOfField(size_t index,
     }
     return true;
 }
-
-Instructor Instructordetail::getInstructor(const drogon::orm::DbClientPtr &clientPtr) const {
-    std::shared_ptr<std::promise<Instructor>> pro(new std::promise<Instructor>);
-    std::future<Instructor> f = pro->get_future();
-    getInstructor(clientPtr, [&pro] (Instructor result) {
-        try {
-            pro->set_value(result);
-        }
-        catch (...) {
-            pro->set_exception(std::current_exception());
-        }
-    }, [&pro] (const DrogonDbException &err) {
-        pro->set_exception(std::make_exception_ptr(err));
-    });
-    return f.get();
+Instructor Instructordetail::getInstructor(const DbClientPtr &clientPtr) const {
+    static const std::string sql = "select * from instructor where id = $1";
+    Result r(nullptr);
+    {
+        auto binder = *clientPtr << sql;
+        binder << *instructorid_ << Mode::Blocking >>
+            [&r](const Result &result) { r = result; };
+        binder.exec();
+    }
+    if (r.size() == 0)
+    {
+        throw UnexpectedRows("0 rows found");
+    }
+    else if (r.size() > 1)
+    {
+        throw UnexpectedRows("Found more than one row");
+    }
+    return Instructor(r[0]);
 }
+
 void Instructordetail::getInstructor(const DbClientPtr &clientPtr,
                                      const std::function<void(Instructor)> &rcb,
                                      const ExceptionCallback &ecb) const
 {
-    const static std::string sql = "select * from instructor where id = $1";
+    static const std::string sql = "select * from instructor where id = $1";
     *clientPtr << sql
                << *instructorid_
                >> [rcb = std::move(rcb), ecb](const Result &r){

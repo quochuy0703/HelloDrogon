@@ -47,16 +47,19 @@ class Course
     struct Cols
     {
         static const std::string _id;
-        static const std::string _title;
+        static const std::string _created_date;
+        static const std::string _last_modified_date;
+        static const std::string _code;
+        static const std::string _name;
         static const std::string _instructor_id;
     };
 
-    const static int primaryKeyNumber;
-    const static std::string tableName;
-    const static bool hasPrimaryKey;
-    const static std::string primaryKeyName;
-    using PrimaryKeyType = void;
-    int getPrimaryKey() const { assert(false); return 0; }
+    static const int primaryKeyNumber;
+    static const std::string tableName;
+    static const bool hasPrimaryKey;
+    static const std::string primaryKeyName;
+    using PrimaryKeyType = int64_t;
+    const PrimaryKeyType &getPrimaryKey() const;
 
     /**
      * @brief constructor
@@ -102,22 +105,49 @@ class Course
 
     /**  For column id  */
     ///Get the value of the column id, returns the default value if the column is null
-    const int32_t &getValueOfId() const noexcept;
+    const int64_t &getValueOfId() const noexcept;
     ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
-    const std::shared_ptr<int32_t> &getId() const noexcept;
+    const std::shared_ptr<int64_t> &getId() const noexcept;
     ///Set the value of the column id
-    void setId(const int32_t &pId) noexcept;
-    void setIdToNull() noexcept;
+    void setId(const int64_t &pId) noexcept;
 
-    /**  For column title  */
-    ///Get the value of the column title, returns the default value if the column is null
-    const std::string &getValueOfTitle() const noexcept;
+    /**  For column created_date  */
+    ///Get the value of the column created_date, returns the default value if the column is null
+    const ::trantor::Date &getValueOfCreatedDate() const noexcept;
     ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
-    const std::shared_ptr<std::string> &getTitle() const noexcept;
-    ///Set the value of the column title
-    void setTitle(const std::string &pTitle) noexcept;
-    void setTitle(std::string &&pTitle) noexcept;
-    void setTitleToNull() noexcept;
+    const std::shared_ptr<::trantor::Date> &getCreatedDate() const noexcept;
+    ///Set the value of the column created_date
+    void setCreatedDate(const ::trantor::Date &pCreatedDate) noexcept;
+    void setCreatedDateToNull() noexcept;
+
+    /**  For column last_modified_date  */
+    ///Get the value of the column last_modified_date, returns the default value if the column is null
+    const ::trantor::Date &getValueOfLastModifiedDate() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<::trantor::Date> &getLastModifiedDate() const noexcept;
+    ///Set the value of the column last_modified_date
+    void setLastModifiedDate(const ::trantor::Date &pLastModifiedDate) noexcept;
+    void setLastModifiedDateToNull() noexcept;
+
+    /**  For column code  */
+    ///Get the value of the column code, returns the default value if the column is null
+    const std::string &getValueOfCode() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getCode() const noexcept;
+    ///Set the value of the column code
+    void setCode(const std::string &pCode) noexcept;
+    void setCode(std::string &&pCode) noexcept;
+    void setCodeToNull() noexcept;
+
+    /**  For column name  */
+    ///Get the value of the column name, returns the default value if the column is null
+    const std::string &getValueOfName() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getName() const noexcept;
+    ///Set the value of the column name
+    void setName(const std::string &pName) noexcept;
+    void setName(std::string &&pName) noexcept;
+    void setNameToNull() noexcept;
 
     /**  For column instructor_id  */
     ///Get the value of the column instructor_id, returns the default value if the column is null
@@ -129,7 +159,7 @@ class Course
     void setInstructorIdToNull() noexcept;
 
 
-    static size_t getColumnNumber() noexcept {  return 3;  }
+    static size_t getColumnNumber() noexcept {  return 6;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
     Json::Value toJson() const;
@@ -158,8 +188,11 @@ class Course
     void updateArgs(drogon::orm::internal::SqlBinder &binder) const;
     ///For mysql or sqlite3
     void updateId(const uint64_t id);
-    std::shared_ptr<int32_t> id_;
-    std::shared_ptr<std::string> title_;
+    std::shared_ptr<int64_t> id_;
+    std::shared_ptr<::trantor::Date> createdDate_;
+    std::shared_ptr<::trantor::Date> lastModifiedDate_;
+    std::shared_ptr<std::string> code_;
+    std::shared_ptr<std::string> name_;
     std::shared_ptr<int32_t> instructorId_;
     struct MetaData
     {
@@ -172,17 +205,17 @@ class Course
         const bool notNull_;
     };
     static const std::vector<MetaData> metaData_;
-    bool dirtyFlag_[3]={ false };
+    bool dirtyFlag_[6]={ false };
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
-        static const std::string sql="";
+        static const std::string sql="select * from " + tableName + " where id = $1";
         return sql;
     }
 
     static const std::string &sqlForDeletingByPrimaryKey()
     {
-        static const std::string sql="";
+        static const std::string sql="delete from " + tableName + " where id = $1";
         return sql;
     }
     std::string sqlForInserting(bool &needSelection) const
@@ -197,10 +230,25 @@ class Course
         }
         if(dirtyFlag_[1])
         {
-            sql += "title,";
+            sql += "created_date,";
             ++parametersCount;
         }
         if(dirtyFlag_[2])
+        {
+            sql += "last_modified_date,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[3])
+        {
+            sql += "code,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[4])
+        {
+            sql += "name,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[5])
         {
             sql += "instructor_id,";
             ++parametersCount;
@@ -227,6 +275,21 @@ class Course
             sql.append(placeholderStr, n);
         }
         if(dirtyFlag_[2])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        if(dirtyFlag_[3])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        if(dirtyFlag_[4])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        if(dirtyFlag_[5])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);

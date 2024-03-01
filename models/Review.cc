@@ -199,7 +199,7 @@ void Review::updateByJson(const Json::Value &pJson) noexcept(false)
 
 const int32_t &Review::getValueOfId() const noexcept
 {
-    const static int32_t defaultValue = int32_t();
+    static const int32_t defaultValue = int32_t();
     if(id_)
         return *id_;
     return defaultValue;
@@ -221,7 +221,7 @@ const typename Review::PrimaryKeyType & Review::getPrimaryKey() const
 
 const int32_t &Review::getValueOfCourseId() const noexcept
 {
-    const static int32_t defaultValue = int32_t();
+    static const int32_t defaultValue = int32_t();
     if(courseId_)
         return *courseId_;
     return defaultValue;
@@ -243,7 +243,7 @@ void Review::setCourseIdToNull() noexcept
 
 const std::string &Review::getValueOfContent() const noexcept
 {
-    const static std::string defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(content_)
         return *content_;
     return defaultValue;
@@ -621,27 +621,31 @@ bool Review::validJsonOfField(size_t index,
     }
     return true;
 }
-
-Course Review::getCourse(const drogon::orm::DbClientPtr &clientPtr) const {
-    std::shared_ptr<std::promise<Course>> pro(new std::promise<Course>);
-    std::future<Course> f = pro->get_future();
-    getCourse(clientPtr, [&pro] (Course result) {
-        try {
-            pro->set_value(result);
-        }
-        catch (...) {
-            pro->set_exception(std::current_exception());
-        }
-    }, [&pro] (const DrogonDbException &err) {
-        pro->set_exception(std::make_exception_ptr(err));
-    });
-    return f.get();
+Course Review::getCourse(const DbClientPtr &clientPtr) const {
+    static const std::string sql = "select * from course where id = $1";
+    Result r(nullptr);
+    {
+        auto binder = *clientPtr << sql;
+        binder << *courseId_ << Mode::Blocking >>
+            [&r](const Result &result) { r = result; };
+        binder.exec();
+    }
+    if (r.size() == 0)
+    {
+        throw UnexpectedRows("0 rows found");
+    }
+    else if (r.size() > 1)
+    {
+        throw UnexpectedRows("Found more than one row");
+    }
+    return Course(r[0]);
 }
+
 void Review::getCourse(const DbClientPtr &clientPtr,
                        const std::function<void(Course)> &rcb,
                        const ExceptionCallback &ecb) const
 {
-    const static std::string sql = "select * from course where id = $1";
+    static const std::string sql = "select * from course where id = $1";
     *clientPtr << sql
                << *courseId_
                >> [rcb = std::move(rcb), ecb](const Result &r){
