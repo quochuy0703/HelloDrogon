@@ -18,6 +18,7 @@
 #include "../utils/FtpHelper.hpp"
 #include "../utils/FileHelper.hpp"
 #include "../utils/Utils.hpp"
+#include "../utils/Fetch.hpp"
 
 #include "../plugins/SMTPMail.h"
 
@@ -532,11 +533,16 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     ret["user_id"] = userId;
     Json::Value root;
     Json::Reader reader;
-    ret["coro"] = reader.parse(std::string{result->getBody()}, root);
+    // std::string coro = reader.parse(std::string{result->getBody()}, root);
+    // ret["coro"] = coro;
+    ret["coro1"] = *(result->getJsonObject());
     auto hmac = co_await app_helpers::crypto_helper::generateHMACCoro("HMAC Test");
     ret["hmac"] = hmac;
     ret["gender"] = 1;
     ret["format"] = app_helpers::format("{0} is {1} years old and has {2} children.", "John", 30, 2);
+    app_helpers::fetch_helper::Fetch fetch;
+    std::map<std::string, std::string> query = {{"name", "huy"}};
+    ret["fetch"] = fetch.Get("/", query).toJson();
 
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);

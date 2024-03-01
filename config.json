@@ -346,6 +346,7 @@
         "FTP_PORT":"21",
         "FTP_USER":"huymq",
         "FTP_PWD":"952e2b105bd188a700b33e1c15d48170", //12345678
-        "FTP_UPLOAD_DIR":"/"
+        "FTP_UPLOAD_DIR":"/",
+        "REACT_APP_BASE_URL":"https://fakestoreapi.com"
     }
 }
