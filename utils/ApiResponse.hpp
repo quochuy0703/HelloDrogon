@@ -12,8 +12,8 @@ namespace app_helpers::api_res_helper
         /* data */
         T data_;
         std::string message_;
-        std::string statusCode_;
-        std::string success_;
+        int statusCode_;
+        bool success_;
 
     public:
         class Builder
@@ -36,12 +36,12 @@ namespace app_helpers::api_res_helper
                 this->api->data_ = data;
                 return *this;
             };
-            Builder &statusCode(const std::string &statusCode)
+            Builder &statusCode(const int &statusCode)
             {
                 this->api->statusCode_ = statusCode;
                 return *this;
             };
-            Builder &success(const std::string &success)
+            Builder &success(const bool &success)
             {
                 this->api->success_ = success;
                 return *this;
