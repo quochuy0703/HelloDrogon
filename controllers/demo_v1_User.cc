@@ -384,31 +384,27 @@ void demo::v1::User::editUserView(const HttpRequestPtr &req, std::function<void(
 
         drogon::orm::Mapper<UserModel> usr(db);
 
-        UserModel user;
         try
         {
             // user = usr.findOne(drogon::orm::Criteria(UserModel::Cols::_id, userId));
+            // auto callbackPtr = make_shared<function<void(const HttpResponsePtr &)>>(move(callback));
             usr.findOne(
-                drogon::orm::Criteria(UserModel::Cols::_id, userId), [&](auto userReturn)
+                drogon::orm::Criteria(UserModel::Cols::_id, userId), [=](auto userReturn)
                 { 
-                    user = userReturn; 
-                    std::cout << "after in callback"  << user.getEmail()<< std::endl; 
+                    LOG_INFO << *userReturn.getEmail(); 
                     HttpViewData data = HttpViewData();
-                    data["user"] = user;
+                    data["user"] = userReturn;
                     auto resp = HttpResponse::newHttpViewResponse("views::user::user_form", data);
                     callback(resp); },
-                [](auto &ex)
+                [callback](auto &ex)
                 {
                     std::cout << ex.base().what() << std::endl;
                 });
-            std::cout << "after call" << std::endl;
         }
         catch (orm::UnexpectedRows &ex)
         {
             throw ResourceNotFoundException("User not found!");
         };
-
-        std::cout << "after try" << std::endl;
     }
     catch (std::exception &ex)
     {
