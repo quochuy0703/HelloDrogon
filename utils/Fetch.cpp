@@ -7,9 +7,12 @@ bool IsNullOrEmpty(const std::string &str)
     return str.empty();
 }
 
-drogon::Task<std::string> sendRequest(const std::string &path, drogon::HttpMethod method, const std::string &endpoint, Json::Value body = Json::Value())
+drogon::Task<ApiResponse<Json::Value>> sendRequest(const std::string &path, drogon::HttpMethod method, const std::string &endpoint, Json::Value body = Json::Value())
 {
     std::string_view json = "";
+    drogon::HttpResponsePtr result;
+    ApiResponse<Json::Value> api;
+    auto res = api.create();
 
     try
     {
@@ -23,17 +26,21 @@ drogon::Task<std::string> sendRequest(const std::string &path, drogon::HttpMetho
             httpReq->setContentTypeCode(drogon::CT_APPLICATION_JSON);
             httpReq->setBody(body.toStyledString());
         }
-        auto result = co_await client->sendRequestCoro(httpReq);
+        result = co_await client->sendRequestCoro(httpReq);
         json = result->getBody();
         LOG_INFO << std::string(json);
+        res.data(std::string(json)).message("Sucesss").success(true).statusCode(static_cast<int>(result->getStatusCode()));
     }
     catch (drogon::HttpException ex)
     {
-        LOG_INFO << ex.what();
+        LOG_INFO << ex.what() << "," << ex.code();
+        res.data(std::string(json)).message(ex.what()).success(false).statusCode(0);
     }
 
-    co_return std::string(json);
+    co_return *(res.build());
 };
+
+// Hàm chuyển đổi map thành chuỗi query string
 std::string MapToQueryString(const std::map<std::string, std::string> &queries)
 {
     std::string queryUri;
@@ -51,7 +58,6 @@ std::string MapToQueryString(const std::map<std::string, std::string> &queries)
     return queryUri;
 };
 
-// Hàm chuyển đổi map thành chuỗi query string
 drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Get(const std::string &url, const std::map<std::string, std::string> &queries,
                                                                              const std::string &endpoint)
 {
@@ -69,14 +75,8 @@ drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Get(con
         }
     }
 
-    // Builder builderRes = ApiResponse<T>::create();
-    // builderRes.data(data).message(message).statusCode("200").success("ok").build()->toJson();
-
     auto result = co_await sendRequest(path, drogon::HttpMethod::Get, baseUrl);
-
-    ApiResponse<Json::Value> api;
-    auto res = api.create();
-    co_return *(res.data(result).build());
+    co_return result;
 }
 drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Post(const std::string &url, Json::Value body, const std::string &endpoint)
 {
@@ -85,10 +85,7 @@ drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Post(co
     std::string baseUrl = (endpoint.empty() ? fetchServer : endpoint);
 
     auto result = co_await sendRequest(url, drogon::HttpMethod::Post, baseUrl, body);
-
-    ApiResponse<Json::Value> api;
-    auto res = api.create();
-    co_return *(res.data(result).build());
+    co_return result;
 }
 drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Put(const std::string &url, Json::Value body, const std::string &endpoint)
 {
@@ -97,10 +94,7 @@ drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Put(con
     std::string baseUrl = (endpoint.empty() ? fetchServer : endpoint);
 
     auto result = co_await sendRequest(url, drogon::HttpMethod::Put, baseUrl, body);
-
-    ApiResponse<Json::Value> api;
-    auto res = api.create();
-    co_return *(res.data(result).build());
+    co_return result;
 };
 
 drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Delete(const std::string &url,
@@ -112,8 +106,5 @@ drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Delete(
     std::string path = url;
 
     auto result = co_await sendRequest(path, drogon::HttpMethod::Delete, baseUrl);
-
-    ApiResponse<Json::Value> api;
-    auto res = api.create();
-    co_return *(res.data(result).build());
+    co_return result;
 };
