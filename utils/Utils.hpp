@@ -5,6 +5,8 @@
 
 #include <string>
 #include <drogon/orm/Mapper.h>
+#include <chrono>
+#include <thread>
 
 namespace app_helpers
 {
@@ -20,6 +22,7 @@ namespace app_helpers
 
     std::string json_encode(const Json::Value &json);
     Json::Value json_decode(const std::string &jsonStr);
+    void repeatForFixedTime(int milliseconds);
     std::vector<std::string> getRange(const std::string &startDate, const std::string &endDate, const std::string &type = "days");
 
     template <typename T>

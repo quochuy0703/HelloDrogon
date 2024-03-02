@@ -125,4 +125,26 @@ namespace app_helpers
         return range;
     }
 
+    void repeatForFixedTime(int milliseconds)
+    {
+        LOG_INFO << "Start loop: " << milliseconds / 1000 << " s";
+        auto start = std::chrono::steady_clock::now(); // Thời điểm bắt đầu
+
+        while (true)
+        {
+            // Kiểm tra nếu đã đạt đến thời gian kết thúc
+            auto now = std::chrono::steady_clock::now();
+            auto elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+            if (elapsedMilliseconds >= milliseconds)
+            {
+                break;
+            }
+
+            // Ngủ một khoảng thời gian nhỏ trước khi lặp lại
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+
+        LOG_INFO << "End loop";
+    }
+
 }
