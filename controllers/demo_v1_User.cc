@@ -12,6 +12,7 @@
 #include "../utils/FtpHelper.hpp"
 #include "../utils/FileHelper.hpp"
 #include "../utils/Utils.hpp"
+#include "../utils/Fetch.hpp"
 
 #include "../plugins/SMTPMail.h"
 
@@ -522,12 +523,47 @@ drogon::AsyncTask User::getInfo(const HttpRequestPtr req,
     // httpReq->setPath("/");
     // auto result = co_await client->sendRequestCoro(httpReq);
 
+    // auto client = drogon::HttpClient::newHttpClient("https://dummyjson.com");
+    // auto httpReq = drogon::HttpRequest::newHttpRequest();
+    // httpReq->setMethod(drogon::HttpMethod::Post);
+    // httpReq->setPath("/products/add");
+    // httpReq->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+    // Json::Value reqBody;
+    // reqBody["title"] = "BMW Pencil";
+    // httpReq->setBody(reqBody.toStyledString());
+    // auto result = co_await client->sendRequestCoro(httpReq);
+
+    // Json::Value reqBody;
+    // reqBody["title"] = "BMW Pencil";
+    // app_helpers::fetch_helper::Fetch fetch;
+    // ApiResponse<Json::Value> result = co_await fetch.Post("/products/add", reqBody, "https://dummyjson.com");
+
+    // https://dummyjson.com/products/search?q=phone'
+    // app_helpers::fetch_helper::Fetch fetch;
+    // map<std::string, std::string> query = {{"q", "phone"}};
+    // ApiResponse<Json::Value> result = co_await fetch.Get("/products/search", query, "https://dummyjson.com");
+
+    // https://dummyjson.com/products/1
+    // Json::Value reqBody;
+    // reqBody["title"] = "iPhone Galaxy +1";
+    // app_helpers::fetch_helper::Fetch fetch;
+    // ApiResponse<Json::Value> result = co_await fetch.Put("/products/1", reqBody, "https://dummyjson.com");
+
+    // https://dummyjson.com/products/1
+    app_helpers::fetch_helper::Fetch fetch;
+    ApiResponse<Json::Value> result = co_await fetch.Delete("/products/1", "https://ffduffmmyjson.com");
+
     Json::Value ret;
     ret["result"] = "ok";
     ret["user_name"] = "Jack";
     ret["user_id"] = userId;
     ret["data"] = data;
     // ret["coro"] = square;
+    // ret["post"] = *(result->getJsonObject());
+    // ret["post"] = result.toJson();
+    // ret["get"] = result.toJson();
+    // ret["put"] = result.toJson();
+    ret["delete"] = result.toJson();
     ret["hmac"] = co_await app_helpers::crypto_helper::generateHMACCoro("HMAC test");
     ret["gender"] = 1;
     ret["format"] = app_helpers::format("{0} - {1} - {2}", 1, "hello", 2.12);
