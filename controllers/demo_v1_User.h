@@ -23,7 +23,7 @@ namespace demo
       METHOD_ADD(User::getInfo, "/{1}/info?token={2}", Get);
       METHOD_ADD(User::loginAccount, "/auth/loginAccount", Post);
       METHOD_ADD(User::helloView, "/view", Get, "AuthViewFilter");
-      METHOD_ADD(User::loginView, "/login", Post, Get);
+      METHOD_ADD(User::loginView, "/login", Post, Get, "AuthViewFilter");
       METHOD_ADD(User::upload, "/upload", Post);
       METHOD_ADD(User::listUserView, "/list", Get);
       METHOD_ADD(User::newUserView, "/new", Get);

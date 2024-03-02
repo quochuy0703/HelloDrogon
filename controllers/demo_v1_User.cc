@@ -146,7 +146,8 @@ void demo::v1::User::loginView(const HttpRequestPtr &req, std::function<void(con
 
         HttpViewData data;
         data["name"] = req->getParameter("name");
-        auto resp = HttpResponse::newHttpViewResponse("views::HelloView", data);
+        // auto resp = HttpResponse::newHttpViewResponse("views::HelloView", data);
+        auto resp = HttpResponse::newRedirectionResponse("view");
         resp->addCookie(cookie);
         callback(resp);
     }

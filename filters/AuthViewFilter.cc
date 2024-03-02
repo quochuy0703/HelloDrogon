@@ -19,11 +19,26 @@ void AuthViewFilter::doFilter(const HttpRequestPtr &req,
     try
     {
         auto token = req->getCookie("token");
+        LOG_INFO << req->getPath();
+        // if (req->getPath().compare("/demo/v1/user/login") == 0)
+        // {
+        //     // Passed
+        //     fccb();
+        //     return;
+        // };
         if (token == "")
             throw ResourceNotFoundException("Not token!");
         jwt::decoded_jwt<jwt::traits::kazuho_picojson> decoded = app_helpers::jwt_helper::verifyToken(token);
 
         // Passed
+        if (req->getPath().compare("/demo/v1/user/login") == 0)
+        {
+            // redirect to dashboard
+            auto res = drogon::HttpResponse::newRedirectionResponse("/demo/v1/user/view");
+            fcb(res);
+
+            return;
+        };
         fccb();
         return;
     }
@@ -41,6 +56,13 @@ void AuthViewFilter::doFilter(const HttpRequestPtr &req,
     }
     // Check failed
 
+    if (req->getPath().compare("/demo/v1/user/login") == 0)
+    {
+        // Passed
+        // pass to login
+        fccb();
+        return;
+    };
     auto res = drogon::HttpResponse::newRedirectionResponse("/demo/v1/user/login");
     fcb(res);
 }
