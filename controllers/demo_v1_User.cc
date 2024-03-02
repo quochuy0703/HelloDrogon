@@ -93,7 +93,7 @@ void User::login(const HttpRequestPtr &req,
         message = ex.what();
     }
 
-    ret = builderRes.data(data).message(message).statusCode("200").success("ok").build()->toJson();
+    ret = builderRes.data(data).message(message).statusCode(drogon::HttpStatusCode::k200OK).success("ok").build()->toJson();
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
 }
@@ -300,7 +300,7 @@ void demo::v1::User::loginAccount(const HttpRequestPtr &req, std::function<void(
         message = ex.what();
     }
 
-    ret = builderRes.data(data).message(message).statusCode("200").success("ok").build()->toJson();
+    ret = builderRes.data(data).message(message).statusCode(drogon::HttpStatusCode::k200OK).success("ok").build()->toJson();
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
 }
@@ -551,7 +551,7 @@ drogon::AsyncTask User::getInfo(const HttpRequestPtr req,
 
     // https://dummyjson.com/products/1
     app_helpers::fetch_helper::Fetch fetch;
-    ApiResponse<Json::Value> result = co_await fetch.Delete("/products/1", "https://ffduffmmyjson.com");
+    ApiResponse<Json::Value> result = co_await fetch.Delete("/products/1", "https://fdfdfdummyjson.com");
 
     Json::Value ret;
     ret["result"] = "ok";
