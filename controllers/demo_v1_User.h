@@ -1,30 +1,9 @@
 #pragma once
 
 #include <drogon/HttpController.h>
+#include "../dto/UserLoginDto.hpp"
 
 using namespace drogon;
-
-struct UserDto
-{
-  std::string userId;
-  std::string password;
-};
-namespace drogon
-{
-  template <>
-  inline UserDto fromRequest(const HttpRequest &req)
-  {
-    auto json = req.getJsonObject();
-    UserDto user;
-    if (json)
-    {
-      user.userId = (*json)["userId"].asString();
-      user.password = (*json)["password"].asString();
-    }
-    return user;
-  }
-}
-
 namespace demo
 {
   namespace v1
@@ -59,7 +38,7 @@ namespace demo
       // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);
       // void your_method_name(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, double p1, int p2) const;
       void login(const HttpRequestPtr &req,
-                 std::function<void(const HttpResponsePtr &)> &&callback, UserDto &&userLogin);
+                 std::function<void(const HttpResponsePtr &)> &&callback, app_dto::user_login::UserLoginDto &&userLogin);
       void loginView(const HttpRequestPtr &req,
                      std::function<void(const HttpResponsePtr &)> &&callback);
       void loginAccount(const HttpRequestPtr &req,
