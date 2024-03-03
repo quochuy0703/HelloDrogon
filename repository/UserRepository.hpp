@@ -1,9 +1,8 @@
 #include <iostream>
 #include <drogon/drogon.h>
 #include "models/User.h"
-#include "../repository/UserRepository.hpp"
 
-namespace app_services::user
+namespace app_repositories::user_repository
 {
     drogon::Task<std::vector<drogon_model::drogon_test::User>> getAll();
     drogon::Task<drogon_model::drogon_test::User> getById(int id);
@@ -12,4 +11,5 @@ namespace app_services::user
     // drogon::Task<drogon_model::drogon_test::User> update();
 
     // drogon::Task<drogon_model::drogon_test::User> remove();
+
 }
