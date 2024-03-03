@@ -28,7 +28,7 @@ using UserSystemModel = drogon_model::drogon_test::Systemaccounts;
 // Add definition of your processing function here
 
 void User::login(const HttpRequestPtr &req,
-                 std::function<void(const HttpResponsePtr &)> &&callback)
+                 std::function<void(const HttpResponsePtr &)> &&callback, UserDto &&userLogin)
 {
 
     app_helpers::api_res_helper::ApiResponse<std::string>::Builder builderRes = app_helpers::api_res_helper::ApiResponse<std::string>::create();
@@ -38,11 +38,9 @@ void User::login(const HttpRequestPtr &req,
 
     try
     {
-        const auto reqBodyPtr = req->getJsonObject();
-        const auto &reqBody = *reqBodyPtr;
-        Json::Value userId = reqBody["userId"];
-        Json::Value passwd = reqBody["password"];
-        cout << "User: " << userId.asString() << endl;
+
+        Json::Value userId = userLogin.userId;
+        Json::Value passwd = userLogin.password;
 
         auto db = drogon::app().getDbClient();
 
