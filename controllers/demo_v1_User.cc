@@ -103,7 +103,7 @@ drogon::AsyncTask User::login(HttpRequestPtr req,
         message = ex.what();
     }
 
-    ret = builderRes.data(data).message(message).statusCode("200").success("ok").build()->toJson();
+    ret = builderRes.data(data).message(message).statusCode(drogon::HttpStatusCode::k200OK).success("ok").build()->toJson();
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
 }
@@ -253,7 +253,7 @@ void demo::v1::User::loginAccount(const HttpRequestPtr &req, std::function<void(
         message = ex.what();
     }
 
-    ret = builderRes.data(data).message(message).statusCode("200").success("ok").build()->toJson();
+    ret = builderRes.data(data).message(message).statusCode(drogon::HttpStatusCode::k200OK).success("ok").build()->toJson();
     auto resp = HttpResponse::newHttpJsonResponse(std::move(ret));
     callback(resp);
 }
