@@ -483,54 +483,84 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
                                 std::string userId,
                                 const std::string &token) const
 {
-    auto client = HttpClient::newHttpClient("https://fakestoreapi.com");
-    auto reqClient = HttpRequest::newHttpRequest();
-    // std::promise<bool> valid;
-    reqClient->setPath("/products/1");
-    reqClient->setMethod(Get);
-    std::string data;
-    // client->sendRequest(reqClient, [callback = std::move(callback), userId, &data](ReqResult result, const HttpResponsePtr &response)
-    //                     {
-    //                         std::cout << "send request" << std::endl;
-    //                         if (result == ReqResult::Ok)
-    //                         {
-    //                             data = std::string(response->getBody());
-    //                             Json::Value ret;
-    //                             ret["result"] = "ok";
-    //                             ret["user_name"] = "Jack";
-    //                             ret["user_id"] = userId;
-    //                             ret["hmac"] = app_helpers::crypto_helper::generateHMAC("HMAC Test");
-    //                             ret["gender"] = 1;
-    //                             ret["data"] = data;
-    //                             auto resp = HttpResponse::newHttpJsonResponse(ret);
+    // auto client = HttpClient::newHttpClient("https://fakestoreapi.com");
+    // auto reqClient = HttpRequest::newHttpRequest();
+    // // std::promise<bool> valid;
+    // reqClient->setPath("/products/1");
+    // reqClient->setMethod(Get);
+    // std::string data;
+    // // client->sendRequest(reqClient, [callback = std::move(callback), userId, &data](ReqResult result, const HttpResponsePtr &response)
+    // //                     {
+    // //                         std::cout << "send request" << std::endl;
+    // //                         if (result == ReqResult::Ok)
+    // //                         {
+    // //                             data = std::string(response->getBody());
+    // //                             Json::Value ret;
+    // //                             ret["result"] = "ok";
+    // //                             ret["user_name"] = "Jack";
+    // //                             ret["user_id"] = userId;
+    // //                             ret["hmac"] = app_helpers::crypto_helper::generateHMAC("HMAC Test");
+    // //                             ret["gender"] = 1;
+    // //                             ret["data"] = data;
+    // //                             auto resp = HttpResponse::newHttpJsonResponse(ret);
 
-    //                             callback(resp);
-    //                             return;
-    //                         }
-    //                         else
-    //                         {
-    //                             std::cout << "Error" << std::endl;
-    //                             Json::Value ret;
-    //                             ret["result"] = "ok";
-    //                             ret["user_name"] = "Jack";
-    //                             ret["user_id"] = userId;
-    //                             ret["hmac"] = app_helpers::crypto_helper::generateHMAC("HMAC Test");
-    //                             ret["gender"] = 1;
-    //                             auto resp = HttpResponse::newHttpJsonResponse(ret);
+    // //                             callback(resp);
+    // //                             return;
+    // //                         }
+    // //                         else
+    // //                         {
+    // //                             std::cout << "Error" << std::endl;
+    // //                             Json::Value ret;
+    // //                             ret["result"] = "ok";
+    // //                             ret["user_name"] = "Jack";
+    // //                             ret["user_id"] = userId;
+    // //                             ret["hmac"] = app_helpers::crypto_helper::generateHMAC("HMAC Test");
+    // //                             ret["gender"] = 1;
+    // //                             auto resp = HttpResponse::newHttpJsonResponse(ret);
 
-    //                             callback(resp);
-    //                         }
-    //                         // if(response == nullptr){ // If no server responce
-    //                         //     valid.set_value(false);}
-    //                         // valid.set_value(true);
-    //                     });
-    // bool api_ok = valid.get_future().get(); // Wait for HTTP to response. Have to wait here otherwise crash the entire application
-    // if (api_ok == false)
-    //     std::cout << "Error" << std::endl;
+    // //                             callback(resp);
+    // //                         }
+    // //                         // if(response == nullptr){ // If no server responce
+    // //                         //     valid.set_value(false);}
+    // //                         // valid.set_value(true);
+    // //                     });
+    // // bool api_ok = valid.get_future().get(); // Wait for HTTP to response. Have to wait here otherwise crash the entire application
+    // // if (api_ok == false)
+    // //     std::cout << "Error" << std::endl;
 
-    auto result = co_await client->sendRequestCoro(reqClient);
-    if (result->getBody().size() == 0)
-        throw std::runtime_error("Why is there nothing");
+    // auto result = co_await client->sendRequestCoro(reqClient);
+    // if (result->getBody().size() == 0)
+    //     throw std::runtime_error("Why is there nothing");
+
+    // auto client = drogon::HttpClient::newHttpClient("https://dummyjson.com");
+    // auto httpReq = drogon::HttpRequest::newHttpRequest();
+    // httpReq->setMethod(drogon::HttpMethod::Post);
+    // httpReq->setPath("/products/add");
+    // httpReq->setContentTypeCode(drogon::CT_APPLICATION_JSON);
+    // Json::Value reqBody;
+    // reqBody["title"] = "BMW Pencil";
+    // httpReq->setBody(reqBody.toStyledString());
+    // auto result = co_await client->sendRequestCoro(httpReq);
+
+    // Json::Value reqBody;
+    // reqBody["title"] = "BMW Pencil";
+    // app_helpers::fetch_helper::Fetch fetch;
+    // ApiResponse<Json::Value> result = co_await fetch.Post("/products/add", reqBody, "https://dummyjson.com");
+
+    // https://dummyjson.com/products/search?q=phone'
+    // app_helpers::fetch_helper::Fetch fetch;
+    // map<std::string, std::string> query = {{"q", "phone"}};
+    // ApiResponse<Json::Value> result = co_await fetch.Get("/products/search", query, "https://dummyjson.com");
+
+    // https://dummyjson.com/products/1
+    // Json::Value reqBody;
+    // reqBody["title"] = "iPhone Galaxy +1";
+    // app_helpers::fetch_helper::Fetch fetch;
+    // ApiResponse<Json::Value> result = co_await fetch.Put("/products/1", reqBody, "https://dummyjson.com");
+
+    // https://dummyjson.com/products/1
+    app_helpers::fetch_helper::Fetch fetch;
+    ApiResponse<Json::Value> result = co_await fetch.Delete("/products/1", "https://fdfdfdummyjson.com");
 
     // auto *smtpmailPtr = app().getPlugin<SMTPMail>();
     // auto id = smtpmailPtr->sendEmail(
@@ -556,14 +586,16 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     Json::Reader reader;
     // std::string coro = reader.parse(std::string{result->getBody()}, root);
     // ret["coro"] = coro;
-    ret["coro1"] = *(result->getJsonObject());
+    // ret["coro1"] = *(result->getJsonObject());
+    // ret["post"] = *(result->getJsonObject());
+    // ret["post"] = result.toJson();
+    // ret["get"] = result.toJson();
+    // ret["put"] = result.toJson();
+    ret["delete"] = result.toJson();
     auto hmac = co_await app_helpers::crypto_helper::generateHMACCoro("HMAC Test");
     ret["hmac"] = hmac;
     ret["gender"] = 1;
     ret["format"] = app_helpers::format("{0} is {1} years old and has {2} children.", "John", 30, 2);
-    app_helpers::fetch_helper::Fetch fetch;
-    std::map<std::string, std::string> query = {{"name", "huy"}};
-    ret["fetch"] = fetch.Get("/", query).toJson();
 
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);

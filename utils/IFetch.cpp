@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <drogon/drogon.h>
 #include <map>
 
 namespace app_helpers::fetch_helper
@@ -11,11 +12,13 @@ namespace app_helpers::fetch_helper
         virtual T Get(const std::string &url, const std::map<std::string, std::string> &queries = {},
                       const std::string &endpoint = "") = 0;
 
-        // virtual T Post(std::string route, object data) = 0;
+        virtual T Post(const std::string &url, Json::Value body = Json::Value(),
+                       const std::string &endpoint = "") = 0;
 
-        // virtual T Put(std::string route, object data) = 0;
+        virtual T Put(const std::string &url, Json::Value body = Json::Value(),
+                      const std::string &endpoint = "") = 0;
 
-        virtual T Delete(const std::string &url, const std::map<std::string, std::string> &queries = {},
+        virtual T Delete(const std::string &url,
                          const std::string &endpoint = "") = 0;
     };
 }
