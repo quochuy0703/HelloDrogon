@@ -40,5 +40,56 @@ namespace app_repositories::user_repository
 
         co_return user;
     }
+    drogon::Task<drogon_model::test::UserLogin> create(drogon_model::test::UserLogin user)
+    {
+        auto db = drogon::app().getDbClient();
+        UserModel userReturn;
+        try
+        {
+            drogon::orm::CoroMapper<UserModel> usr(db);
+            userReturn = co_await usr.insert(user);
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+        }
+
+        co_return userReturn;
+    }
+
+    drogon::Task<bool> update(drogon_model::test::UserLogin user)
+    {
+        auto db = drogon::app().getDbClient();
+        int idPrimaryKey = *user.getId();
+        UserModel userExist;
+        bool result;
+        try
+        {
+            drogon::orm::CoroMapper<UserModel> usr(db);
+            userExist = co_await usr.findByPrimaryKey(idPrimaryKey);
+            result = co_await usr.update(user);
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+        }
+
+        co_return result;
+    }
+
+    drogon::Task<drogon_model::test::UserLogin> remove(int id)
+    {
+        auto db = drogon::app().getDbClient();
+        bool result;
+        try
+        {
+            drogon::orm::CoroMapper<UserModel> usr(db);
+            result = co_await usr.deleteBy(drogon::orm::Criteria(UserModel::Cols::_id, id));
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+        }
+    }
 
 }

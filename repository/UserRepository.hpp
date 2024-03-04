@@ -6,10 +6,10 @@ namespace app_repositories::user_repository
 {
     drogon::Task<std::vector<drogon_model::test::UserLogin>> getAll();
     drogon::Task<drogon_model::test::UserLogin> getById(int id);
-    // drogon::Task<drogon_model::drogon_test::User> create();
+    drogon::Task<drogon_model::test::UserLogin> create(drogon_model::test::UserLogin user);
 
-    // drogon::Task<drogon_model::drogon_test::User> update();
+    drogon::Task<bool> update(drogon_model::test::UserLogin user);
 
-    // drogon::Task<drogon_model::drogon_test::User> remove();
+    drogon::Task<drogon_model::test::UserLogin> remove(int id);
 
 }
