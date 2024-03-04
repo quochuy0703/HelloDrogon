@@ -362,7 +362,7 @@ drogon::AsyncTask demo::v1::User::listUserViewCoro(const HttpRequestPtr req,
 
     HttpViewData data = HttpViewData();
     data["users"] = users;
-    auto resp = HttpResponse::newHttpViewResponse("views::user::user_list", data);
+    auto resp = HttpResponse::newHttpViewResponse("views::user::user_list_coro", data);
     callback(resp);
 };
 

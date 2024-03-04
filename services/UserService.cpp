@@ -6,39 +6,28 @@ using UserModel = drogon_model::drogon_test::User;
 namespace app_services::user
 {
 
-    drogon::Task<std::vector<drogon_model::drogon_test::User>> getAll()
+    drogon::Task<std::vector<app_dto::user::UserDto>> getAll()
     {
-        auto db = drogon::app().getDbClient();
-        std::vector<UserModel> users;
-        try
-        {
-            drogon::orm::CoroMapper<UserModel> usr(db);
-            users = co_await usr.findAll();
-        }
-        catch (const drogon::orm::DrogonDbException &ex)
-        {
-            LOG_ERROR << ex.base().what();
-        }
 
-        co_return users;
+        std::vector<UserModel> users = co_await app_repositories::user_repository::getAll();
+
+        std::vector<app_dto::user::UserDto> userDtos;
+        for (auto user : users)
+        {
+            app_dto::user::UserDto temp = app_dto::user::UserDto::fromUser(user);
+            userDtos.push_back(temp);
+        }
+        co_return userDtos;
     }
 
-    drogon::Task<drogon_model::drogon_test::User> getById(int id)
+    drogon::Task<app_dto::user::UserDto> getById(int id)
     {
-        auto db = drogon::app().getDbClient();
-        UserModel user;
+        UserModel user = co_await app_repositories::user_repository::getById(id);
+        co_return app_dto::user::UserDto::fromUser(user);
+    }
 
-        try
-        {
-            drogon::orm::CoroMapper<UserModel> usr(db);
-            user = co_await usr.findOne(drogon::orm::Criteria(UserModel::Cols::_id, id));
-        }
-        catch (const drogon::orm::DrogonDbException &ex)
-        {
-            LOG_ERROR << ex.base().what();
-        }
-
-        co_return user;
+    drogon::Task<app_dto::user::UserDto> create(app_dto::user::UserDto data)
+    {
     }
 
 }

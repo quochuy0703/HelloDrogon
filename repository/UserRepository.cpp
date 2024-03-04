@@ -8,10 +8,11 @@ namespace app_repositories::user_repository
 
     drogon::Task<std::vector<drogon_model::drogon_test::User>> getAll()
     {
-        auto db = drogon::app().getDbClient();
+
         std::vector<UserModel> users;
         try
         {
+            auto db = drogon::app().getDbClient();
             drogon::orm::CoroMapper<UserModel> usr(db);
             users = co_await usr.findAll();
         }
@@ -25,11 +26,12 @@ namespace app_repositories::user_repository
 
     drogon::Task<drogon_model::drogon_test::User> getById(int id)
     {
-        auto db = drogon::app().getDbClient();
+
         UserModel user;
 
         try
         {
+            auto db = drogon::app().getDbClient();
             drogon::orm::CoroMapper<UserModel> usr(db);
             user = co_await usr.findOne(drogon::orm::Criteria(UserModel::Cols::_id, id));
         }
@@ -39,6 +41,61 @@ namespace app_repositories::user_repository
         }
 
         co_return user;
+    }
+
+    drogon::Task<drogon_model::drogon_test::User> create(drogon_model::drogon_test::User user)
+    {
+
+        UserModel userReturn;
+        try
+        {
+            auto db = drogon::app().getDbClient();
+            drogon::orm::CoroMapper<UserModel> usr(db);
+            userReturn = co_await usr.insert(user);
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+        }
+
+        co_return userReturn;
+    }
+
+    drogon::Task<bool> update(drogon_model::drogon_test::User user)
+    {
+
+        int idPrimaryKey = *user.getId();
+        UserModel userExist;
+        bool result;
+        try
+        {
+            auto db = drogon::app().getDbClient();
+            drogon::orm::CoroMapper<UserModel> usr(db);
+            userExist = co_await usr.findByPrimaryKey(idPrimaryKey);
+            result = co_await usr.update(user);
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+        }
+
+        co_return result;
+    }
+
+    drogon::Task<drogon_model::drogon_test::User> remove(int id)
+    {
+
+        bool result;
+        try
+        {
+            auto db = drogon::app().getDbClient();
+            drogon::orm::CoroMapper<UserModel> usr(db);
+            result = co_await usr.deleteBy(drogon::orm::Criteria(UserModel::Cols::_id, id));
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+        }
     }
 
 }
