@@ -1,0 +1,66 @@
+<%inc #include "../dto/UserDto.cpp"  
+
+%>
+
+<html>
+<%c++
+    using UserModel = app_dto::user::UserDto;
+    auto user=@@.get<UserModel>("user");
+	
+%>
+  <head>
+    <%view views::user::head %>
+    <!-- Custom styles for this template -->
+    
+  </head>
+
+  <body>
+    <%view views::user::header_user %>
+    <br />
+
+    <div class="container col-md-5">
+                <div class="card">
+                    <div class="card-body">
+                    
+                    <%c++ 
+                    std::string action;
+                    if(!user.id.empty()) {
+                      action = "../updateCoro";
+                    }else{
+                      action = "insertCoro";
+                    };
+                      %>
+                      <form action="{%action%}" method="post">
+                       
+                            
+                        <caption>
+                            <h2>
+                            <%c++ 
+                          if(!user.id.empty()) {
+                            $$<<"Edit User";
+                          }else{
+                            $$<<"Add New User";
+                          };
+                            %>
+                            </h2>
+                        </caption>
+
+                        <%c++ if(!user.id.empty()) { %>
+                         <input type="hidden" name="id" value=<%c++ $$<<"\"" +user.id + "\"";%> />
+                        <%c++ } %>
+
+                        <fieldset class="form-group">
+                            <label>User Name</label> <input type="text" value=<%c++ $$<<"\"" +user.name+ "\"";%> class="form-control" name="name" required="required">
+                        </fieldset>
+
+                        <fieldset class="form-group">
+                            <label>User Email</label> <input type="text" value=<%c++ $$<<"\"" +(  user.email.empty() ? "" : user.email)  + "\"";%> class="form-control" name="email">
+                        </fieldset>
+
+                        <button type="submit" class="btn btn-success">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+  </body>
+</html>

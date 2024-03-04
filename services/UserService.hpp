@@ -10,7 +10,7 @@ namespace app_services::user
     drogon::Task<app_dto::user::UserDto> getById(int id);
     drogon::Task<app_dto::user::UserDto> create(app_dto::user::UserDto data);
 
-    // drogon::Task<drogon_model::drogon_test::User> update();
+    drogon::Task<bool> update(app_dto::user::UserDto data);
 
-    // drogon::Task<drogon_model::drogon_test::User> remove();
+    drogon::Task<bool> remove(int id);
 }
