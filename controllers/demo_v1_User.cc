@@ -316,19 +316,31 @@ void demo::v1::User::listUserView(const HttpRequestPtr &req, std::function<void(
         drogon::orm::Mapper<UserModel> usr(db);
 
         vector<UserModel> users;
-        try
-        {
-            users = usr.findAll();
-        }
-        catch (orm::UnexpectedRows &ex)
-        {
-            throw ResourceNotFoundException("User not found!");
-        };
+        usr.findAll([=](auto users)
+                    {
+                        HttpViewData data = HttpViewData();
+                        data["users"] = users;
+                        auto resp = HttpResponse::newHttpViewResponse("views::user::user_list", data);
+                        callback(resp); },
+                    [=](auto &ex)
+                    {
+                        LOG_ERROR << ex.base().what();
+                        auto resp = HttpResponse::newHttpViewResponse("views::user::user_form");
+                        callback(resp);
+                    });
+        // try
+        // {
+        //     users = usr.findAll();
+        // }
+        // catch (orm::UnexpectedRows &ex)
+        // {
+        //     throw ResourceNotFoundException("User not found!");
+        // };
 
-        HttpViewData data = HttpViewData();
-        data["users"] = users;
-        auto resp = HttpResponse::newHttpViewResponse("views::user::user_list", data);
-        callback(resp);
+        // HttpViewData data = HttpViewData();
+        // data["users"] = users;
+        // auto resp = HttpResponse::newHttpViewResponse("views::user::user_list", data);
+        // callback(resp);
     }
     catch (ResourceNotFoundException &ex)
     {
@@ -363,10 +375,17 @@ void demo::v1::User::insertUserView(const HttpRequestPtr &req, std::function<voi
     UserModel user;
     user.setEmail(emailUser);
     user.setName(nameUser);
-    usr.insert(user);
-
-    auto resp = HttpResponse::newRedirectionResponse("list");
-    callback(resp);
+    usr.insert(
+        user, [=](auto result)
+        {
+            auto resp = HttpResponse::newRedirectionResponse("list");
+            callback(resp); },
+        [=](auto &ex)
+        {
+            LOG_ERROR << ex.base().what();
+            auto resp = HttpResponse::newHttpViewResponse("views::user::user_form");
+            callback(resp);
+        });
 }
 
 void demo::v1::User::editUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback, std::string userId)
@@ -377,19 +396,22 @@ void demo::v1::User::editUserView(const HttpRequestPtr &req, std::function<void(
 
         drogon::orm::Mapper<UserModel> usr(db);
 
-        UserModel user;
-        try
-        {
-            user = usr.findOne(drogon::orm::Criteria(UserModel::Cols::_id, userId));
-        }
-        catch (orm::UnexpectedRows &ex)
-        {
-            throw ResourceNotFoundException("User not found!");
-        };
-        HttpViewData data = HttpViewData();
-        data["user"] = user;
-        auto resp = HttpResponse::newHttpViewResponse("views::user::user_form", data);
-        callback(resp);
+        // user = usr.findOne(drogon::orm::Criteria(UserModel::Cols::_id, userId));
+        // auto callbackPtr = make_shared<function<void(const HttpResponsePtr &)>>(move(callback));
+        usr.findOne(
+            drogon::orm::Criteria(UserModel::Cols::_id, userId), [=](auto userReturn)
+            { 
+                    LOG_INFO << *userReturn.getEmail(); 
+                    HttpViewData data = HttpViewData();
+                    data["user"] = userReturn;
+                    auto resp = HttpResponse::newHttpViewResponse("views::user::user_form", data);
+                    callback(resp); },
+            [callback](auto &ex)
+            {
+                LOG_ERROR << ex.base().what();
+                auto resp = HttpResponse::newHttpViewResponse("views::user::user_form");
+                callback(resp);
+            });
     }
     catch (std::exception &ex)
     {
