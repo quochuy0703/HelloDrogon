@@ -47,7 +47,7 @@ void AuthFilter::doFilter(const HttpRequestPtr &req,
     }
     // Check failed
 
-    Json::Value ret = resBuilder.data(data).message(message).statusCode("200").success("false").build()->toJson();
+    Json::Value ret = resBuilder.data(data).message(message).statusCode(drogon::HttpStatusCode::k200OK).success(false).build()->toJson();
     auto res = drogon::HttpResponse::newHttpJsonResponse(ret);
     res->setStatusCode(k500InternalServerError);
     fcb(res);

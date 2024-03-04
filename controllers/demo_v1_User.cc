@@ -553,14 +553,14 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     // ApiResponse<Json::Value> result = co_await fetch.Get("/products/search", query, "https://dummyjson.com");
 
     // https://dummyjson.com/products/1
-    // Json::Value reqBody;
-    // reqBody["title"] = "iPhone Galaxy +1";
-    // app_helpers::fetch_helper::Fetch fetch;
-    // ApiResponse<Json::Value> result = co_await fetch.Put("/products/1", reqBody, "https://dummyjson.com");
+    Json::Value reqBody;
+    reqBody["title"] = "iPhone Galaxy +1";
+    app_helpers::fetch_helper::Fetch fetch;
+    ApiResponse<Json::Value> result = co_await fetch.Put("/products/1", reqBody, "https://dummyjson.com");
 
     // https://dummyjson.com/products/1
-    app_helpers::fetch_helper::Fetch fetch;
-    ApiResponse<Json::Value> result = co_await fetch.Delete("/products/1", "https://fdfdfdummyjson.com");
+    // app_helpers::fetch_helper::Fetch fetch;
+    // ApiResponse<Json::Value> result = co_await fetch.Delete("/products/1", "https://fdfsdummyjson.com");
 
     // auto *smtpmailPtr = app().getPlugin<SMTPMail>();
     // auto id = smtpmailPtr->sendEmail(
@@ -590,8 +590,8 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     // ret["post"] = *(result->getJsonObject());
     // ret["post"] = result.toJson();
     // ret["get"] = result.toJson();
-    // ret["put"] = result.toJson();
-    ret["delete"] = result.toJson();
+    ret["put"] = result.toJson();
+    // ret["delete"] = result.toJson();
     auto hmac = co_await app_helpers::crypto_helper::generateHMACCoro("HMAC Test");
     ret["hmac"] = hmac;
     ret["gender"] = 1;
