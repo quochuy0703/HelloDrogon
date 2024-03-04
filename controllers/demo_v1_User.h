@@ -25,6 +25,7 @@ namespace demo
       METHOD_ADD(User::helloView, "/view", Get, "AuthViewFilter");
       METHOD_ADD(User::loginView, "/login", Get, Post);
       METHOD_ADD(User::listUserView, "/list", Get);
+      METHOD_ADD(User::listUserViewCoro, "/listCoro", Get);
       METHOD_ADD(User::newUserView, "/new", Get);
       METHOD_ADD(User::insertUserView, "/insert", Post);
       METHOD_ADD(User::editUserView, "/edit/{1}", Get);
@@ -46,6 +47,8 @@ namespace demo
                      std::function<void(const HttpResponsePtr &)> &&callback);
       void listUserView(const HttpRequestPtr &req,
                         std::function<void(const HttpResponsePtr &)> &&callback);
+      drogon::AsyncTask listUserViewCoro(const HttpRequestPtr req,
+                                         std::function<void(const HttpResponsePtr &)> callback);
       void newUserView(const HttpRequestPtr &req,
                        std::function<void(const HttpResponsePtr &)> &&callback);
       void insertUserView(const HttpRequestPtr &req,

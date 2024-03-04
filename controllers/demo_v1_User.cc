@@ -20,6 +20,8 @@
 #include "../utils/Utils.hpp"
 #include "../utils/Fetch.hpp"
 
+#include "../services/UserService.hpp"
+
 #include "../plugins/SMTPMail.h"
 
 using namespace std;
@@ -347,6 +349,17 @@ void demo::v1::User::listUserView(const HttpRequestPtr &req, std::function<void(
         std::cout << ex.what() << std::endl;
     }
 }
+
+drogon::AsyncTask demo::v1::User::listUserViewCoro(const HttpRequestPtr req,
+                                                   std::function<void(const HttpResponsePtr &)> callback)
+{
+    auto users = co_await app_services::user::getAll();
+
+    HttpViewData data = HttpViewData();
+    data["users"] = users;
+    auto resp = HttpResponse::newHttpViewResponse("views::user::user_list_coro", data);
+    callback(resp);
+};
 
 void demo::v1::User::newUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
 {
