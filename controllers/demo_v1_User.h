@@ -1,6 +1,7 @@
 #pragma once
 
 #include <drogon/HttpController.h>
+#include "../dto/UserLoginDto.hpp"
 
 using namespace drogon;
 
@@ -34,7 +35,7 @@ namespace demo
       // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);
       // void your_method_name(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, double p1, int p2) const;
       drogon::AsyncTask login(HttpRequestPtr req,
-                              std::function<void(const HttpResponsePtr &)> callback);
+                              std::function<void(const HttpResponsePtr &)> callback, app_dto::user_login::UserLoginDto &&userLogin);
       void loginView(const HttpRequestPtr &req,
                      std::function<void(const HttpResponsePtr &)> &&callback);
       void loginAccount(const HttpRequestPtr &req,

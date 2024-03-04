@@ -36,7 +36,7 @@ using ReviewModel = drogon_model::test::Review;
 // Add definition of your processing function here
 
 drogon::AsyncTask User::login(HttpRequestPtr req,
-                              std::function<void(const HttpResponsePtr &)> callback)
+                              std::function<void(const HttpResponsePtr &)> callback, app_dto::user_login::UserLoginDto &&userLogin)
 {
 
     app_helpers::api_res_helper::ApiResponse<Json::Value>::Builder builderRes = app_helpers::api_res_helper::ApiResponse<Json::Value>::create();
@@ -46,11 +46,10 @@ drogon::AsyncTask User::login(HttpRequestPtr req,
 
     try
     {
-        const auto reqBodyPtr = req->getJsonObject();
-        const auto &reqBody = *reqBodyPtr;
-        Json::Value userId = reqBody["userId"];
-        Json::Value passwd = reqBody["password"];
-        cout << "User: " << userId.asString() << endl;
+        Json::Value userId = userLogin.userId;
+        Json::Value passwd = userLogin.password;
+
+        LOG_INFO << "User: " << userId.asString();
 
         auto db = drogon::app().getDbClient();
 

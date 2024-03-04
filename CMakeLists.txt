@@ -49,6 +49,9 @@ aux_source_directory(plugins PLUGIN_SRC)
 aux_source_directory(models MODEL_SRC)
 aux_source_directory(utils UTIL_SRC)
 aux_source_directory(errors ERROR_SRC)
+aux_source_directory(services SERVICE_SRC)
+aux_source_directory(dto DTO_SRC)
+aux_source_directory(repository REPOSITORY_SRC)
 aux_source_directory(plugins PLUGIN_SRC)
 
 # drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
@@ -73,6 +76,9 @@ target_sources(${PROJECT_NAME}
                ${MODEL_SRC}
                ${UTIL_SRC}
                ${ERROR_SRC}
+               ${SERVICE_SRC}
+               ${DTO_SRC}
+               ${REPOSITORY_SRC}
                ${PLUGIN_SRC})
 # ##############################################################################
 # uncomment the following line for dynamically loading views 
