@@ -81,7 +81,7 @@ namespace app_repositories::user_repository
         co_return result;
     }
 
-    drogon::Task<drogon_model::test::UserLogin> remove(int id)
+    drogon::Task<bool> remove(int id)
     {
 
         bool result;
@@ -95,6 +95,8 @@ namespace app_repositories::user_repository
         {
             LOG_ERROR << ex.base().what();
         }
+
+        co_return result;
     }
 
 }

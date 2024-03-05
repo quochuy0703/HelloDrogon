@@ -10,6 +10,6 @@ namespace app_repositories::user_repository
 
     drogon::Task<bool> update(drogon_model::test::UserLogin user);
 
-    drogon::Task<drogon_model::test::UserLogin> remove(int id);
+    drogon::Task<bool> remove(int id);
 
 }

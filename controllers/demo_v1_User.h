@@ -2,6 +2,7 @@
 
 #include <drogon/HttpController.h>
 #include "../dto/UserLoginDto.hpp"
+#include "../dto/UserDto.cpp"
 
 using namespace drogon;
 
@@ -27,10 +28,15 @@ namespace demo
       METHOD_ADD(User::listUserView, "/list", Get);
       METHOD_ADD(User::listUserViewCoro, "/listCoro", Get);
       METHOD_ADD(User::newUserView, "/new", Get);
+      METHOD_ADD(User::newUserViewCoro, "/newCoro", Get);
       METHOD_ADD(User::insertUserView, "/insert", Post);
+      METHOD_ADD(User::insertUserViewCoro, "/insertCoro", Post);
       METHOD_ADD(User::editUserView, "/edit/{1}", Get);
+      METHOD_ADD(User::editUserViewCoro, "/editCoro/{1}", Get);
       METHOD_ADD(User::updateUserView, "/update", Post);
+      METHOD_ADD(User::updateUserViewCoro, "/updateCoro", Post);
       METHOD_ADD(User::deleteUserView, "/delete/{1}", Get);
+      METHOD_ADD(User::deleteUserViewCoro, "/deleteCoro/{1}", Get);
       METHOD_LIST_END
       // your declaration of processing function maybe like this:
       // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);
@@ -51,14 +57,24 @@ namespace demo
                                          std::function<void(const HttpResponsePtr &)> callback);
       void newUserView(const HttpRequestPtr &req,
                        std::function<void(const HttpResponsePtr &)> &&callback);
+      void newUserViewCoro(const HttpRequestPtr &req,
+                           std::function<void(const HttpResponsePtr &)> &&callback);
       void insertUserView(const HttpRequestPtr &req,
                           std::function<void(const HttpResponsePtr &)> &&callback);
+      drogon::AsyncTask insertUserViewCoro(const HttpRequestPtr req,
+                                           std::function<void(const HttpResponsePtr &)> callback, app_dto::user::UserDto &&user);
       void editUserView(const HttpRequestPtr &req,
                         std::function<void(const HttpResponsePtr &)> &&callback, std::string userId);
+      drogon::AsyncTask editUserViewCoro(const HttpRequestPtr req,
+                                         std::function<void(const HttpResponsePtr &)> callback, std::string userId);
       void updateUserView(const HttpRequestPtr &req,
                           std::function<void(const HttpResponsePtr &)> &&callback);
+      drogon::AsyncTask updateUserViewCoro(const HttpRequestPtr req,
+                                           std::function<void(const HttpResponsePtr &)> callback, app_dto::user::UserDto &&user);
       void deleteUserView(const HttpRequestPtr &req,
                           std::function<void(const HttpResponsePtr &)> &&callback, std::string userId);
+      drogon::AsyncTask deleteUserViewCoro(const HttpRequestPtr req,
+                                           std::function<void(const HttpResponsePtr &)> callback, std::string userId);
       drogon::AsyncTask getInfo(HttpRequestPtr req,
                                 std::function<void(const HttpResponsePtr &)> callback,
                                 std::string userId,

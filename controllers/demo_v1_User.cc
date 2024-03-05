@@ -377,6 +377,23 @@ void demo::v1::User::newUserView(const HttpRequestPtr &req, std::function<void(c
     }
 }
 
+void demo::v1::User::newUserViewCoro(const HttpRequestPtr &req,
+                                     std::function<void(const HttpResponsePtr &)> &&callback)
+{
+    try
+    {
+        HttpViewData data = HttpViewData();
+        app_dto::user::UserDto user;
+        data["user"] = user;
+        auto resp = HttpResponse::newHttpViewResponse("views::user::user_form_coro", data);
+        callback(resp);
+    }
+    catch (std::exception &ex)
+    {
+        std::cout << ex.what() << std::endl;
+    }
+}
+
 void demo::v1::User::insertUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
 {
     auto nameUser = req->getParameter("name");
@@ -399,6 +416,14 @@ void demo::v1::User::insertUserView(const HttpRequestPtr &req, std::function<voi
             auto resp = HttpResponse::newHttpViewResponse("views::user::user_form");
             callback(resp);
         });
+}
+
+drogon::AsyncTask demo::v1::User::insertUserViewCoro(const HttpRequestPtr req,
+                                                     std::function<void(const HttpResponsePtr &)> callback, app_dto::user::UserDto &&user)
+{
+    auto users = co_await app_services::user::create(user);
+    auto resp = HttpResponse::newRedirectionResponse("listCoro");
+    callback(resp);
 }
 
 void demo::v1::User::editUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback, std::string userId)
@@ -432,6 +457,17 @@ void demo::v1::User::editUserView(const HttpRequestPtr &req, std::function<void(
     }
 }
 
+drogon::AsyncTask demo::v1::User::editUserViewCoro(const HttpRequestPtr req,
+                                                   std::function<void(const HttpResponsePtr &)> callback, std::string userId)
+{
+    auto user = co_await app_services::user::getById(std::stoi(userId));
+    LOG_INFO << user.email << ":" << user.id;
+    HttpViewData data = HttpViewData();
+    data["user"] = user;
+    auto resp = HttpResponse::newHttpViewResponse("views::user::user_form_coro", data);
+    callback(resp);
+}
+
 void demo::v1::User::updateUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback)
 {
     auto idUser = req->getParameter("id");
@@ -462,6 +498,15 @@ void demo::v1::User::updateUserView(const HttpRequestPtr &req, std::function<voi
     callback(resp);
 }
 
+drogon::AsyncTask demo::v1::User::updateUserViewCoro(const HttpRequestPtr req,
+                                                     std::function<void(const HttpResponsePtr &)> callback, app_dto::user::UserDto &&user)
+{
+    auto result = co_await app_services::user::update(user);
+    LOG_INFO << result;
+    auto resp = HttpResponse::newRedirectionResponse("listCoro");
+    callback(resp);
+}
+
 void demo::v1::User::deleteUserView(const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback, std::string userId)
 {
     try
@@ -489,6 +534,14 @@ void demo::v1::User::deleteUserView(const HttpRequestPtr &req, std::function<voi
     {
         std::cout << ex.what() << std::endl;
     }
+}
+
+drogon::AsyncTask demo::v1::User::deleteUserViewCoro(const HttpRequestPtr req,
+                                                     std::function<void(const HttpResponsePtr &)> callback, std::string userId)
+{
+    auto users = co_await app_services::user::remove(std::stoi(userId));
+    auto resp = HttpResponse::newRedirectionResponse("../listCoro");
+    callback(resp);
 }
 
 drogon::AsyncTask User::getInfo(HttpRequestPtr req,

@@ -31,18 +31,16 @@ namespace app_dto::user
 
 }
 
-// namespace drogon
-// {
-//     template <>
-//     inline app_dto::user::UserDto fromRequest(const HttpRequest &req)
-//     {
-//         auto json = req.getJsonObject();
-//         app_dto::user_login::UserLoginDto user;
-//         if (json)
-//         {
-//             user.userId = (*json)["userId"].asString();
-//             user.password = (*json)["password"].asString();
-//         }
-//         return user;
-//     }
-// }
+namespace drogon
+{
+    template <>
+    inline app_dto::user::UserDto fromRequest(const HttpRequest &req)
+    {
+        app_dto::user::UserDto user;
+
+        user.id = req.getParameter("id");
+        user.email = req.getParameter("email");
+        user.name = req.getParameter("name");
+        return user;
+    }
+}
