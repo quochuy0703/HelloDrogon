@@ -678,17 +678,14 @@ drogon::AsyncTask demo::v1::User::getUserByCondition(HttpRequestPtr req, std::fu
     condition["email"] = req->getParameter("email");
 
     auto users = co_await app_services::user::getByCondition(condition);
-    // Json::Value root;
-    // Json::Reader reader;
-    // std::string coro = reader.parse(std::string{result->getBody()}, root);
+
     for (std::vector<app_dto::user::UserDto>::iterator it = users.begin(); it != users.end(); it++)
     {
         Json::Value jsonVect;
-        jsonVect.append(it->name);
-        jsonVect.append(it->email);
+        jsonVect["name"] = it->name;
+        jsonVect["email"] = it->email;
         ret["user"].append(jsonVect);
     }
-    // ret["user"] = users;
 
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
