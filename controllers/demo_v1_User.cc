@@ -647,6 +647,7 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     Json::Value ret;
     ret["result"] = "ok";
     ret["user_name"] = "Jack";
+    ret["token"] = req->getParameter("token");
     ret["user_id"] = userId;
     Json::Value root;
     Json::Reader reader;
@@ -665,4 +666,31 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
 
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
+}
+
+drogon::AsyncTask demo::v1::User::getUserByCondition(HttpRequestPtr req, std::function<void(const HttpResponsePtr &)> callback, std::string userId, const std::string &token) const
+{
+    Json::Value ret;
+    ret["result"] = "ok";
+
+    std::map<std::string, std::string> condition;
+    condition["name"] = req->getParameter("name");
+    condition["email"] = req->getParameter("email");
+
+    auto users = co_await app_services::user::getByCondition(condition);
+    // Json::Value root;
+    // Json::Reader reader;
+    // std::string coro = reader.parse(std::string{result->getBody()}, root);
+    for (std::vector<app_dto::user::UserDto>::iterator it = users.begin(); it != users.end(); it++)
+    {
+        Json::Value jsonVect;
+        jsonVect.append(it->name);
+        jsonVect.append(it->email);
+        ret["user"].append(jsonVect);
+    }
+    // ret["user"] = users;
+
+    auto resp = HttpResponse::newHttpJsonResponse(ret);
+    callback(resp);
+    ;
 }

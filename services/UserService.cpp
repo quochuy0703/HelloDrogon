@@ -21,6 +21,19 @@ namespace app_services::user
         co_return userDtos;
     }
 
+    drogon::Task<std::vector<app_dto::user::UserDto>> getByCondition(std::map<std::string, std::string> condition)
+    {
+        std::vector<UserModel> users = co_await app_repositories::user_repository::getByCondition(condition);
+
+        std::vector<app_dto::user::UserDto> userDtos;
+        for (auto user : users)
+        {
+            app_dto::user::UserDto temp = app_dto::user::UserDto::fromUser(user);
+            userDtos.push_back(temp);
+        }
+        co_return userDtos;
+    }
+
     drogon::Task<app_dto::user::UserDto> getById(int id)
     {
         UserModel user = co_await app_repositories::user_repository::getById(id);

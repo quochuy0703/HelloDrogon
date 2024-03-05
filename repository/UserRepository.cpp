@@ -24,6 +24,32 @@ namespace app_repositories::user_repository
         co_return users;
     }
 
+    drogon::Task<std::vector<drogon_model::test::UserLogin>> getByCondition(std::map<std::string, std::string> condition)
+    {
+        std::vector<UserModel> users;
+        try
+        {
+            drogon::orm::Criteria criteria;
+            if (condition["email"].compare("") != 0)
+            {
+                criteria = criteria && drogon::orm::Criteria(UserModel::Cols::_email, condition["email"]);
+            }
+            if (condition["name"].compare("") != 0)
+            {
+                criteria = criteria && drogon::orm::Criteria(UserModel::Cols::_name, condition["name"]);
+            }
+            auto db = drogon::app().getDbClient();
+            drogon::orm::CoroMapper<UserModel> usr(db);
+            users = co_await usr.findBy(criteria);
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+        }
+
+        co_return users;
+    }
+
     drogon::Task<drogon_model::test::UserLogin> getById(int id)
     {
 
