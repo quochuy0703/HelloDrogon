@@ -30,6 +30,10 @@ namespace app_repositories::user_repository
         try
         {
             drogon::orm::Criteria criteria;
+            if (condition["id"].compare("") != 0)
+            {
+                criteria = criteria && drogon::orm::Criteria(UserModel::Cols::_id, condition["id"]);
+            }
             if (condition["email"].compare("") != 0)
             {
                 criteria = criteria && drogon::orm::Criteria(UserModel::Cols::_email, condition["email"]);
