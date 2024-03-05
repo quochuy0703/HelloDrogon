@@ -7,7 +7,9 @@
 namespace app_services::user
 {
     drogon::Task<std::vector<app_dto::user::UserDto>> getAll();
+    drogon::Task<std::vector<app_dto::user::UserDto>> getAllBySql();
     drogon::Task<std::vector<app_dto::user::UserDto>> getByCondition(std::map<std::string, std::string> condition);
+
     drogon::Task<app_dto::user::UserDto> getById(int id);
 
     drogon::Task<app_dto::user::UserDto> create(app_dto::user::UserDto data);

@@ -54,6 +54,26 @@ namespace app_repositories::user_repository
         co_return users;
     }
 
+    drogon::Task<std::vector<drogon_model::test::UserLogin>> getAllBySql()
+    {
+        std::vector<UserModel> users;
+        try
+        {
+            auto db = drogon::app().getDbClient();
+            auto rows = co_await db->execSqlCoro("SELECT * from user_login;");
+            for (auto row : rows)
+            {
+                users.push_back(UserModel(row));
+            }
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+        }
+
+        co_return users;
+    }
+
     drogon::Task<drogon_model::test::UserLogin> getById(int id)
     {
 
