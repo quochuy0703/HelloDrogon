@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <drogon/drogon.h>
 #include "../models/UserLogin.h"
@@ -15,6 +17,7 @@ namespace app_dto::user
         static UserLogin toUser(UserDto data)
         {
             UserLogin user;
+            user.setId(std::stoi(data.id));
             user.setEmail(data.email);
             user.setName(data.name);
             return user;
