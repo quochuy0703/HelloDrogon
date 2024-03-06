@@ -20,6 +20,7 @@ namespace api
       // ADD_METHOD_TO(Course::your_method_name, "/absolute/path/{1}/{2}/list", Get); // path is /absolute/path/{arg1}/{arg2}/list
       METHOD_ADD(Course::GetAllCourse, "/", Get);
       METHOD_ADD(Course::PostCourse, "/", Post);
+      METHOD_ADD(Course::UpdateCourse, "/", Put);
       METHOD_LIST_END
       // your declaration of processing function maybe like this:
       // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);
@@ -28,6 +29,8 @@ namespace api
                                      std::function<void(const HttpResponsePtr &)> callback);
       drogon::AsyncTask PostCourse(const HttpRequestPtr req,
                                    std::function<void(const HttpResponsePtr &)> callback, app_dto::course::CourseDto &&course);
+      drogon::AsyncTask UpdateCourse(const HttpRequestPtr req,
+                                     std::function<void(const HttpResponsePtr &)> callback, app_dto::course::CourseDto &&course);
     };
   }
 }

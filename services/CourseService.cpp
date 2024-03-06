@@ -32,6 +32,7 @@ namespace app_services::course_service
     drogon::Task<bool> update(CourseDto data)
     {
         CourseModel course = CourseDto::toModel(data);
+        course.setLastModifiedDate(::trantor::Date());
         bool result = co_await app_repositories::course_repository::update(course);
         co_return result;
     }

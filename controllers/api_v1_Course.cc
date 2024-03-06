@@ -39,3 +39,14 @@ drogon::AsyncTask api::v1::Course::PostCourse(const HttpRequestPtr req,
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
 }
+
+drogon::AsyncTask api::v1::Course::UpdateCourse(const HttpRequestPtr req,
+                                                std::function<void(const HttpResponsePtr &)> callback, app_dto::course::CourseDto &&course)
+{
+    auto result = co_await app_services::course_service::update(course);
+    Json::Value ret;
+    ret["result"] = ret;
+
+    auto resp = HttpResponse::newHttpJsonResponse(ret);
+    callback(resp);
+}
