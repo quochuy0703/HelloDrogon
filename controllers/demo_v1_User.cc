@@ -673,10 +673,12 @@ drogon::AsyncTask demo::v1::User::getUserByCondition(HttpRequestPtr req, std::fu
     Json::Value ret;
     ret["result"] = "ok";
 
-    std::map<std::string, std::string> condition;
-    condition["name"] = req->getParameter("name");
-    condition["email"] = req->getParameter("email");
-    condition["id"] = req->getParameter("id");
+    std::map<std::string, std::string> condition = {{"name", req->getParameter("name")},
+                                                    {"email", req->getParameter("email")},
+                                                    {"id", req->getParameter("id")}};
+    // condition["name"] = req->getParameter("name");
+    // condition["email"] = req->getParameter("email");
+    // condition["id"] = req->getParameter("id");
 
     auto users = co_await app_services::user::getByCondition(condition);
     // auto users = co_await app_services::user::getAllBySql();
@@ -688,9 +690,8 @@ drogon::AsyncTask demo::v1::User::getUserByCondition(HttpRequestPtr req, std::fu
         jsonVect["name"] = it->name;
         jsonVect["email"] = it->email;
         ret["user"].append(jsonVect);
-    }
+    };
 
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
-    ;
 }
