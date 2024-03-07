@@ -116,3 +116,29 @@ drogon::AsyncTask api::v1::Course::UpdateCourse(const HttpRequestPtr req,
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
 }
+
+drogon::AsyncTask api::v1::Course::DeleteCourseById(const HttpRequestPtr req,
+                                                    std::function<void(const HttpResponsePtr &)> callback, std::string courseId)
+{
+    Json::Value data;
+    app_helpers::api_res_helper::ApiResponse<Json::Value>::Builder builderRes = app_helpers::api_res_helper::ApiResponse<Json::Value>::create();
+    std::string message = "";
+    drogon::HttpStatusCode statusCode;
+    try
+    {
+        auto result = co_await app_services::course_service::remove(std::stoi(courseId));
+
+        data["result"] = result;
+        message = "success";
+        statusCode = drogon::HttpStatusCode::k200OK;
+    }
+    catch (const std::exception &ex)
+    {
+        data["result"] = false;
+        message = ex.what();
+        statusCode = drogon::HttpStatusCode::k404NotFound;
+    }
+    Json::Value ret = builderRes.data(data).message(message).success(true).statusCode(statusCode).build()->toJson();
+    auto resp = HttpResponse::newHttpJsonResponse(ret);
+    callback(resp);
+}

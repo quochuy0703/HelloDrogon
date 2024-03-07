@@ -84,6 +84,10 @@ namespace app_repositories::course_repository
             auto db = drogon::app().getDbClient();
             drogon::orm::CoroMapper<Model> mp(db);
             result = co_await mp.deleteBy(drogon::orm::Criteria(Model::Cols::_id, id));
+            if (!result)
+            {
+                throw drogon::orm::UnexpectedRows("0 row found!");
+            }
         }
         catch (const drogon::orm::DrogonDbException &ex)
         {

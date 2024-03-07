@@ -24,6 +24,7 @@ namespace api
       METHOD_ADD(Course::GetCourseById, "/{1}", Get);
       METHOD_ADD(Course::PostCourse, "/", Post);
       METHOD_ADD(Course::UpdateCourse, "/", Put);
+      METHOD_ADD(Course::DeleteCourseById, "/{1}", Delete);
       METHOD_LIST_END
       // your declaration of processing function maybe like this:
       // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);
@@ -36,6 +37,8 @@ namespace api
                                    std::function<void(const HttpResponsePtr &)> callback, app_dto::course::CourseDto &&course);
       drogon::AsyncTask UpdateCourse(const HttpRequestPtr req,
                                      std::function<void(const HttpResponsePtr &)> callback, app_dto::course::CourseDto &&course);
+      drogon::AsyncTask DeleteCourseById(const HttpRequestPtr req,
+                                         std::function<void(const HttpResponsePtr &)> callback, std::string courseId);
     };
   }
 }

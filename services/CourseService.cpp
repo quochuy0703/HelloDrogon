@@ -72,7 +72,16 @@ namespace app_services::course_service
 
     drogon::Task<bool> remove(int id)
     {
-        bool result = co_await app_repositories::course_repository::remove(id);
+
+        bool result;
+        try
+        {
+            result = co_await app_repositories::course_repository::remove(id);
+        }
+        catch (const std::exception &ex)
+        {
+            throw std::runtime_error(ex.what());
+        }
         co_return result;
     }
 
