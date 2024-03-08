@@ -67,6 +67,7 @@ namespace app_repositories::course_repository
         catch (const drogon::orm::DrogonDbException &ex)
         {
             LOG_ERROR << ex.base().what();
+            result = false;
         }
 
         co_return result;
@@ -84,6 +85,7 @@ namespace app_repositories::course_repository
         catch (const drogon::orm::DrogonDbException &ex)
         {
             LOG_ERROR << ex.base().what();
+            result = false;
         }
 
         co_return result;

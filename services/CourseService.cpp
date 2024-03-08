@@ -24,7 +24,7 @@ namespace app_services::course_service
     drogon::Task<CourseDto> create(CourseDto data)
     {
         CourseModel course = CourseDto::toModel(data);
-        course.setCreatedDate(::trantor::Date());
+        course.setCreatedDate(::trantor::Date().now());
         course = co_await app_repositories::course_repository::create(course);
         co_return CourseDto::fromModel(course);
     }
@@ -32,7 +32,7 @@ namespace app_services::course_service
     drogon::Task<bool> update(CourseDto data)
     {
         CourseModel course = CourseDto::toModel(data);
-        course.setLastModifiedDate(::trantor::Date());
+        course.setLastModifiedDate(::trantor::Date().now());
         bool result = co_await app_repositories::course_repository::update(course);
         co_return result;
     }
