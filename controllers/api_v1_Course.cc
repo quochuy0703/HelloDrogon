@@ -49,7 +49,11 @@ drogon::AsyncTask api::v1::Course::GetCourseById(const HttpRequestPtr req,
     {
         auto course = co_await app_services::course_service::getById(std::stoi(courseId));
 
-        data["id"] = course.id;
+        if (course.id.has_value())
+        {
+            data["id"] = course.id.value();
+        }
+
         data["name"] = course.name;
         data["code"] = course.code;
 
@@ -80,7 +84,12 @@ drogon::AsyncTask api::v1::Course::PostCourse(const HttpRequestPtr req,
         Json::Value jsonVect;
         jsonVect["name"] = courseDto.name;
         jsonVect["code"] = courseDto.code;
-        jsonVect["id"] = courseDto.id;
+
+        if (courseDto.id.has_value())
+        {
+            jsonVect["id"] = courseDto.id.value();
+        }
+
         ret["course"].append(jsonVect);
     }
     catch (const std::exception &ex)
