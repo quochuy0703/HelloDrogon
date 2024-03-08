@@ -27,7 +27,7 @@ namespace app_repositories::course_repository
         {
             auto db = drogon::app().getDbClient();
             drogon::orm::CoroMapper<Model> mp(db);
-            course = co_await mp.findOne(drogon::orm::Criteria(Model::Cols::_id, id));
+            course = co_await mp.findOne(drogon::orm::Criteria(Model::Cols::_id, std::to_string(id)));
         }
         catch (const drogon::orm::DrogonDbException &ex)
         {
@@ -37,6 +37,26 @@ namespace app_repositories::course_repository
 
         co_return course;
     }
+    drogon::Task<Model> getByIdSql(int id)
+    {
+        Model course;
+
+        try
+        {
+            auto db = drogon::app().getDbClient();
+            auto row = co_await db->execSqlCoro("SELECT * FROM course where id = $1;", std::to_string(id));
+            course = Model(row.at(0));
+            // course = co_await mp.findOne(drogon::orm::Criteria(Model::Cols::_id, id));
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+            throw std::runtime_error(ex.base().what());
+        }
+
+        co_return course;
+    }
+
     drogon::Task<Model> create(Model course)
     {
         Model courseReturn;
