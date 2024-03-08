@@ -14,6 +14,7 @@ namespace app_repositories::course_repository
         catch (const drogon::orm::DrogonDbException &ex)
         {
             LOG_ERROR << ex.base().what();
+            throw std::runtime_error(ex.base().what());
         }
 
         co_return courses;
@@ -31,6 +32,7 @@ namespace app_repositories::course_repository
         catch (const drogon::orm::DrogonDbException &ex)
         {
             LOG_ERROR << ex.base().what();
+            throw std::runtime_error(ex.base().what());
         }
 
         co_return course;
@@ -47,6 +49,7 @@ namespace app_repositories::course_repository
         catch (const drogon::orm::DrogonDbException &ex)
         {
             LOG_ERROR << ex.base().what();
+            throw std::runtime_error(ex.base().what());
         }
 
         co_return courseReturn;
@@ -67,7 +70,7 @@ namespace app_repositories::course_repository
         catch (const drogon::orm::DrogonDbException &ex)
         {
             LOG_ERROR << ex.base().what();
-            result = false;
+            throw std::runtime_error(ex.base().what());
         }
 
         co_return result;
@@ -81,11 +84,15 @@ namespace app_repositories::course_repository
             auto db = drogon::app().getDbClient();
             drogon::orm::CoroMapper<Model> mp(db);
             result = co_await mp.deleteBy(drogon::orm::Criteria(Model::Cols::_id, id));
+            if (!result)
+            {
+                throw drogon::orm::UnexpectedRows("0 row found!");
+            }
         }
         catch (const drogon::orm::DrogonDbException &ex)
         {
             LOG_ERROR << ex.base().what();
-            result = false;
+            throw std::runtime_error(ex.base().what());
         }
 
         co_return result;
