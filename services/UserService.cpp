@@ -1,76 +1,87 @@
-#include "UserService.hpp"
-#include "../utils/Utils.hpp"
-#include "../repository/UserRepository.hpp"
+#include "CourseService.hpp"
 
-using UserModel = drogon_model::test::UserLogin;
-
-namespace app_services::user
+namespace app_services::course_service
 {
-
-    drogon::Task<std::vector<app_dto::user::UserDto>> getAll()
+    drogon::Task<std::vector<CourseDto>> getAll()
     {
 
-        std::vector<UserModel> users = co_await app_repositories::user_repository::getAll();
-
-        std::vector<app_dto::user::UserDto> userDtos;
-        for (auto user : users)
+        std::vector<CourseModel> courses;
+        try
         {
-            app_dto::user::UserDto temp = app_dto::user::UserDto::fromUser(user);
-            userDtos.push_back(temp);
+            courses = co_await app_repositories::course_repository::getAll();
         }
-        co_return userDtos;
-    }
-
-    drogon::Task<std::vector<app_dto::user::UserDto>> getAllBySql()
-    {
-
-        std::vector<UserModel> users = co_await app_repositories::user_repository::getAllBySql();
-
-        std::vector<app_dto::user::UserDto> userDtos;
-        for (auto user : users)
+        catch (const std::exception &ex)
         {
-            app_dto::user::UserDto temp = app_dto::user::UserDto::fromUser(user);
-            userDtos.push_back(temp);
+            throw std::runtime_error(ex.what());
         }
-        co_return userDtos;
-    }
-
-    drogon::Task<std::vector<app_dto::user::UserDto>> getByCondition(std::map<std::string, std::string> condition)
-    {
-        std::vector<UserModel> users = co_await app_repositories::user_repository::getByCondition(condition);
-
-        std::vector<app_dto::user::UserDto> userDtos;
-        for (auto user : users)
+        std::vector<CourseDto> courseDtos;
+        for (auto course : courses)
         {
-            app_dto::user::UserDto temp = app_dto::user::UserDto::fromUser(user);
-            userDtos.push_back(temp);
+            CourseDto temp = CourseDto::fromModel(course);
+            courseDtos.push_back(temp);
         }
-        co_return userDtos;
+        co_return courseDtos;
     }
 
-    drogon::Task<app_dto::user::UserDto> getById(int id)
+    drogon::Task<CourseDto> getById(int id)
     {
-        UserModel user = co_await app_repositories::user_repository::getById(id);
-        co_return app_dto::user::UserDto::fromUser(user);
+        CourseModel course;
+        try
+        {
+            course = co_await app_repositories::course_repository::getById(id);
+        }
+        catch (const std::exception &ex)
+        {
+            throw std::runtime_error(ex.what());
+        }
+        co_return CourseDto::fromModel(course);
     }
 
-    drogon::Task<app_dto::user::UserDto> create(app_dto::user::UserDto data)
+    drogon::Task<CourseDto> create(CourseDto data)
     {
-        UserModel user = app_dto::user::UserDto::toUser(data);
-        user = co_await app_repositories::user_repository::create(user);
-        co_return app_dto::user::UserDto::fromUser(user);
+        CourseModel course = CourseDto::toModel(data);
+        course.setCreatedDate(::trantor::Date().now());
+        try
+        {
+            course = co_await app_repositories::course_repository::create(course);
+        }
+        catch (const std::exception &ex)
+        {
+            throw std::runtime_error(ex.what());
+        }
+
+        co_return CourseDto::fromModel(course);
     }
 
-    drogon::Task<bool> update(app_dto::user::UserDto data)
+    drogon::Task<bool> update(CourseDto data)
     {
-        UserModel user = app_dto::user::UserDto::toUser(data);
-        bool result = co_await app_repositories::user_repository::update(user);
+        bool result;
+        try
+        {
+            CourseModel course = CourseDto::toModel(data);
+            course.setLastModifiedDate(::trantor::Date().now());
+            result = co_await app_repositories::course_repository::update(course);
+        }
+        catch (const std::exception &ex)
+        {
+            throw std::runtime_error(ex.what());
+        }
+
         co_return result;
     }
 
     drogon::Task<bool> remove(int id)
     {
-        bool result = co_await app_repositories::user_repository::remove(id);
+
+        bool result;
+        try
+        {
+            result = co_await app_repositories::course_repository::remove(id);
+        }
+        catch (const std::exception &ex)
+        {
+            throw std::runtime_error(ex.what());
+        }
         co_return result;
     }
 
