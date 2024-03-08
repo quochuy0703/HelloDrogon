@@ -22,12 +22,12 @@ const std::string Student::Cols::_name = "name";
 const std::string Student::Cols::_semester = "semester";
 const std::string Student::Cols::_year = "year";
 const std::string Student::Cols::_course_id = "course_id";
-const std::string Student::primaryKeyName = "id";
-const bool Student::hasPrimaryKey = true;
+const std::string Student::primaryKeyName = "";
+const bool Student::hasPrimaryKey = false;
 const std::string Student::tableName = "student";
 
 const std::vector<typename Student::MetaData> Student::metaData_={
-{"id","int64_t","bigint",8,0,1,1},
+{"id","int64_t","bigint",8,0,0,1},
 {"created_date","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"last_modified_date","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"batch","int64_t","bigint",8,0,0,0},
@@ -452,6 +452,7 @@ void Student::updateByMasqueradedJson(const Json::Value &pJson,
     }
     if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
+        dirtyFlag_[0] = true;
         if(!pJson[pMasqueradingVector[0]].isNull())
         {
             id_=std::make_shared<int64_t>((int64_t)pJson[pMasqueradingVector[0]].asInt64());
@@ -563,6 +564,7 @@ void Student::updateByJson(const Json::Value &pJson) noexcept(false)
 {
     if(pJson.isMember("id"))
     {
+        dirtyFlag_[0] = true;
         if(!pJson["id"].isNull())
         {
             id_=std::make_shared<int64_t>((int64_t)pJson["id"].asInt64());
@@ -685,11 +687,6 @@ void Student::setId(const int64_t &pId) noexcept
 {
     id_ = std::make_shared<int64_t>(pId);
     dirtyFlag_[0] = true;
-}
-const typename Student::PrimaryKeyType & Student::getPrimaryKey() const
-{
-    assert(id_);
-    return *id_;
 }
 
 const ::trantor::Date &Student::getValueOfCreatedDate() const noexcept
@@ -1562,11 +1559,6 @@ bool Student::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
-    else
-    {
-        err = "The value of primary key must be set in the json object for update";
-        return false;
-    }
     if(pJson.isMember("created_date"))
     {
         if(!validJsonOfField(1, "created_date", pJson["created_date"], err, false))
@@ -1624,11 +1616,6 @@ bool Student::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
-    else
-    {
-        err = "The value of primary key must be set in the json object for update";
-        return false;
-    }
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))

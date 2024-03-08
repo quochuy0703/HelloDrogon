@@ -59,8 +59,8 @@ class Student
     static const std::string tableName;
     static const bool hasPrimaryKey;
     static const std::string primaryKeyName;
-    using PrimaryKeyType = int64_t;
-    const PrimaryKeyType &getPrimaryKey() const;
+    using PrimaryKeyType = void;
+    int getPrimaryKey() const { assert(false); return 0; }
 
     /**
      * @brief constructor
@@ -232,13 +232,13 @@ class Student
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
-        static const std::string sql="select * from " + tableName + " where id = $1";
+        static const std::string sql="";
         return sql;
     }
 
     static const std::string &sqlForDeletingByPrimaryKey()
     {
-        static const std::string sql="delete from " + tableName + " where id = $1";
+        static const std::string sql="";
         return sql;
     }
     std::string sqlForInserting(bool &needSelection) const

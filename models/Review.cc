@@ -17,12 +17,12 @@ using namespace drogon_model::test;
 const std::string Review::Cols::_id = "id";
 const std::string Review::Cols::_course_id = "course_id";
 const std::string Review::Cols::_content = "content";
-const std::string Review::primaryKeyName = "id";
-const bool Review::hasPrimaryKey = true;
+const std::string Review::primaryKeyName = "";
+const bool Review::hasPrimaryKey = false;
 const std::string Review::tableName = "review";
 
 const std::vector<typename Review::MetaData> Review::metaData_={
-{"id","int32_t","integer",4,1,1,1},
+{"id","int32_t","integer",4,1,0,1},
 {"course_id","int32_t","integer",4,0,0,0},
 {"content","std::string","character varying",0,0,0,0}
 };
@@ -212,11 +212,6 @@ void Review::setId(const int32_t &pId) noexcept
 {
     id_ = std::make_shared<int32_t>(pId);
     dirtyFlag_[0] = true;
-}
-const typename Review::PrimaryKeyType & Review::getPrimaryKey() const
-{
-    assert(id_);
-    return *id_;
 }
 
 const int32_t &Review::getValueOfCourseId() const noexcept
@@ -513,11 +508,6 @@ bool Review::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
-    else
-    {
-        err = "The value of primary key must be set in the json object for update";
-        return false;
-    }
     if(pJson.isMember("course_id"))
     {
         if(!validJsonOfField(1, "course_id", pJson["course_id"], err, false))
@@ -545,11 +535,6 @@ bool Review::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
           if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
               return false;
       }
-    else
-    {
-        err = "The value of primary key must be set in the json object for update";
-        return false;
-    }
       if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
       {
           if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
@@ -585,6 +570,11 @@ bool Review::validJsonOfField(size_t index,
             if(isForCreation)
             {
                 err="The automatic primary key cannot be set";
+                return false;
+            }
+            else
+            {
+                err="The automatic primary key cannot be update";
                 return false;
             }
             if(!pJson.isInt())

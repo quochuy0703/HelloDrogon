@@ -1,7 +1,8 @@
 #include "UserService.hpp"
 #include "../utils/Utils.hpp"
+#include "../repository/UserRepository.hpp"
 
-using UserModel = drogon_model::drogon_test::User;
+using UserModel = drogon_model::test::UserLogin;
 
 namespace app_services::user
 {
@@ -55,7 +56,6 @@ namespace app_services::user
 
     drogon::Task<app_dto::user::UserDto> create(app_dto::user::UserDto data)
     {
-
         UserModel user = app_dto::user::UserDto::toUser(data);
         user = co_await app_repositories::user_repository::create(user);
         co_return app_dto::user::UserDto::fromUser(user);
@@ -73,4 +73,5 @@ namespace app_services::user
         bool result = co_await app_repositories::user_repository::remove(id);
         co_return result;
     }
+
 }

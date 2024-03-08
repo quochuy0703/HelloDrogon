@@ -12,7 +12,7 @@
     //schema: valid for postgreSQL, "public" by default;
     "schema": "public",
     //user: User name
-    "user": "postgres",
+    "user": "quochuy0703",
     //password or passwd: Password
     "password": "hguyFtgfR4r9R4r76",
     //client_encoding: The character set used by drogon_ctl. it is empty string by default which 
