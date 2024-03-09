@@ -223,11 +223,8 @@ class Course
         std::string sql="insert into " + tableName + " (";
         size_t parametersCount = 0;
         needSelection = false;
-        if(dirtyFlag_[0])
-        {
             sql += "id,";
             ++parametersCount;
-        }
         if(dirtyFlag_[1])
         {
             sql += "created_date,";
@@ -253,6 +250,7 @@ class Course
             sql += "instructor_id,";
             ++parametersCount;
         }
+        needSelection=true;
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -264,11 +262,7 @@ class Course
         int placeholder=1;
         char placeholderStr[64];
         size_t n=0;
-        if(dirtyFlag_[0])
-        {
-            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
-            sql.append(placeholderStr, n);
-        }
+        sql +="default,";
         if(dirtyFlag_[1])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);

@@ -26,7 +26,7 @@ const bool Course::hasPrimaryKey = true;
 const std::string Course::tableName = "course";
 
 const std::vector<typename Course::MetaData> Course::metaData_={
-{"id","int64_t","bigint",8,0,1,1},
+{"id","int64_t","bigint",8,1,1,1},
 {"created_date","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"last_modified_date","::trantor::Date","timestamp without time zone",0,0,0,0},
 {"code","std::string","character varying",255,0,0,0},
@@ -692,7 +692,6 @@ void Course::updateId(const uint64_t id)
 const std::vector<std::string> &Course::insertColumns() noexcept
 {
     static const std::vector<std::string> inCols={
-        "id",
         "created_date",
         "last_modified_date",
         "code",
@@ -704,17 +703,6 @@ const std::vector<std::string> &Course::insertColumns() noexcept
 
 void Course::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
-    if(dirtyFlag_[0])
-    {
-        if(getId())
-        {
-            binder << getValueOfId();
-        }
-        else
-        {
-            binder << nullptr;
-        }
-    }
     if(dirtyFlag_[1])
     {
         if(getCreatedDate())
@@ -775,10 +763,6 @@ void Course::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 const std::vector<std::string> Course::updateColumns() const
 {
     std::vector<std::string> ret;
-    if(dirtyFlag_[0])
-    {
-        ret.push_back(getColumnName(0));
-    }
     if(dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
@@ -804,17 +788,6 @@ const std::vector<std::string> Course::updateColumns() const
 
 void Course::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
-    if(dirtyFlag_[0])
-    {
-        if(getId())
-        {
-            binder << getValueOfId();
-        }
-        else
-        {
-            binder << nullptr;
-        }
-    }
     if(dirtyFlag_[1])
     {
         if(getCreatedDate())
@@ -1058,11 +1031,6 @@ bool Course::validateJsonForCreation(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
-    else
-    {
-        err="The id column cannot be null";
-        return false;
-    }
     if(pJson.isMember("created_date"))
     {
         if(!validJsonOfField(1, "created_date", pJson["created_date"], err, true))
@@ -1107,11 +1075,6 @@ bool Course::validateMasqueradedJsonForCreation(const Json::Value &pJson,
               if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
                   return false;
           }
-        else
-        {
-            err="The " + pMasqueradingVector[0] + " column cannot be null";
-            return false;
-        }
       }
       if(!pMasqueradingVector[1].empty())
       {
@@ -1265,6 +1228,11 @@ bool Course::validJsonOfField(size_t index,
             if(pJson.isNull())
             {
                 err="The " + fieldName + " column cannot be null";
+                return false;
+            }
+            if(isForCreation)
+            {
+                err="The automatic primary key cannot be set";
                 return false;
             }
             if(!pJson.isInt64())

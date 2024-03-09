@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <optional>
 #include <drogon/drogon.h>
 #include "../models/Course.h"
 
@@ -10,14 +11,17 @@ namespace app_dto::course
 {
     struct CourseDto
     {
-        int id;
+        std::optional<int> id;
         std::string code;
         std::string name;
         int instructor_id;
         static CourseModel toModel(CourseDto data)
         {
             CourseModel course;
-            course.setId(data.id);
+            if (data.id.has_value())
+            {
+                course.setId(data.id.value());
+            }
             course.setCode(data.code);
             course.setName(data.name);
             course.setInstructorId(data.instructor_id);
@@ -26,10 +30,11 @@ namespace app_dto::course
         static CourseDto fromModel(CourseModel course)
         {
             CourseDto data;
-            data.code = *course.getCode();
-            data.id = *course.getId();
-            data.name = *course.getName();
-            data.instructor_id = *course.getInstructorId();
+            data.code = course.getValueOfCode();
+            data.id = std::make_optional(course.getValueOfId());
+            data.name = course.getValueOfName();
+            data.instructor_id = course.getValueOfInstructorId();
+
             return data;
         }
     };
@@ -46,7 +51,8 @@ namespace drogon
 
         if (json)
         {
-            course.id = (*json)["id"].asInt();
+            course.id = (*json)["id"].empty() ? std::nullopt : std::make_optional((*json)["id"].asInt());
+            // course.id = (*json)["id"].asInt();
             course.code = (*json)["code"].asString();
             course.name = (*json)["name"].asString();
             course.instructor_id = (*json)["instructor_id"].asInt();

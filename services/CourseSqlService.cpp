@@ -29,15 +29,15 @@ namespace app_services::course_service
     drogon::Task<CourseDto> getByIdSql(int id)
     {
         CourseModel course;
+        auto db = drogon::app().getDbClient();
+        auto tranPtr = co_await db->newTransactionCoro();
         try
         {
-            auto db = drogon::app().getDbClient();
-            auto tranPtr = co_await db->newTransactionCoro();
-
-            course = co_await app_repositories::course_repository::getByIdSql(tranPtr.get(), id);
+            course = co_await app_repositories::course_repository::getByIdSql(tranPtr, id);
         }
         catch (const std::exception &ex)
         {
+            tranPtr->rollback();
             throw std::runtime_error(ex.what());
         }
         co_return CourseDto::fromModel(course);
@@ -57,42 +57,50 @@ namespace app_services::course_service
         }
         catch (const std::exception &ex)
         {
+            tranPtr->rollback();
             throw std::runtime_error(ex.what());
         }
 
         co_return CourseDto::fromModel(course);
     }
 
-    // drogon::Task<bool> update(CourseDto data)
-    // {
-    //     bool result;
-    //     try
-    //     {
-    //         CourseModel course = CourseDto::toModel(data);
-    //         course.setLastModifiedDate(::trantor::Date().now());
-    //         result = co_await app_repositories::course_repository::update(course);
-    //     }
-    //     catch (const std::exception &ex)
-    //     {
-    //         throw std::runtime_error(ex.what());
-    //     }
+    drogon::Task<bool> updateSql(CourseDto data)
+    {
+        auto db = drogon::app().getDbClient();
+        auto tranPtr = co_await db->newTransactionCoro();
 
-    //     co_return result;
-    // }
+        bool result;
+        try
+        {
+            CourseModel course = CourseDto::toModel(data);
+            course.setLastModifiedDate(::trantor::Date().now());
+            result = co_await app_repositories::course_repository::updateSql(tranPtr, course);
+        }
+        catch (const std::exception &ex)
+        {
+            tranPtr->rollback();
+            throw std::runtime_error(ex.what());
+        }
 
-    // drogon::Task<bool> remove(int id)
-    // {
+        co_return result;
+    }
 
-    //     bool result;
-    //     try
-    //     {
-    //         result = co_await app_repositories::course_repository::remove(id);
-    //     }
-    //     catch (const std::exception &ex)
-    //     {
-    //         throw std::runtime_error(ex.what());
-    //     }
-    //     co_return result;
-    // }
+    drogon::Task<bool> removeSql(int id)
+    {
+
+        bool result;
+        auto db = drogon::app().getDbClient();
+        auto tranPtr = co_await db->newTransactionCoro();
+        try
+        {
+            result = co_await app_repositories::course_repository::removeSql(tranPtr, id);
+        }
+        catch (const std::exception &ex)
+        {
+            tranPtr->rollback();
+            throw std::runtime_error(ex.what());
+        }
+        co_return result;
+    }
 
 }

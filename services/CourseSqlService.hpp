@@ -17,7 +17,7 @@ namespace app_services::course_service
 
     drogon::Task<CourseDto> createSql(CourseDto data);
 
-    // drogon::Task<bool> update(CourseDto data);
+    drogon::Task<bool> updateSql(CourseDto data);
 
-    // drogon::Task<bool> remove(int id);
+    drogon::Task<bool> removeSql(int id);
 }
