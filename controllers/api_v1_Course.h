@@ -2,6 +2,7 @@
 
 #include <drogon/HttpController.h>
 #include "../services/CourseService.hpp"
+#include "../services/CourseSqlService.hpp"
 #include "../dto/CourseDto.cpp"
 #include <trantor/utils/Date.h>
 #include "../utils/ApiResponse.hpp"

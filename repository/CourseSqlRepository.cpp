@@ -2,14 +2,16 @@
 
 namespace app_repositories::course_repository
 {
-    drogon::Task<std::vector<Model>> getAll()
+    drogon::Task<std::vector<Model>> getAllSql(drogon::orm::Transaction *tranPtr)
     {
         std::vector<Model> courses;
         try
         {
-            auto db = drogon::app().getDbClient();
-            drogon::orm::CoroMapper<Model> mp(db);
-            courses = co_await mp.findAll();
+            auto rows = co_await tranPtr->execSqlCoro("SELECT * FROM course;");
+            for (auto row : rows)
+            {
+                courses.push_back(Model(row));
+            }
         }
         catch (const drogon::orm::DrogonDbException &ex)
         {
@@ -19,15 +21,19 @@ namespace app_repositories::course_repository
 
         co_return courses;
     }
-    drogon::Task<Model> getById(int id)
+
+    drogon::Task<Model> getByIdSql(drogon::orm::Transaction *tranPtr, int id)
     {
         Model course;
 
         try
         {
-            auto db = drogon::app().getDbClient();
-            drogon::orm::CoroMapper<Model> mp(db);
-            course = co_await mp.findOne(drogon::orm::Criteria(Model::Cols::_id, std::to_string(id)));
+            auto row = co_await tranPtr->execSqlCoro("SELECT * FROM course where id = $1;", std::to_string(id));
+            if (row.size() == 0)
+            {
+                throw drogon::orm::UnexpectedRows("O row found!");
+            }
+            course = Model(row.at(0));
         }
         catch (const drogon::orm::DrogonDbException &ex)
         {
@@ -37,34 +43,19 @@ namespace app_repositories::course_repository
 
         co_return course;
     }
-    // drogon::Task<Model> getByIdSql(int id)
-    // {
-    //     Model course;
 
-    //     try
-    //     {
-    //         auto db = drogon::app().getDbClient();
-    //         auto row = co_await db->execSqlCoro("SELECT * FROM course where id = $1;", std::to_string(id));
-    //         course = Model(row.at(0));
-    //         // course = co_await mp.findOne(drogon::orm::Criteria(Model::Cols::_id, id));
-    //     }
-    //     catch (const drogon::orm::DrogonDbException &ex)
-    //     {
-    //         LOG_ERROR << ex.base().what();
-    //         throw std::runtime_error(ex.base().what());
-    //     }
-
-    //     co_return course;
-    // }
-
-    drogon::Task<Model> create(Model course)
+    drogon::Task<Model> createSql(drogon::orm::Transaction *tranPtr, Model course)
     {
         Model courseReturn;
         try
         {
-            auto db = drogon::app().getDbClient();
-            drogon::orm::CoroMapper<Model> mp(db);
-            courseReturn = co_await mp.insert(course);
+            bool sel = false;
+            auto sql = course.sqlForInserting(sel);
+            // course.getInstructorId
+            LOG_INFO << sql;
+
+            auto row = co_await tranPtr->execSqlCoro(sql, std::to_string(*course.getId()), *course.getCreatedDate(), *course.getCode(), *course.getName(), std::to_string(*course.getInstructorId()));
+            LOG_INFO << row.affectedRows();
         }
         catch (const drogon::orm::DrogonDbException &ex)
         {
@@ -75,7 +66,7 @@ namespace app_repositories::course_repository
         co_return courseReturn;
     }
 
-    drogon::Task<bool> update(Model course)
+    drogon::Task<bool> updateSql(drogon::orm::Transaction *tranPtr, Model course)
     {
         int idPrimaryKey = *course.getId();
         Model courseExist;
@@ -96,14 +87,16 @@ namespace app_repositories::course_repository
         co_return result;
     }
 
-    drogon::Task<bool> remove(int id)
+    drogon::Task<bool> removeSql(drogon::orm::Transaction *tranPtr, int id)
     {
         bool result;
         try
         {
             auto db = drogon::app().getDbClient();
             drogon::orm::CoroMapper<Model> mp(db);
+
             result = co_await mp.deleteBy(drogon::orm::Criteria(Model::Cols::_id, id));
+
             if (!result)
             {
                 throw drogon::orm::UnexpectedRows("0 row found!");

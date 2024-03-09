@@ -13,7 +13,7 @@ drogon::AsyncTask api::v1::Course::GetAllCourse(const HttpRequestPtr req,
     drogon::HttpStatusCode statusCode;
     try
     {
-        auto cousers = co_await app_services::course_service::getAll();
+        auto cousers = co_await app_services::course_service::getAllSql();
         for (std::vector<app_dto::course::CourseDto>::iterator it = cousers.begin(); it != cousers.end(); it++)
         {
             Json::Value jsonVect;
@@ -47,7 +47,7 @@ drogon::AsyncTask api::v1::Course::GetCourseById(const HttpRequestPtr req,
 
     try
     {
-        auto course = co_await app_services::course_service::getById(std::stoi(courseId));
+        auto course = co_await app_services::course_service::getByIdSql(std::stoi(courseId));
 
         data["id"] = course.id;
         data["name"] = course.name;
@@ -74,7 +74,7 @@ drogon::AsyncTask api::v1::Course::PostCourse(const HttpRequestPtr req,
     try
     {
 
-        auto courseDto = co_await app_services::course_service::create(course);
+        auto courseDto = co_await app_services::course_service::createSql(course);
 
         ret["result"] = "ok";
         Json::Value jsonVect;
