@@ -26,6 +26,29 @@ namespace app_services::course_service
         co_return courseDtos;
     }
 
+    drogon::Task<std::vector<CourseDto>> getByCondition(std::map<std::string, std::string> condition)
+    {
+        std::vector<CourseModel> courses;
+        try
+        {
+            auto db = drogon::app().getDbClient();
+            auto tranPtr = co_await db->newTransactionCoro();
+
+            courses = co_await app_repositories::course_repository::getByConditionSqlMapper(tranPtr, condition);
+        }
+        catch (const std::exception &ex)
+        {
+            throw std::runtime_error(ex.what());
+        }
+        std::vector<CourseDto> courseDtos;
+        for (auto course : courses)
+        {
+            CourseDto temp = CourseDto::fromModel(course);
+            courseDtos.push_back(temp);
+        }
+        co_return courseDtos;
+    }
+
     drogon::Task<CourseDto> getByIdSql(int id)
     {
         CourseModel course;

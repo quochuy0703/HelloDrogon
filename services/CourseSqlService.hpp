@@ -13,6 +13,8 @@ namespace app_services::course_service
 {
     drogon::Task<std::vector<CourseDto>> getAllSql();
 
+    drogon::Task<std::vector<CourseDto>> getByCondition(std::map<std::string, std::string> condition);
+
     drogon::Task<CourseDto> getByIdSql(int id);
 
     drogon::Task<CourseDto> createSql(CourseDto data);

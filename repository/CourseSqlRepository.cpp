@@ -41,6 +41,36 @@ namespace app_repositories::course_repository
         co_return courses;
     }
 
+    drogon::Task<std::vector<Model>> getByConditionSqlMapper(std::shared_ptr<drogon::orm::Transaction> tranPtr, std::map<std::string, std::string> condition)
+    {
+        std::vector<Model> courses;
+        try
+        {
+            drogon::orm::Criteria criteria;
+            if (condition["id"].compare("") != 0)
+            {
+                criteria = criteria && drogon::orm::Criteria(Model::Cols::_id, condition["id"]);
+            }
+            if (condition["name"].compare("") != 0)
+            {
+                criteria = criteria && drogon::orm::Criteria(Model::Cols::_name, condition["name"]);
+            }
+            if (condition["code"].compare("") != 0)
+            {
+                criteria = criteria && drogon::orm::Criteria(Model::Cols::_code, condition["code"]);
+            }
+
+            drogon::orm::CoroMapper<Model> usr(tranPtr);
+            courses = co_await usr.findBy(criteria);
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+        }
+
+        co_return courses;
+    }
+
     drogon::Task<Model> getByIdSql(std::shared_ptr<drogon::orm::Transaction> tranPtr, int id)
     {
         Model course;

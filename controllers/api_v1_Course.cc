@@ -37,6 +37,45 @@ drogon::AsyncTask api::v1::Course::GetAllCourse(const HttpRequestPtr req,
     callback(resp);
 }
 
+drogon::AsyncTask api::v1::Course::GetCourseByCondition(const HttpRequestPtr req,
+                                                        std::function<void(const HttpResponsePtr &)> callback)
+{
+
+    Json::Value data;
+    app_helpers::api_res_helper::ApiResponse<Json::Value>::Builder builderRes = app_helpers::api_res_helper::ApiResponse<Json::Value>::create();
+    std::string message = "";
+    drogon::HttpStatusCode statusCode;
+    try
+    {
+        std::map<std::string, std::string> condition;
+        condition["name"] = req->getParameter("name");
+        condition["code"] = req->getParameter("code");
+        condition["id"] = req->getParameter("id");
+
+        auto cousers = co_await app_services::course_service::getByCondition(condition);
+        for (std::vector<app_dto::course::CourseDto>::iterator it = cousers.begin(); it != cousers.end(); it++)
+        {
+            Json::Value jsonVect;
+            // jsonVect.append(*it);
+            jsonVect["name"] = it->name;
+            jsonVect["code"] = it->code;
+            data["courses"].append(jsonVect);
+        };
+
+        message = "success";
+        statusCode = drogon::HttpStatusCode::k200OK;
+    }
+    catch (const std::exception &ex)
+    {
+        message = ex.what();
+        statusCode = drogon::HttpStatusCode::k500InternalServerError;
+    }
+
+    Json::Value ret = builderRes.data(data).message(message).success(true).statusCode(statusCode).build()->toJson();
+    auto resp = HttpResponse::newHttpJsonResponse(ret);
+    callback(resp);
+}
+
 drogon::AsyncTask api::v1::Course::GetCourseById(const HttpRequestPtr req,
                                                  std::function<void(const HttpResponsePtr &)> callback, std::string courseId)
 {

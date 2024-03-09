@@ -22,6 +22,7 @@ namespace api
       // ADD_METHOD_TO(Course::your_method_name, "/absolute/path/{1}/{2}/list", Get); // path is /absolute/path/{arg1}/{arg2}/list
       METHOD_ADD(Course::GetAllCourse, "/", Get);
       METHOD_ADD(Course::GetCourseById, "/{1}", Get);
+      METHOD_ADD(Course::GetCourseByCondition, "/condition", Get);
       METHOD_ADD(Course::PostCourse, "/", Post);
       METHOD_ADD(Course::UpdateCourse, "/", Put);
       METHOD_ADD(Course::DeleteCourseById, "/{1}", Delete);
@@ -31,6 +32,8 @@ namespace api
       // void your_method_name(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, double p1, int p2) const;
       drogon::AsyncTask GetAllCourse(const HttpRequestPtr req,
                                      std::function<void(const HttpResponsePtr &)> callback);
+      drogon::AsyncTask GetCourseByCondition(const HttpRequestPtr req,
+                                             std::function<void(const HttpResponsePtr &)> callback);
       drogon::AsyncTask GetCourseById(const HttpRequestPtr req,
                                       std::function<void(const HttpResponsePtr &)> callback, std::string courseId);
       drogon::AsyncTask PostCourse(const HttpRequestPtr req,

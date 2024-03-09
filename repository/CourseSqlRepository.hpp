@@ -9,6 +9,8 @@ namespace app_repositories::course_repository
     drogon::Task<std::vector<Model>> getAllSql(std::shared_ptr<drogon::orm::Transaction> tranPtr);
     drogon::Task<std::vector<Model>> getAllSqlMapper(std::shared_ptr<drogon::orm::Transaction> tranPtr);
 
+    drogon::Task<std::vector<Model>> getByConditionSqlMapper(std::shared_ptr<drogon::orm::Transaction> tranPtr, std::map<std::string, std::string> condition);
+
     drogon::Task<Model> getByIdSql(std::shared_ptr<drogon::orm::Transaction> tranPtr, int id);
     drogon::Task<Model> getByIdSqlMapper(std::shared_ptr<drogon::orm::Transaction> tranPtr, int id);
 
