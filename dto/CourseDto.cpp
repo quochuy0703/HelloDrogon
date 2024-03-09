@@ -30,10 +30,12 @@ namespace app_dto::course
         static CourseDto fromModel(CourseModel course)
         {
             CourseDto data;
-            data.code = *course.getCode();
-            data.id = *course.getId();
-            data.name = *course.getName();
-            data.instructor_id = *course.getInstructorId();
+
+            data.code = course.getValueOfCode();
+            data.id = std::make_optional(course.getValueOfId());
+            data.name = course.getValueOfName();
+            data.instructor_id = course.getValueOfInstructorId();
+
             return data;
         }
     };

@@ -28,7 +28,7 @@ const std::vector<typename Course::MetaData> Course::metaData_={
 {"code","std::string","varchar(100)",100,0,0,0},
 {"name","std::string","varchar(100)",100,0,0,0},
 {"created_date","::trantor::Date","datetime",0,0,0,0},
-{"last_modified_date","::trantor::Date","date",0,0,0,0},
+{"last_modified_date","::trantor::Date","datetime",0,0,0,0},
 {"instructor_id","int32_t","int(11)",4,0,0,0}
 };
 const std::string &Course::getColumnName(size_t index) noexcept(false)
@@ -76,12 +76,25 @@ Course::Course(const Row &r, const ssize_t indexOffset) noexcept
         }
         if(!r["last_modified_date"].isNull())
         {
-            auto daysStr = r["last_modified_date"].as<std::string>();
+            auto timeStr = r["last_modified_date"].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
-            strptime(daysStr.c_str(),"%Y-%m-%d",&stm);
+            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
-            lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000);
+            size_t decimalNum = 0;
+            if(p)
+            {
+                if(*p=='.')
+                {
+                    std::string decimals(p+1,&timeStr[timeStr.length()]);
+                    while(decimals.length()<6)
+                    {
+                        decimals += "0";
+                    }
+                    decimalNum = (size_t)atol(decimals.c_str());
+                }
+                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            }
         }
         if(!r["instructor_id"].isNull())
         {
@@ -138,12 +151,25 @@ Course::Course(const Row &r, const ssize_t indexOffset) noexcept
         index = offset + 4;
         if(!r[index].isNull())
         {
-            auto daysStr = r[index].as<std::string>();
+            auto timeStr = r[index].as<std::string>();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
-            strptime(daysStr.c_str(),"%Y-%m-%d",&stm);
+            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
-            lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000);
+            size_t decimalNum = 0;
+            if(p)
+            {
+                if(*p=='.')
+                {
+                    std::string decimals(p+1,&timeStr[timeStr.length()]);
+                    while(decimals.length()<6)
+                    {
+                        decimals += "0";
+                    }
+                    decimalNum = (size_t)atol(decimals.c_str());
+                }
+                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            }
         }
         index = offset + 5;
         if(!r[index].isNull())
@@ -216,12 +242,25 @@ Course::Course(const Json::Value &pJson, const std::vector<std::string> &pMasque
         dirtyFlag_[4] = true;
         if(!pJson[pMasqueradingVector[4]].isNull())
         {
-            auto daysStr = pJson[pMasqueradingVector[4]].asString();
+            auto timeStr = pJson[pMasqueradingVector[4]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
-            strptime(daysStr.c_str(),"%Y-%m-%d",&stm);
+            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
-            lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000);
+            size_t decimalNum = 0;
+            if(p)
+            {
+                if(*p=='.')
+                {
+                    std::string decimals(p+1,&timeStr[timeStr.length()]);
+                    while(decimals.length()<6)
+                    {
+                        decimals += "0";
+                    }
+                    decimalNum = (size_t)atol(decimals.c_str());
+                }
+                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            }
         }
     }
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
@@ -291,12 +330,25 @@ Course::Course(const Json::Value &pJson) noexcept(false)
         dirtyFlag_[4]=true;
         if(!pJson["last_modified_date"].isNull())
         {
-            auto daysStr = pJson["last_modified_date"].asString();
+            auto timeStr = pJson["last_modified_date"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
-            strptime(daysStr.c_str(),"%Y-%m-%d",&stm);
+            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
-            lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000);
+            size_t decimalNum = 0;
+            if(p)
+            {
+                if(*p=='.')
+                {
+                    std::string decimals(p+1,&timeStr[timeStr.length()]);
+                    while(decimals.length()<6)
+                    {
+                        decimals += "0";
+                    }
+                    decimalNum = (size_t)atol(decimals.c_str());
+                }
+                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            }
         }
     }
     if(pJson.isMember("instructor_id"))
@@ -371,12 +423,25 @@ void Course::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[4] = true;
         if(!pJson[pMasqueradingVector[4]].isNull())
         {
-            auto daysStr = pJson[pMasqueradingVector[4]].asString();
+            auto timeStr = pJson[pMasqueradingVector[4]].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
-            strptime(daysStr.c_str(),"%Y-%m-%d",&stm);
+            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
-            lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000);
+            size_t decimalNum = 0;
+            if(p)
+            {
+                if(*p=='.')
+                {
+                    std::string decimals(p+1,&timeStr[timeStr.length()]);
+                    while(decimals.length()<6)
+                    {
+                        decimals += "0";
+                    }
+                    decimalNum = (size_t)atol(decimals.c_str());
+                }
+                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            }
         }
     }
     if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
@@ -445,12 +510,25 @@ void Course::updateByJson(const Json::Value &pJson) noexcept(false)
         dirtyFlag_[4] = true;
         if(!pJson["last_modified_date"].isNull())
         {
-            auto daysStr = pJson["last_modified_date"].asString();
+            auto timeStr = pJson["last_modified_date"].asString();
             struct tm stm;
             memset(&stm,0,sizeof(stm));
-            strptime(daysStr.c_str(),"%Y-%m-%d",&stm);
+            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
             time_t t = mktime(&stm);
-            lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000);
+            size_t decimalNum = 0;
+            if(p)
+            {
+                if(*p=='.')
+                {
+                    std::string decimals(p+1,&timeStr[timeStr.length()]);
+                    while(decimals.length()<6)
+                    {
+                        decimals += "0";
+                    }
+                    decimalNum = (size_t)atol(decimals.c_str());
+                }
+                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+            }
         }
     }
     if(pJson.isMember("instructor_id"))
@@ -574,7 +652,7 @@ const std::shared_ptr<::trantor::Date> &Course::getLastModifiedDate() const noex
 }
 void Course::setLastModifiedDate(const ::trantor::Date &pLastModifiedDate) noexcept
 {
-    lastModifiedDate_ = std::make_shared<::trantor::Date>(pLastModifiedDate.roundDay());
+    lastModifiedDate_ = std::make_shared<::trantor::Date>(pLastModifiedDate);
     dirtyFlag_[4] = true;
 }
 void Course::setLastModifiedDateToNull() noexcept
