@@ -42,7 +42,7 @@
     ]
   },
   "relationships": {
-    "enabled": false,
+    "enabled": true,
     "items": [
       {
         "type": "has one",
@@ -77,6 +77,16 @@
         "target_table_name": "carts",
         "target_table_alias": "",
         "target_key": "id",
+        "enable_reverse": true
+      },
+      {
+        "type": "has many",
+        "original_table_name": "user",
+        "original_table_alias": "user",
+        "original_key": "id",
+        "target_table_name": "course",
+        "target_table_alias": "",
+        "target_key": "instructor_id",
         "enable_reverse": true
       }
     ]

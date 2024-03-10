@@ -6,6 +6,7 @@
  */
 
 #include "Course.h"
+#include "User.h"
 #include <drogon/utils/Utilities.h>
 #include <string>
 
@@ -1318,4 +1319,47 @@ bool Course::validJsonOfField(size_t index,
             return false;
     }
     return true;
+}
+User Course::getUser(const DbClientPtr &clientPtr) const {
+    const static std::string sql = "select * from user where id = ?";
+    Result r(nullptr);
+    {
+        auto binder = *clientPtr << sql;
+        binder << *instructorId_ << Mode::Blocking >>
+            [&r](const Result &result) { r = result; };
+        binder.exec();
+    }
+    if (r.size() == 0)
+    {
+        throw UnexpectedRows("0 rows found");
+    }
+    else if (r.size() > 1)
+    {
+        throw UnexpectedRows("Found more than one row");
+    }
+    return User(r[0]);
+}
+
+void Course::getUser(const DbClientPtr &clientPtr,
+                     const std::function<void(User)> &rcb,
+                     const ExceptionCallback &ecb) const
+{
+    const static std::string sql = "select * from user where id = ?";
+    *clientPtr << sql
+               << *instructorId_
+               >> [rcb = std::move(rcb), ecb](const Result &r){
+                    if (r.size() == 0)
+                    {
+                        ecb(UnexpectedRows("0 rows found"));
+                    }
+                    else if (r.size() > 1)
+                    {
+                        ecb(UnexpectedRows("Found more than one row"));
+                    }
+                    else
+                    {
+                        rcb(User(r[0]));
+                    }
+               }
+               >> ecb;
 }

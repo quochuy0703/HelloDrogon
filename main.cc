@@ -3,6 +3,22 @@
 #include "../plugins/SMTPMail.h"
 #include "../utils/EmailHelper.hpp"
 
+// void handle_exception(const std::exception &except, const drogon::HttpRequestPtr &req, std::function<void(const drogon::HttpResponsePtr &)> callback)
+// {
+// 	// // Log the exception
+// 	// if (g_log_exception)
+// 	// {
+// 	// 	logger::error("Exception thrown in {}, what: {}. Request sent by IP: {}", req->path(), except.what(), req->peerAddr().toIpPort());
+// 	// }
+
+// 	// Also notify the client
+// 	Json::Value data;
+// 	data["success"] = 0;
+// 	data["what"] = std::string(except.what());
+// 	// Json::Value ret = builderRes.data(data).message("fdfd").success(true).statusCode().build()->toJson();
+// 	auto resp = drogon::HttpResponse::newHttpJsonResponse(data);
+// 	callback(resp);
+// };
 int main()
 {
 	// Set HTTP listener address and port
@@ -12,6 +28,10 @@ int main()
 	drogon::app().setThreadNum(10);
 	// drogon::app().loadConfigFile("../config.yaml");
 	// Run HTTP framework,the method will block in the internal event loop
+
+	// drogon::app()
+	// 	.setExceptionHandler(handle_exception);
+
 	drogon::app().registerHandler("/test_request_coro/{1}", [](drogon::HttpRequestPtr req, std::function<void(const drogon::HttpResponsePtr &)> callback, std::string userId) -> drogon::AsyncTask
 								  {
 		auto client = drogon::HttpClient::newHttpClient("http://localhost:8000");

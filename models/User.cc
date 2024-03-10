@@ -6,6 +6,7 @@
  */
 
 #include "User.h"
+#include "Course.h"
 #include <drogon/utils/Utilities.h>
 #include <string>
 
@@ -968,4 +969,40 @@ bool User::validJsonOfField(size_t index,
             return false;
     }
     return true;
+}
+std::vector<Course> User::getCourse(const DbClientPtr &clientPtr) const {
+    const static std::string sql = "select * from course where instructor_id = ?";
+    Result r(nullptr);
+    {
+        auto binder = *clientPtr << sql;
+        binder << *id_ << Mode::Blocking >>
+            [&r](const Result &result) { r = result; };
+        binder.exec();
+    }
+    std::vector<Course> ret;
+    ret.reserve(r.size());
+    for (auto const &row : r)
+    {
+        ret.emplace_back(Course(row));
+    }
+    return ret;
+}
+
+void User::getCourse(const DbClientPtr &clientPtr,
+                     const std::function<void(std::vector<Course>)> &rcb,
+                     const ExceptionCallback &ecb) const
+{
+    const static std::string sql = "select * from course where instructor_id = ?";
+    *clientPtr << sql
+               << *id_
+               >> [rcb = std::move(rcb)](const Result &r){
+                   std::vector<Course> ret;
+                   ret.reserve(r.size());
+                   for (auto const &row : r)
+                   {
+                       ret.emplace_back(Course(row));
+                   }
+                   rcb(ret);
+               }
+               >> ecb;
 }

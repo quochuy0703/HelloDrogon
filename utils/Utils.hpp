@@ -1,6 +1,3 @@
-// #ifndef UTILS_HPP
-// #define UTILS_HPP
-
 #pragma once
 
 #include <string>
@@ -84,7 +81,18 @@ namespace app_helpers
         return oss.str();
     }
 
-    // #include "Utils.cpp"
+    //     template <typename T, typename Func>
+    //     requires std::is_invocable_v<Func, typename T::value_type>
+    // auto map(const T& data, Func&& func)
+    // {
+    //     using func_ret_type = decltype(func(data.front()));
+    //     std::vector<func_ret_type> ret;
+    //     ret.resize(data.size());
+    //     std::transform(data.begin(), data.end(), std::back_inserter(ret), std::forward<Func>(func));
+    //     return ret;
+    // }
 
-    // #endif
+    // auto result = co_await db->execSqlCoro("SELECT .....");
+    // auto urls = map(result, [](const auto& row) { return row["url"].as<std::string>(); });
+
 }

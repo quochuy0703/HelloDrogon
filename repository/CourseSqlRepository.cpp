@@ -41,6 +41,25 @@ namespace app_repositories::course_repository
         co_return courses;
     }
 
+    drogon::Task<drogon::orm::Result> getAllSqlIncludeUser(std::shared_ptr<drogon::orm::Transaction> tranPtr)
+    {
+
+        try
+        {
+            auto result = co_await tranPtr->execSqlCoro("SELECT * FROM course;");
+            // for (auto row : rows)
+            // {
+            //     courses.push_back(Model(row));
+            // }
+            co_return result;
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+            throw std::runtime_error(ex.base().what());
+        }
+    }
+
     drogon::Task<std::vector<Model>> getByConditionSqlMapper(std::shared_ptr<drogon::orm::Transaction> tranPtr, std::map<std::string, std::string> condition)
     {
         std::vector<Model> courses;

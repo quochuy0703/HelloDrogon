@@ -38,6 +38,7 @@ namespace drogon_model
 {
 namespace drogon_test
 {
+class Course;
 
 class User
 {
@@ -155,6 +156,10 @@ class User
     Json::Value toJson() const;
     Json::Value toMasqueradedJson(const std::vector<std::string> &pMasqueradingVector) const;
     /// Relationship interfaces
+    std::vector<Course> getCourse(const drogon::orm::DbClientPtr &clientPtr) const;
+    void getCourse(const drogon::orm::DbClientPtr &clientPtr,
+                   const std::function<void(std::vector<Course>)> &rcb,
+                   const drogon::orm::ExceptionCallback &ecb) const;
   private:
     friend drogon::orm::Mapper<User>;
     friend drogon::orm::BaseBuilder<User, true, true>;
