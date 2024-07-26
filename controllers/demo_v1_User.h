@@ -3,6 +3,9 @@
 #include <drogon/HttpController.h>
 #include "../dto/UserLoginDto.hpp"
 #include "../dto/UserDto.cpp"
+#include "../utils/ArrayHelper.hpp"
+#include "../utils/lodash.hpp"
+#include "../utils/moment.hpp"
 
 using namespace drogon;
 namespace demo

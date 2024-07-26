@@ -628,11 +628,21 @@ drogon::AsyncTask User::getInfo(const HttpRequestPtr req,
     app_helpers::fetch_helper::Fetch fetch;
     ApiResponse<Json::Value> result = co_await fetch.Delete("/products/1", "https://fdfdfdummyjson.com");
 
+    app_helpers::array_helper::Array<int> numbers;
+
+    numbers.concat({1, 2, 10, 5, 7});
+
     Json::Value ret;
     ret["result"] = "ok";
     ret["user_name"] = "Jack";
     ret["user_id"] = userId;
     ret["data"] = data;
+    ret["array"] = numbers.filter([](auto item, auto index)
+                                  { return item > 5; })
+                       .reduce([](auto acc, auto item, auto index)
+                               { return acc + item; },
+                               0);
+    ret["moment"] = moment::moment().toString();
     // ret["coro"] = square;
     // ret["post"] = *(result->getJsonObject());
     // ret["post"] = result.toJson();
