@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:\\SoftwareVNN\\LT\\lib\\**",
+                "C:\\SoftwareVNN\\LT\\lib\\mailio\\include",
+                "C:\\SoftwareVNN\\msys64\\usr\\local\\include\\**",
+                "C:\\SoftwareVNN\\msys64\\mingw64\\**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "8.1",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "compilerPath": "C:/SoftwareVNN/msys64/mingw64/bin/g++.exe",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
