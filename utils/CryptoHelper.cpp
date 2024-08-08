@@ -71,19 +71,18 @@ namespace app_helpers::crypto_helper
             // byte byteString[decoded.length()];
             // memcpy(byteString, encoded.data(), decoded.length());
 
-            byte byteString[token.length()];
-            memcpy(byteString, token.data(), token.length());
+            std::vector<CryptoPP::byte> byteString(token.begin(), token.end());
 
             cout << (int)byteString[15] << endl;
             CryptoPP::SecByteBlock derived(32);
             string salt = "GfG";
-            byte saltBytes[salt.length()];
-            memcpy(saltBytes, salt.data(), salt.length());
+
+            std::vector<CryptoPP::byte> saltBytes(salt.begin(), salt.end());
 
             CryptoPP::Scrypt scrypt;
-            scrypt.DeriveKey(derived, derived.size(), (CryptoPP::byte *)byteString, token.length(), (CryptoPP::byte *)saltBytes, salt.length(), 16384, 8, 1);
+            scrypt.DeriveKey(derived, derived.size(), (CryptoPP::byte *)byteString.data(), token.length(), (CryptoPP::byte*)saltBytes.data(), salt.length(), 16384, 8, 1);
 
-            byte temp[32];
+            CryptoPP::byte temp[32];
             memcpy(temp, derived, 32);
             string s((const char *)temp, 32);
 
@@ -128,19 +127,18 @@ namespace app_helpers::crypto_helper
             if (token.compare("") == 0)
                 token = drogon::app().getCustomConfig()["ACCESS_TOKEN_SECRET"].asString();
 
-            byte byteString[token.length()];
-            memcpy(byteString, token.data(), token.length());
+            std::vector<CryptoPP::byte> byteString(token.begin(), token.end());
 
             std::cout << (int)byteString[15] << std::endl;
             CryptoPP::SecByteBlock derived(32);
             std::string salt = "GfG";
-            byte saltBytes[salt.length()];
-            memcpy(saltBytes, salt.data(), salt.length());
+
+            std::vector<CryptoPP::byte> saltBytes(salt.begin(), salt.end());
 
             CryptoPP::Scrypt scrypt;
-            scrypt.DeriveKey(derived, derived.size(), (CryptoPP::byte *)byteString, token.length(), (CryptoPP::byte *)saltBytes, salt.length(), 16384, 8, 1);
+            scrypt.DeriveKey(derived, derived.size(), (CryptoPP::byte *)byteString.data(), token.length(), (CryptoPP::byte*)saltBytes.data(), salt.length(), 16384, 8, 1);
 
-            byte temp[32];
+            CryptoPP::byte temp[32];
             memcpy(temp, derived, 32);
             std::string s((const char *)temp, 32);
 
@@ -190,9 +188,8 @@ namespace app_helpers::crypto_helper
         }
         else
         {
-            CryptoPP::byte stringKey[keyPlain.length()];
-            memcpy(stringKey, keyPlain.data(), keyPlain.length());
-            key.Assign(stringKey, keyPlain.length());
+            std::vector<CryptoPP::byte> stringKey(keyPlain.begin(), keyPlain.end());
+            key.Assign(stringKey.data(), stringKey.size());
         }
 
         // AutoSeededRandomPool prng;

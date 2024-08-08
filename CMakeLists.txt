@@ -30,8 +30,22 @@ add_executable(${PROJECT_NAME} main.cc)
 #
 # and comment out the following lines
 find_package(Drogon CONFIG REQUIRED)
-target_include_directories(${PROJECT_NAME} PRIVATE "/usr/include/botan-2")
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon botan-2 cryptopp ftp mailio)
+find_package(botan CONFIG REQUIRED)
+find_package(cryptopp CONFIG REQUIRED)
+find_package(mailio CONFIG REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS date_time)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    NOSSL
+    NOLFS
+    _WIN32
+    PICOJSON_USE_INT64
+    PICOJSON_USE_LOCALE
+)
+#target_include_directories(${PROJECT_NAME} PRIVATE "/usr/include/botan-2")
+target_link_directories(${PROJECT_NAME} PRIVATE "C:/LT/vcpkg/vcpkg/installed/x64-windows/lib")
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon Botan::Botan cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time)
 
 # ##############################################################################
 
