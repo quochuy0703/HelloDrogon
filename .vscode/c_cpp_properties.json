@@ -1,25 +1,65 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "MINGW64",
             "includePath": [
+              "${workspaceFolder}/build/vcpkg_installed/x64-mingw-dynamic/include/**",
+              "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/**",
+              "C:/msys64/mingw64/include/**",
+              "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include-fixed/**",
+              "${workspaceFolder}/**",
+              "${default}"
+            ],
+            "browse": {
+              "databaseFilename": "${default}",
+              "limitSymbolsToIncludedHeaders": true,
+              "path": [
+                "${workspaceFolder}/build/vcpkg_installed/x64-mingw-dynamic/include/**",
+                "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include",
+                "C:/msys64/mingw64/include",
+                "C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include-fixed",
                 "${workspaceFolder}/**",
-                "C:\\SoftwareVNN\\LT\\lib\\**",
-                "C:\\SoftwareVNN\\LT\\lib\\mailio\\include",
-                "C:\\SoftwareVNN\\msys64\\usr\\local\\include\\**",
-                "C:\\SoftwareVNN\\msys64\\mingw64\\**"
+                "${default}"
+              ]
+            },
+            "defines": ["-DUNICODE", "-D_UNICODE"],
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "windows-gcc-x64",
+            "compilerPath": "C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-gcc.exe",
+            "compilerArgs": [
+              // "-DUNICODE",
+              // "-D_UNICODE",
+              // "-IC:/msys64/mingw64/include/c++/13.2.0",
+              // "-IC:/msys64/mingw64/include/c++/13.2.0/x86_64-w64-mingw32",
+              // "-IC:/msys64/mingw64/include/c++/13.2.0/backward",
+              // "-IC:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/13.2.0/include",
+              // "-IC:/msys64/mingw64/include",
+              // "-IC:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/13.2.0/include-fixed",
+              // "-I${workspaceFolder}/include",
+              // "-LC:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/13.2.0",
+              // "-LC:/msys64/mingw64/lib/gcc",
+              // "-LC:/msys64/mingw64/x86_64-w64-mingw32/lib",
+              // "-LC:/msys64/mingw64/lib",
+              // "-lstdc++",
+              // "-lmingw32",
+              // "-lgcc_s",
+              // "-lgcc",
+              // "-lmoldname",
+              // "-lmingwex",
+              // "-lkernel32",
+              // "-lpthread",
+              // "-ladvapi32",
+              // "-lshell32",
+              // "-luser32",
+              "-ld2d1",
+              "-mwindows",
+              "-municode"
             ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "windowsSdkVersion": "8.1",
-            "cStandard": "c17",
-            "cppStandard": "c++20",
-            "compilerPath": "C:/SoftwareVNN/msys64/mingw64/bin/g++.exe",
-            "intelliSenseMode": "windows-gcc-x64"
-        }
+            "mergeConfigurations": false,
+            "configurationProvider": "${default}"
+          }
+      
     ],
     "version": 4
 }
