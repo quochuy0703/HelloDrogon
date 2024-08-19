@@ -72,7 +72,7 @@ namespace app_repositories::course_repository
         bool result;
         try
         {
-            auto row = co_await tranPtr->execSqlCoro("UPDATE course SET code = $1, name = $2, last_modified_date = $3  where id = $4;", course.getValueOfCode(), course.getValueOfName(), course.getValueOfLastModifiedDate(), course.getValueOfId());
+            auto& row = co_await tranPtr->execSqlCoro("UPDATE course SET code = $1, name = $2, last_modified_date = $3  where id = $4;", course.getValueOfCode(), course.getValueOfName(), course.getValueOfLastModifiedDate(), course.getValueOfId());
             LOG_INFO << row.affectedRows();
             result = row.affectedRows();
         }

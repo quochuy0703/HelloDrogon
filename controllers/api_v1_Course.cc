@@ -20,7 +20,7 @@ drogon::AsyncTask api::v1::Course::GetAllCourse(const HttpRequestPtr req,
             // jsonVect.append(*it);
             jsonVect["name"] = it->name;
             jsonVect["code"] = it->code;
-            data["courses"].append(jsonVect);
+            data.append(jsonVect);
         };
 
         message = "success";
