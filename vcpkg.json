@@ -1,0 +1,10 @@
+{
+  "dependencies": [ {
+    "name": "drogon",
+    "features": [ "ctl", "mysql", "postgres","redis","sqlite3","yaml"]
+
+  }, "botan", "cryptopp", "mailio","ftplib", "jwt-cpp"],
+  "overrides": [
+
+  ]
+}
