@@ -1,4 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
+
+set(VCPKG_TARGET_TRIPLET "x64-mingw-dynamic")
+set(VCPKG_HOST_TRIPLET "x64-mingw-dynamic")
+# set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/toolchain-mingw.cmake)
+
 project(HelloDrogon CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -30,8 +35,24 @@ add_executable(${PROJECT_NAME} main.cc)
 #
 # and comment out the following lines
 find_package(Drogon CONFIG REQUIRED)
-include_directories(${PROJECT_NAME} "C:\\SoftwareVNN\\msys64\\usr\\local\\include" "C:\\SoftwareVNN\\LT\\lib\\libftp\\include" "C:\\SoftwareVNN\\LT\\lib\\mailio\\include" "C:\\SoftwareVNN\\msys64\\mingw64\\include\\botan-3")
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon botan-3 "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libcryptopp.a" ws2_32 "C:\\SoftwareVNN\\msys64\\usr\\local\\lib\\libftp.dll.a" "C:\\SoftwareVNN\\LT\\lib\\mailio\\lib\\libmailio.dll.a")
+find_package(botan CONFIG REQUIRED)
+find_package(cryptopp CONFIG REQUIRED)
+find_package(mailio CONFIG REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS date_time)
+find_package(ftplib CONFIG REQUIRED)
+
+
+# target_compile_definitions(${PROJECT_NAME} PRIVATE
+#     NOSSL
+#     NOLFS
+#     _WIN32
+#     PICOJSON_USE_INT64
+#     PICOJSON_USE_LOCALE
+# )
+
+# target_link_directories(${PROJECT_NAME} PRIVATE "C:/LT/vcpkg/vcpkg/installed/x64-windows/lib")
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon Botan::Botan-static cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time)
 
 # ##############################################################################
 
