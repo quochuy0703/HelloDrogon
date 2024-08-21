@@ -25,14 +25,13 @@ const std::string Course::primaryKeyName = "id";
 const bool Course::hasPrimaryKey = true;
 const std::string Course::tableName = "course";
 
-const std::vector<typename Course::MetaData> Course::metaData_={
-{"id","int64_t","bigint",8,1,1,1},
-{"created_date","::trantor::Date","timestamp without time zone",0,0,0,0},
-{"last_modified_date","::trantor::Date","timestamp without time zone",0,0,0,0},
-{"code","std::string","character varying",255,0,0,0},
-{"name","std::string","character varying",255,0,0,0},
-{"instructor_id","int32_t","integer",4,0,0,0}
-};
+const std::vector<typename Course::MetaData> Course::metaData_ = {
+    {"id", "int64_t", "bigint", 8, 1, 1, 1},
+    {"created_date", "::trantor::Date", "timestamp without time zone", 0, 0, 0, 0},
+    {"last_modified_date", "::trantor::Date", "timestamp without time zone", 0, 0, 0, 0},
+    {"code", "std::string", "character varying", 255, 0, 0, 0},
+    {"name", "std::string", "character varying", 255, 0, 0, 0},
+    {"instructor_id", "int32_t", "integer", 4, 0, 0, 0}};
 const std::string &Course::getColumnName(size_t index) noexcept(false)
 {
     assert(index < metaData_.size());
@@ -40,505 +39,504 @@ const std::string &Course::getColumnName(size_t index) noexcept(false)
 }
 Course::Course(const Row &r, const ssize_t indexOffset) noexcept
 {
-    if(indexOffset < 0)
+    if (indexOffset < 0)
     {
-        if(!r["id"].isNull())
+        if (!r["id"].isNull())
         {
-            id_=std::make_shared<int64_t>(r["id"].as<int64_t>());
+            id_ = std::make_shared<int64_t>(r["id"].as<int64_t>());
         }
-        if(!r["created_date"].isNull())
+        if (!r["created_date"].isNull())
         {
             auto timeStr = r["created_date"].as<std::string>();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                createdDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                createdDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
-        if(!r["last_modified_date"].isNull())
+        if (!r["last_modified_date"].isNull())
         {
             auto timeStr = r["last_modified_date"].as<std::string>();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                lastModifiedDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
-        if(!r["code"].isNull())
+        if (!r["code"].isNull())
         {
-            code_=std::make_shared<std::string>(r["code"].as<std::string>());
+            code_ = std::make_shared<std::string>(r["code"].as<std::string>());
         }
-        if(!r["name"].isNull())
+        if (!r["name"].isNull())
         {
-            name_=std::make_shared<std::string>(r["name"].as<std::string>());
+            name_ = std::make_shared<std::string>(r["name"].as<std::string>());
         }
-        if(!r["instructor_id"].isNull())
+        if (!r["instructor_id"].isNull())
         {
-            instructorId_=std::make_shared<int32_t>(r["instructor_id"].as<int32_t>());
+            instructorId_ = std::make_shared<int32_t>(r["instructor_id"].as<int32_t>());
         }
     }
     else
     {
         size_t offset = (size_t)indexOffset;
-        if(offset + 6 > r.size())
+        if (offset + 6 > r.size())
         {
             LOG_FATAL << "Invalid SQL result for this model";
             return;
         }
         size_t index;
         index = offset + 0;
-        if(!r[index].isNull())
+        if (!r[index].isNull())
         {
-            id_=std::make_shared<int64_t>(r[index].as<int64_t>());
+            id_ = std::make_shared<int64_t>(r[index].as<int64_t>());
         }
         index = offset + 1;
-        if(!r[index].isNull())
+        if (!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                createdDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                createdDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
         index = offset + 2;
-        if(!r[index].isNull())
+        if (!r[index].isNull())
         {
             auto timeStr = r[index].as<std::string>();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                lastModifiedDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
         index = offset + 3;
-        if(!r[index].isNull())
+        if (!r[index].isNull())
         {
-            code_=std::make_shared<std::string>(r[index].as<std::string>());
+            code_ = std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 4;
-        if(!r[index].isNull())
+        if (!r[index].isNull())
         {
-            name_=std::make_shared<std::string>(r[index].as<std::string>());
+            name_ = std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 5;
-        if(!r[index].isNull())
+        if (!r[index].isNull())
         {
-            instructorId_=std::make_shared<int32_t>(r[index].as<int32_t>());
+            instructorId_ = std::make_shared<int32_t>(r[index].as<int32_t>());
         }
     }
-
 }
 
 Course::Course(const Json::Value &pJson, const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 6)
+    if (pMasqueradingVector.size() != 6)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
-    if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
+    if (!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
         dirtyFlag_[0] = true;
-        if(!pJson[pMasqueradingVector[0]].isNull())
+        if (!pJson[pMasqueradingVector[0]].isNull())
         {
-            id_=std::make_shared<int64_t>((int64_t)pJson[pMasqueradingVector[0]].asInt64());
+            id_ = std::make_shared<int64_t>((int64_t)pJson[pMasqueradingVector[0]].asInt64());
         }
     }
-    if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
+    if (!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
-        if(!pJson[pMasqueradingVector[1]].isNull())
+        if (!pJson[pMasqueradingVector[1]].isNull())
         {
             auto timeStr = pJson[pMasqueradingVector[1]].asString();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                createdDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                createdDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
     }
-    if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
+    if (!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
-        if(!pJson[pMasqueradingVector[2]].isNull())
+        if (!pJson[pMasqueradingVector[2]].isNull())
         {
             auto timeStr = pJson[pMasqueradingVector[2]].asString();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                lastModifiedDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
     }
-    if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
+    if (!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
-        if(!pJson[pMasqueradingVector[3]].isNull())
+        if (!pJson[pMasqueradingVector[3]].isNull())
         {
-            code_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            code_ = std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
-    if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
+    if (!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
-        if(!pJson[pMasqueradingVector[4]].isNull())
+        if (!pJson[pMasqueradingVector[4]].isNull())
         {
-            name_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
+            name_ = std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
-    if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
+    if (!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
-        if(!pJson[pMasqueradingVector[5]].isNull())
+        if (!pJson[pMasqueradingVector[5]].isNull())
         {
-            instructorId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[5]].asInt64());
+            instructorId_ = std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[5]].asInt64());
         }
     }
 }
 
 Course::Course(const Json::Value &pJson) noexcept(false)
 {
-    if(pJson.isMember("id"))
+    if (pJson.isMember("id"))
     {
-        dirtyFlag_[0]=true;
-        if(!pJson["id"].isNull())
+        dirtyFlag_[0] = true;
+        if (!pJson["id"].isNull())
         {
-            id_=std::make_shared<int64_t>((int64_t)pJson["id"].asInt64());
+            id_ = std::make_shared<int64_t>((int64_t)pJson["id"].asInt64());
         }
     }
-    if(pJson.isMember("created_date"))
+    if (pJson.isMember("created_date"))
     {
-        dirtyFlag_[1]=true;
-        if(!pJson["created_date"].isNull())
+        dirtyFlag_[1] = true;
+        if (!pJson["created_date"].isNull())
         {
             auto timeStr = pJson["created_date"].asString();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                createdDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                createdDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
     }
-    if(pJson.isMember("last_modified_date"))
+    if (pJson.isMember("last_modified_date"))
     {
-        dirtyFlag_[2]=true;
-        if(!pJson["last_modified_date"].isNull())
+        dirtyFlag_[2] = true;
+        if (!pJson["last_modified_date"].isNull())
         {
             auto timeStr = pJson["last_modified_date"].asString();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                lastModifiedDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
     }
-    if(pJson.isMember("code"))
+    if (pJson.isMember("code"))
     {
-        dirtyFlag_[3]=true;
-        if(!pJson["code"].isNull())
+        dirtyFlag_[3] = true;
+        if (!pJson["code"].isNull())
         {
-            code_=std::make_shared<std::string>(pJson["code"].asString());
+            code_ = std::make_shared<std::string>(pJson["code"].asString());
         }
     }
-    if(pJson.isMember("name"))
+    if (pJson.isMember("name"))
     {
-        dirtyFlag_[4]=true;
-        if(!pJson["name"].isNull())
+        dirtyFlag_[4] = true;
+        if (!pJson["name"].isNull())
         {
-            name_=std::make_shared<std::string>(pJson["name"].asString());
+            name_ = std::make_shared<std::string>(pJson["name"].asString());
         }
     }
-    if(pJson.isMember("instructor_id"))
+    if (pJson.isMember("instructor_id"))
     {
-        dirtyFlag_[5]=true;
-        if(!pJson["instructor_id"].isNull())
+        dirtyFlag_[5] = true;
+        if (!pJson["instructor_id"].isNull())
         {
-            instructorId_=std::make_shared<int32_t>((int32_t)pJson["instructor_id"].asInt64());
+            instructorId_ = std::make_shared<int32_t>((int32_t)pJson["instructor_id"].asInt64());
         }
     }
 }
 
 void Course::updateByMasqueradedJson(const Json::Value &pJson,
-                                            const std::vector<std::string> &pMasqueradingVector) noexcept(false)
+                                     const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 6)
+    if (pMasqueradingVector.size() != 6)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
     }
-    if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
+    if (!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
     {
-        if(!pJson[pMasqueradingVector[0]].isNull())
+        if (!pJson[pMasqueradingVector[0]].isNull())
         {
-            id_=std::make_shared<int64_t>((int64_t)pJson[pMasqueradingVector[0]].asInt64());
+            id_ = std::make_shared<int64_t>((int64_t)pJson[pMasqueradingVector[0]].asInt64());
         }
     }
-    if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
+    if (!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
     {
         dirtyFlag_[1] = true;
-        if(!pJson[pMasqueradingVector[1]].isNull())
+        if (!pJson[pMasqueradingVector[1]].isNull())
         {
             auto timeStr = pJson[pMasqueradingVector[1]].asString();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                createdDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                createdDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
     }
-    if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
+    if (!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
     {
         dirtyFlag_[2] = true;
-        if(!pJson[pMasqueradingVector[2]].isNull())
+        if (!pJson[pMasqueradingVector[2]].isNull())
         {
             auto timeStr = pJson[pMasqueradingVector[2]].asString();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                lastModifiedDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
     }
-    if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
+    if (!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
     {
         dirtyFlag_[3] = true;
-        if(!pJson[pMasqueradingVector[3]].isNull())
+        if (!pJson[pMasqueradingVector[3]].isNull())
         {
-            code_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            code_ = std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
-    if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
+    if (!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
     {
         dirtyFlag_[4] = true;
-        if(!pJson[pMasqueradingVector[4]].isNull())
+        if (!pJson[pMasqueradingVector[4]].isNull())
         {
-            name_=std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
+            name_ = std::make_shared<std::string>(pJson[pMasqueradingVector[4]].asString());
         }
     }
-    if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
+    if (!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
     {
         dirtyFlag_[5] = true;
-        if(!pJson[pMasqueradingVector[5]].isNull())
+        if (!pJson[pMasqueradingVector[5]].isNull())
         {
-            instructorId_=std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[5]].asInt64());
+            instructorId_ = std::make_shared<int32_t>((int32_t)pJson[pMasqueradingVector[5]].asInt64());
         }
     }
 }
 
 void Course::updateByJson(const Json::Value &pJson) noexcept(false)
 {
-    if(pJson.isMember("id"))
+    if (pJson.isMember("id"))
     {
-        if(!pJson["id"].isNull())
+        if (!pJson["id"].isNull())
         {
-            id_=std::make_shared<int64_t>((int64_t)pJson["id"].asInt64());
+            id_ = std::make_shared<int64_t>((int64_t)pJson["id"].asInt64());
         }
     }
-    if(pJson.isMember("created_date"))
+    if (pJson.isMember("created_date"))
     {
         dirtyFlag_[1] = true;
-        if(!pJson["created_date"].isNull())
+        if (!pJson["created_date"].isNull())
         {
             auto timeStr = pJson["created_date"].asString();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                createdDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                createdDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
     }
-    if(pJson.isMember("last_modified_date"))
+    if (pJson.isMember("last_modified_date"))
     {
         dirtyFlag_[2] = true;
-        if(!pJson["last_modified_date"].isNull())
+        if (!pJson["last_modified_date"].isNull())
         {
             auto timeStr = pJson["last_modified_date"].asString();
             struct tm stm;
-            memset(&stm,0,sizeof(stm));
-            auto p = strptime(timeStr.c_str(),"%Y-%m-%d %H:%M:%S",&stm);
+            memset(&stm, 0, sizeof(stm));
+            auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
             time_t t = mktime(&stm);
             size_t decimalNum = 0;
-            if(p)
+            if (p)
             {
-                if(*p=='.')
+                if (*p == '.')
                 {
-                    std::string decimals(p+1,&timeStr[timeStr.length()]);
-                    while(decimals.length()<6)
+                    std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                    while (decimals.length() < 6)
                     {
                         decimals += "0";
                     }
                     decimalNum = (size_t)atol(decimals.c_str());
                 }
-                lastModifiedDate_=std::make_shared<::trantor::Date>(t*1000000+decimalNum);
+                lastModifiedDate_ = std::make_shared<::trantor::Date>(t * 1000000 + decimalNum);
             }
         }
     }
-    if(pJson.isMember("code"))
+    if (pJson.isMember("code"))
     {
         dirtyFlag_[3] = true;
-        if(!pJson["code"].isNull())
+        if (!pJson["code"].isNull())
         {
-            code_=std::make_shared<std::string>(pJson["code"].asString());
+            code_ = std::make_shared<std::string>(pJson["code"].asString());
         }
     }
-    if(pJson.isMember("name"))
+    if (pJson.isMember("name"))
     {
         dirtyFlag_[4] = true;
-        if(!pJson["name"].isNull())
+        if (!pJson["name"].isNull())
         {
-            name_=std::make_shared<std::string>(pJson["name"].asString());
+            name_ = std::make_shared<std::string>(pJson["name"].asString());
         }
     }
-    if(pJson.isMember("instructor_id"))
+    if (pJson.isMember("instructor_id"))
     {
         dirtyFlag_[5] = true;
-        if(!pJson["instructor_id"].isNull())
+        if (!pJson["instructor_id"].isNull())
         {
-            instructorId_=std::make_shared<int32_t>((int32_t)pJson["instructor_id"].asInt64());
+            instructorId_ = std::make_shared<int32_t>((int32_t)pJson["instructor_id"].asInt64());
         }
     }
 }
@@ -546,7 +544,7 @@ void Course::updateByJson(const Json::Value &pJson) noexcept(false)
 const int64_t &Course::getValueOfId() const noexcept
 {
     static const int64_t defaultValue = int64_t();
-    if(id_)
+    if (id_)
         return *id_;
     return defaultValue;
 }
@@ -559,7 +557,7 @@ void Course::setId(const int64_t &pId) noexcept
     id_ = std::make_shared<int64_t>(pId);
     dirtyFlag_[0] = true;
 }
-const typename Course::PrimaryKeyType & Course::getPrimaryKey() const
+const typename Course::PrimaryKeyType &Course::getPrimaryKey() const
 {
     assert(id_);
     return *id_;
@@ -568,7 +566,7 @@ const typename Course::PrimaryKeyType & Course::getPrimaryKey() const
 const ::trantor::Date &Course::getValueOfCreatedDate() const noexcept
 {
     static const ::trantor::Date defaultValue = ::trantor::Date();
-    if(createdDate_)
+    if (createdDate_)
         return *createdDate_;
     return defaultValue;
 }
@@ -590,7 +588,7 @@ void Course::setCreatedDateToNull() noexcept
 const ::trantor::Date &Course::getValueOfLastModifiedDate() const noexcept
 {
     static const ::trantor::Date defaultValue = ::trantor::Date();
-    if(lastModifiedDate_)
+    if (lastModifiedDate_)
         return *lastModifiedDate_;
     return defaultValue;
 }
@@ -612,7 +610,7 @@ void Course::setLastModifiedDateToNull() noexcept
 const std::string &Course::getValueOfCode() const noexcept
 {
     static const std::string defaultValue = std::string();
-    if(code_)
+    if (code_)
         return *code_;
     return defaultValue;
 }
@@ -639,7 +637,7 @@ void Course::setCodeToNull() noexcept
 const std::string &Course::getValueOfName() const noexcept
 {
     static const std::string defaultValue = std::string();
-    if(name_)
+    if (name_)
         return *name_;
     return defaultValue;
 }
@@ -666,7 +664,7 @@ void Course::setNameToNull() noexcept
 const int32_t &Course::getValueOfInstructorId() const noexcept
 {
     static const int32_t defaultValue = int32_t();
-    if(instructorId_)
+    if (instructorId_)
         return *instructorId_;
     return defaultValue;
 }
@@ -691,21 +689,20 @@ void Course::updateId(const uint64_t id)
 
 const std::vector<std::string> &Course::insertColumns() noexcept
 {
-    static const std::vector<std::string> inCols={
+    static const std::vector<std::string> inCols = {
         "created_date",
         "last_modified_date",
         "code",
         "name",
-        "instructor_id"
-    };
+        "instructor_id"};
     return inCols;
 }
 
 void Course::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 {
-    if(dirtyFlag_[1])
+    if (dirtyFlag_[1])
     {
-        if(getCreatedDate())
+        if (getCreatedDate())
         {
             binder << getValueOfCreatedDate();
         }
@@ -714,9 +711,9 @@ void Course::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[2])
+    if (dirtyFlag_[2])
     {
-        if(getLastModifiedDate())
+        if (getLastModifiedDate())
         {
             binder << getValueOfLastModifiedDate();
         }
@@ -725,9 +722,9 @@ void Course::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[3])
+    if (dirtyFlag_[3])
     {
-        if(getCode())
+        if (getCode())
         {
             binder << getValueOfCode();
         }
@@ -736,9 +733,9 @@ void Course::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[4])
+    if (dirtyFlag_[4])
     {
-        if(getName())
+        if (getName())
         {
             binder << getValueOfName();
         }
@@ -747,9 +744,9 @@ void Course::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[5])
+    if (dirtyFlag_[5])
     {
-        if(getInstructorId())
+        if (getInstructorId())
         {
             binder << getValueOfInstructorId();
         }
@@ -763,23 +760,23 @@ void Course::outputArgs(drogon::orm::internal::SqlBinder &binder) const
 const std::vector<std::string> Course::updateColumns() const
 {
     std::vector<std::string> ret;
-    if(dirtyFlag_[1])
+    if (dirtyFlag_[1])
     {
         ret.push_back(getColumnName(1));
     }
-    if(dirtyFlag_[2])
+    if (dirtyFlag_[2])
     {
         ret.push_back(getColumnName(2));
     }
-    if(dirtyFlag_[3])
+    if (dirtyFlag_[3])
     {
         ret.push_back(getColumnName(3));
     }
-    if(dirtyFlag_[4])
+    if (dirtyFlag_[4])
     {
         ret.push_back(getColumnName(4));
     }
-    if(dirtyFlag_[5])
+    if (dirtyFlag_[5])
     {
         ret.push_back(getColumnName(5));
     }
@@ -788,9 +785,9 @@ const std::vector<std::string> Course::updateColumns() const
 
 void Course::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 {
-    if(dirtyFlag_[1])
+    if (dirtyFlag_[1])
     {
-        if(getCreatedDate())
+        if (getCreatedDate())
         {
             binder << getValueOfCreatedDate();
         }
@@ -799,9 +796,9 @@ void Course::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[2])
+    if (dirtyFlag_[2])
     {
-        if(getLastModifiedDate())
+        if (getLastModifiedDate())
         {
             binder << getValueOfLastModifiedDate();
         }
@@ -810,9 +807,9 @@ void Course::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[3])
+    if (dirtyFlag_[3])
     {
-        if(getCode())
+        if (getCode())
         {
             binder << getValueOfCode();
         }
@@ -821,9 +818,9 @@ void Course::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[4])
+    if (dirtyFlag_[4])
     {
-        if(getName())
+        if (getName())
         {
             binder << getValueOfName();
         }
@@ -832,9 +829,9 @@ void Course::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
-    if(dirtyFlag_[5])
+    if (dirtyFlag_[5])
     {
-        if(getInstructorId())
+        if (getInstructorId())
         {
             binder << getValueOfInstructorId();
         }
@@ -847,53 +844,53 @@ void Course::updateArgs(drogon::orm::internal::SqlBinder &binder) const
 Json::Value Course::toJson() const
 {
     Json::Value ret;
-    if(getId())
+    if (getId())
     {
-        ret["id"]=(Json::Int64)getValueOfId();
+        ret["id"] = (Json::Int64)getValueOfId();
     }
     else
     {
-        ret["id"]=Json::Value();
+        ret["id"] = Json::Value();
     }
-    if(getCreatedDate())
+    if (getCreatedDate())
     {
-        ret["created_date"]=getCreatedDate()->toDbStringLocal();
-    }
-    else
-    {
-        ret["created_date"]=Json::Value();
-    }
-    if(getLastModifiedDate())
-    {
-        ret["last_modified_date"]=getLastModifiedDate()->toDbStringLocal();
+        ret["created_date"] = getCreatedDate()->toDbStringLocal();
     }
     else
     {
-        ret["last_modified_date"]=Json::Value();
+        ret["created_date"] = Json::Value();
     }
-    if(getCode())
+    if (getLastModifiedDate())
     {
-        ret["code"]=getValueOfCode();
-    }
-    else
-    {
-        ret["code"]=Json::Value();
-    }
-    if(getName())
-    {
-        ret["name"]=getValueOfName();
+        ret["last_modified_date"] = getLastModifiedDate()->toDbStringLocal();
     }
     else
     {
-        ret["name"]=Json::Value();
+        ret["last_modified_date"] = Json::Value();
     }
-    if(getInstructorId())
+    if (getCode())
     {
-        ret["instructor_id"]=getValueOfInstructorId();
+        ret["code"] = getValueOfCode();
     }
     else
     {
-        ret["instructor_id"]=Json::Value();
+        ret["code"] = Json::Value();
+    }
+    if (getName())
+    {
+        ret["name"] = getValueOfName();
+    }
+    else
+    {
+        ret["name"] = Json::Value();
+    }
+    if (getInstructorId())
+    {
+        ret["instructor_id"] = getValueOfInstructorId();
+    }
+    else
+    {
+        ret["instructor_id"] = Json::Value();
     }
     return ret;
 }
@@ -902,158 +899,158 @@ Json::Value Course::toMasqueradedJson(
     const std::vector<std::string> &pMasqueradingVector) const
 {
     Json::Value ret;
-    if(pMasqueradingVector.size() == 6)
+    if (pMasqueradingVector.size() == 6)
     {
-        if(!pMasqueradingVector[0].empty())
+        if (!pMasqueradingVector[0].empty())
         {
-            if(getId())
+            if (getId())
             {
-                ret[pMasqueradingVector[0]]=(Json::Int64)getValueOfId();
+                ret[pMasqueradingVector[0]] = (Json::Int64)getValueOfId();
             }
             else
             {
-                ret[pMasqueradingVector[0]]=Json::Value();
+                ret[pMasqueradingVector[0]] = Json::Value();
             }
         }
-        if(!pMasqueradingVector[1].empty())
+        if (!pMasqueradingVector[1].empty())
         {
-            if(getCreatedDate())
+            if (getCreatedDate())
             {
-                ret[pMasqueradingVector[1]]=getCreatedDate()->toDbStringLocal();
+                ret[pMasqueradingVector[1]] = getCreatedDate()->toDbStringLocal();
             }
             else
             {
-                ret[pMasqueradingVector[1]]=Json::Value();
+                ret[pMasqueradingVector[1]] = Json::Value();
             }
         }
-        if(!pMasqueradingVector[2].empty())
+        if (!pMasqueradingVector[2].empty())
         {
-            if(getLastModifiedDate())
+            if (getLastModifiedDate())
             {
-                ret[pMasqueradingVector[2]]=getLastModifiedDate()->toDbStringLocal();
+                ret[pMasqueradingVector[2]] = getLastModifiedDate()->toDbStringLocal();
             }
             else
             {
-                ret[pMasqueradingVector[2]]=Json::Value();
+                ret[pMasqueradingVector[2]] = Json::Value();
             }
         }
-        if(!pMasqueradingVector[3].empty())
+        if (!pMasqueradingVector[3].empty())
         {
-            if(getCode())
+            if (getCode())
             {
-                ret[pMasqueradingVector[3]]=getValueOfCode();
+                ret[pMasqueradingVector[3]] = getValueOfCode();
             }
             else
             {
-                ret[pMasqueradingVector[3]]=Json::Value();
+                ret[pMasqueradingVector[3]] = Json::Value();
             }
         }
-        if(!pMasqueradingVector[4].empty())
+        if (!pMasqueradingVector[4].empty())
         {
-            if(getName())
+            if (getName())
             {
-                ret[pMasqueradingVector[4]]=getValueOfName();
+                ret[pMasqueradingVector[4]] = getValueOfName();
             }
             else
             {
-                ret[pMasqueradingVector[4]]=Json::Value();
+                ret[pMasqueradingVector[4]] = Json::Value();
             }
         }
-        if(!pMasqueradingVector[5].empty())
+        if (!pMasqueradingVector[5].empty())
         {
-            if(getInstructorId())
+            if (getInstructorId())
             {
-                ret[pMasqueradingVector[5]]=getValueOfInstructorId();
+                ret[pMasqueradingVector[5]] = getValueOfInstructorId();
             }
             else
             {
-                ret[pMasqueradingVector[5]]=Json::Value();
+                ret[pMasqueradingVector[5]] = Json::Value();
             }
         }
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
-    if(getId())
+    if (getId())
     {
-        ret["id"]=(Json::Int64)getValueOfId();
+        ret["id"] = (Json::Int64)getValueOfId();
     }
     else
     {
-        ret["id"]=Json::Value();
+        ret["id"] = Json::Value();
     }
-    if(getCreatedDate())
+    if (getCreatedDate())
     {
-        ret["created_date"]=getCreatedDate()->toDbStringLocal();
-    }
-    else
-    {
-        ret["created_date"]=Json::Value();
-    }
-    if(getLastModifiedDate())
-    {
-        ret["last_modified_date"]=getLastModifiedDate()->toDbStringLocal();
+        ret["created_date"] = getCreatedDate()->toDbStringLocal();
     }
     else
     {
-        ret["last_modified_date"]=Json::Value();
+        ret["created_date"] = Json::Value();
     }
-    if(getCode())
+    if (getLastModifiedDate())
     {
-        ret["code"]=getValueOfCode();
-    }
-    else
-    {
-        ret["code"]=Json::Value();
-    }
-    if(getName())
-    {
-        ret["name"]=getValueOfName();
+        ret["last_modified_date"] = getLastModifiedDate()->toDbStringLocal();
     }
     else
     {
-        ret["name"]=Json::Value();
+        ret["last_modified_date"] = Json::Value();
     }
-    if(getInstructorId())
+    if (getCode())
     {
-        ret["instructor_id"]=getValueOfInstructorId();
+        ret["code"] = getValueOfCode();
     }
     else
     {
-        ret["instructor_id"]=Json::Value();
+        ret["code"] = Json::Value();
+    }
+    if (getName())
+    {
+        ret["name"] = getValueOfName();
+    }
+    else
+    {
+        ret["name"] = Json::Value();
+    }
+    if (getInstructorId())
+    {
+        ret["instructor_id"] = getValueOfInstructorId();
+    }
+    else
+    {
+        ret["instructor_id"] = Json::Value();
     }
     return ret;
 }
 
 bool Course::validateJsonForCreation(const Json::Value &pJson, std::string &err)
 {
-    if(pJson.isMember("id"))
+    if (pJson.isMember("id"))
     {
-        if(!validJsonOfField(0, "id", pJson["id"], err, true))
+        if (!validJsonOfField(0, "id", pJson["id"], err, true))
             return false;
     }
-    if(pJson.isMember("created_date"))
+    if (pJson.isMember("created_date"))
     {
-        if(!validJsonOfField(1, "created_date", pJson["created_date"], err, true))
+        if (!validJsonOfField(1, "created_date", pJson["created_date"], err, true))
             return false;
     }
-    if(pJson.isMember("last_modified_date"))
+    if (pJson.isMember("last_modified_date"))
     {
-        if(!validJsonOfField(2, "last_modified_date", pJson["last_modified_date"], err, true))
+        if (!validJsonOfField(2, "last_modified_date", pJson["last_modified_date"], err, true))
             return false;
     }
-    if(pJson.isMember("code"))
+    if (pJson.isMember("code"))
     {
-        if(!validJsonOfField(3, "code", pJson["code"], err, true))
+        if (!validJsonOfField(3, "code", pJson["code"], err, true))
             return false;
     }
-    if(pJson.isMember("name"))
+    if (pJson.isMember("name"))
     {
-        if(!validJsonOfField(4, "name", pJson["name"], err, true))
+        if (!validJsonOfField(4, "name", pJson["name"], err, true))
             return false;
     }
-    if(pJson.isMember("instructor_id"))
+    if (pJson.isMember("instructor_id"))
     {
-        if(!validJsonOfField(5, "instructor_id", pJson["instructor_id"], err, true))
+        if (!validJsonOfField(5, "instructor_id", pJson["instructor_id"], err, true))
             return false;
     }
     return true;
@@ -1062,73 +1059,74 @@ bool Course::validateMasqueradedJsonForCreation(const Json::Value &pJson,
                                                 const std::vector<std::string> &pMasqueradingVector,
                                                 std::string &err)
 {
-    if(pMasqueradingVector.size() != 6)
+    if (pMasqueradingVector.size() != 6)
     {
         err = "Bad masquerading vector";
         return false;
     }
-    try {
-      if(!pMasqueradingVector[0].empty())
-      {
-          if(pJson.isMember(pMasqueradingVector[0]))
-          {
-              if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
-                  return false;
-          }
-      }
-      if(!pMasqueradingVector[1].empty())
-      {
-          if(pJson.isMember(pMasqueradingVector[1]))
-          {
-              if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
-                  return false;
-          }
-      }
-      if(!pMasqueradingVector[2].empty())
-      {
-          if(pJson.isMember(pMasqueradingVector[2]))
-          {
-              if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
-                  return false;
-          }
-      }
-      if(!pMasqueradingVector[3].empty())
-      {
-          if(pJson.isMember(pMasqueradingVector[3]))
-          {
-              if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
-                  return false;
-          }
-      }
-      if(!pMasqueradingVector[4].empty())
-      {
-          if(pJson.isMember(pMasqueradingVector[4]))
-          {
-              if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
-                  return false;
-          }
-      }
-      if(!pMasqueradingVector[5].empty())
-      {
-          if(pJson.isMember(pMasqueradingVector[5]))
-          {
-              if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
-                  return false;
-          }
-      }
-    }
-    catch(const Json::LogicError &e)
+    try
     {
-      err = e.what();
-      return false;
+        if (!pMasqueradingVector[0].empty())
+        {
+            if (pJson.isMember(pMasqueradingVector[0]))
+            {
+                if (!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, true))
+                    return false;
+            }
+        }
+        if (!pMasqueradingVector[1].empty())
+        {
+            if (pJson.isMember(pMasqueradingVector[1]))
+            {
+                if (!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, true))
+                    return false;
+            }
+        }
+        if (!pMasqueradingVector[2].empty())
+        {
+            if (pJson.isMember(pMasqueradingVector[2]))
+            {
+                if (!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, true))
+                    return false;
+            }
+        }
+        if (!pMasqueradingVector[3].empty())
+        {
+            if (pJson.isMember(pMasqueradingVector[3]))
+            {
+                if (!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, true))
+                    return false;
+            }
+        }
+        if (!pMasqueradingVector[4].empty())
+        {
+            if (pJson.isMember(pMasqueradingVector[4]))
+            {
+                if (!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, true))
+                    return false;
+            }
+        }
+        if (!pMasqueradingVector[5].empty())
+        {
+            if (pJson.isMember(pMasqueradingVector[5]))
+            {
+                if (!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, true))
+                    return false;
+            }
+        }
+    }
+    catch (const Json::LogicError &e)
+    {
+        err = e.what();
+        return false;
     }
     return true;
 }
 bool Course::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
 {
-    if(pJson.isMember("id"))
+    if (pJson.isMember("id"))
     {
-        if(!validJsonOfField(0, "id", pJson["id"], err, false))
+        if (!validJsonOfField(0, "id", pJson["id"], err, false))
             return false;
     }
     else
@@ -1136,29 +1134,29 @@ bool Course::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
         err = "The value of primary key must be set in the json object for update";
         return false;
     }
-    if(pJson.isMember("created_date"))
+    if (pJson.isMember("created_date"))
     {
-        if(!validJsonOfField(1, "created_date", pJson["created_date"], err, false))
+        if (!validJsonOfField(1, "created_date", pJson["created_date"], err, false))
             return false;
     }
-    if(pJson.isMember("last_modified_date"))
+    if (pJson.isMember("last_modified_date"))
     {
-        if(!validJsonOfField(2, "last_modified_date", pJson["last_modified_date"], err, false))
+        if (!validJsonOfField(2, "last_modified_date", pJson["last_modified_date"], err, false))
             return false;
     }
-    if(pJson.isMember("code"))
+    if (pJson.isMember("code"))
     {
-        if(!validJsonOfField(3, "code", pJson["code"], err, false))
+        if (!validJsonOfField(3, "code", pJson["code"], err, false))
             return false;
     }
-    if(pJson.isMember("name"))
+    if (pJson.isMember("name"))
     {
-        if(!validJsonOfField(4, "name", pJson["name"], err, false))
+        if (!validJsonOfField(4, "name", pJson["name"], err, false))
             return false;
     }
-    if(pJson.isMember("instructor_id"))
+    if (pJson.isMember("instructor_id"))
     {
-        if(!validJsonOfField(5, "instructor_id", pJson["instructor_id"], err, false))
+        if (!validJsonOfField(5, "instructor_id", pJson["instructor_id"], err, false))
             return false;
     }
     return true;
@@ -1167,52 +1165,53 @@ bool Course::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
                                               const std::vector<std::string> &pMasqueradingVector,
                                               std::string &err)
 {
-    if(pMasqueradingVector.size() != 6)
+    if (pMasqueradingVector.size() != 6)
     {
         err = "Bad masquerading vector";
         return false;
     }
-    try {
-      if(!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
-      {
-          if(!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
-              return false;
-      }
-    else
+    try
     {
-        err = "The value of primary key must be set in the json object for update";
+        if (!pMasqueradingVector[0].empty() && pJson.isMember(pMasqueradingVector[0]))
+        {
+            if (!validJsonOfField(0, pMasqueradingVector[0], pJson[pMasqueradingVector[0]], err, false))
+                return false;
+        }
+        else
+        {
+            err = "The value of primary key must be set in the json object for update";
+            return false;
+        }
+        if (!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
+        {
+            if (!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
+                return false;
+        }
+        if (!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
+        {
+            if (!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
+                return false;
+        }
+        if (!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
+        {
+            if (!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
+                return false;
+        }
+        if (!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
+        {
+            if (!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
+                return false;
+        }
+        if (!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
+        {
+            if (!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
+                return false;
+        }
+    }
+    catch (const Json::LogicError &e)
+    {
+        err = e.what();
         return false;
-    }
-      if(!pMasqueradingVector[1].empty() && pJson.isMember(pMasqueradingVector[1]))
-      {
-          if(!validJsonOfField(1, pMasqueradingVector[1], pJson[pMasqueradingVector[1]], err, false))
-              return false;
-      }
-      if(!pMasqueradingVector[2].empty() && pJson.isMember(pMasqueradingVector[2]))
-      {
-          if(!validJsonOfField(2, pMasqueradingVector[2], pJson[pMasqueradingVector[2]], err, false))
-              return false;
-      }
-      if(!pMasqueradingVector[3].empty() && pJson.isMember(pMasqueradingVector[3]))
-      {
-          if(!validJsonOfField(3, pMasqueradingVector[3], pJson[pMasqueradingVector[3]], err, false))
-              return false;
-      }
-      if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
-      {
-          if(!validJsonOfField(4, pMasqueradingVector[4], pJson[pMasqueradingVector[4]], err, false))
-              return false;
-      }
-      if(!pMasqueradingVector[5].empty() && pJson.isMember(pMasqueradingVector[5]))
-      {
-          if(!validJsonOfField(5, pMasqueradingVector[5], pJson[pMasqueradingVector[5]], err, false))
-              return false;
-      }
-    }
-    catch(const Json::LogicError &e)
-    {
-      err = e.what();
-      return false;
     }
     return true;
 }
@@ -1222,111 +1221,113 @@ bool Course::validJsonOfField(size_t index,
                               std::string &err,
                               bool isForCreation)
 {
-    switch(index)
+    switch (index)
     {
-        case 0:
-            if(pJson.isNull())
-            {
-                err="The " + fieldName + " column cannot be null";
-                return false;
-            }
-            if(isForCreation)
-            {
-                err="The automatic primary key cannot be set";
-                return false;
-            }
-            if(!pJson.isInt64())
-            {
-                err="Type error in the "+fieldName+" field";
-                return false;
-            }
-            break;
-        case 1:
-            if(pJson.isNull())
-            {
-                return true;
-            }
-            if(!pJson.isString())
-            {
-                err="Type error in the "+fieldName+" field";
-                return false;
-            }
-            break;
-        case 2:
-            if(pJson.isNull())
-            {
-                return true;
-            }
-            if(!pJson.isString())
-            {
-                err="Type error in the "+fieldName+" field";
-                return false;
-            }
-            break;
-        case 3:
-            if(pJson.isNull())
-            {
-                return true;
-            }
-            if(!pJson.isString())
-            {
-                err="Type error in the "+fieldName+" field";
-                return false;
-            }
-            // asString().length() creates a string object, is there any better way to validate the length?
-            if(pJson.isString() && pJson.asString().length() > 255)
-            {
-                err="String length exceeds limit for the " +
-                    fieldName +
-                    " field (the maximum value is 255)";
-                return false;
-            }
-
-            break;
-        case 4:
-            if(pJson.isNull())
-            {
-                return true;
-            }
-            if(!pJson.isString())
-            {
-                err="Type error in the "+fieldName+" field";
-                return false;
-            }
-            // asString().length() creates a string object, is there any better way to validate the length?
-            if(pJson.isString() && pJson.asString().length() > 255)
-            {
-                err="String length exceeds limit for the " +
-                    fieldName +
-                    " field (the maximum value is 255)";
-                return false;
-            }
-
-            break;
-        case 5:
-            if(pJson.isNull())
-            {
-                return true;
-            }
-            if(!pJson.isInt())
-            {
-                err="Type error in the "+fieldName+" field";
-                return false;
-            }
-            break;
-        default:
-            err="Internal error in the server";
+    case 0:
+        if (pJson.isNull())
+        {
+            err = "The " + fieldName + " column cannot be null";
             return false;
+        }
+        if (isForCreation)
+        {
+            err = "The automatic primary key cannot be set";
+            return false;
+        }
+        if (!pJson.isInt64())
+        {
+            err = "Type error in the " + fieldName + " field";
+            return false;
+        }
+        break;
+    case 1:
+        if (pJson.isNull())
+        {
+            return true;
+        }
+        if (!pJson.isString())
+        {
+            err = "Type error in the " + fieldName + " field";
+            return false;
+        }
+        break;
+    case 2:
+        if (pJson.isNull())
+        {
+            return true;
+        }
+        if (!pJson.isString())
+        {
+            err = "Type error in the " + fieldName + " field";
+            return false;
+        }
+        break;
+    case 3:
+        if (pJson.isNull())
+        {
+            return true;
+        }
+        if (!pJson.isString())
+        {
+            err = "Type error in the " + fieldName + " field";
+            return false;
+        }
+        // asString().length() creates a string object, is there any better way to validate the length?
+        if (pJson.isString() && pJson.asString().length() > 255)
+        {
+            err = "String length exceeds limit for the " +
+                  fieldName +
+                  " field (the maximum value is 255)";
+            return false;
+        }
+
+        break;
+    case 4:
+        if (pJson.isNull())
+        {
+            return true;
+        }
+        if (!pJson.isString())
+        {
+            err = "Type error in the " + fieldName + " field";
+            return false;
+        }
+        // asString().length() creates a string object, is there any better way to validate the length?
+        if (pJson.isString() && pJson.asString().length() > 255)
+        {
+            err = "String length exceeds limit for the " +
+                  fieldName +
+                  " field (the maximum value is 255)";
+            return false;
+        }
+
+        break;
+    case 5:
+        if (pJson.isNull())
+        {
+            return true;
+        }
+        if (!pJson.isInt())
+        {
+            err = "Type error in the " + fieldName + " field";
+            return false;
+        }
+        break;
+    default:
+        err = "Internal error in the server";
+        return false;
     }
     return true;
 }
-Instructor Course::getInstructor(const DbClientPtr &clientPtr) const {
+Instructor Course::getInstructor(const DbClientPtr &clientPtr) const
+{
     static const std::string sql = "select * from instructor where id = $1";
     Result r(nullptr);
     {
         auto binder = *clientPtr << sql;
         binder << *instructorId_ << Mode::Blocking >>
-            [&r](const Result &result) { r = result; };
+            [&r](const Result &result)
+        { r = result; };
         binder.exec();
     }
     if (r.size() == 0)
@@ -1346,30 +1347,32 @@ void Course::getInstructor(const DbClientPtr &clientPtr,
 {
     static const std::string sql = "select * from instructor where id = $1";
     *clientPtr << sql
-               << *instructorId_
-               >> [rcb = std::move(rcb), ecb](const Result &r){
-                    if (r.size() == 0)
-                    {
-                        ecb(UnexpectedRows("0 rows found"));
-                    }
-                    else if (r.size() > 1)
-                    {
-                        ecb(UnexpectedRows("Found more than one row"));
-                    }
-                    else
-                    {
-                        rcb(Instructor(r[0]));
-                    }
-               }
-               >> ecb;
+               << *instructorId_ >>
+        [rcb = std::move(rcb), ecb](const Result &r)
+    {
+        if (r.size() == 0)
+        {
+            ecb(UnexpectedRows("0 rows found"));
+        }
+        else if (r.size() > 1)
+        {
+            ecb(UnexpectedRows("Found more than one row"));
+        }
+        else
+        {
+            rcb(Instructor(r[0]));
+        }
+    } >> ecb;
 }
-std::vector<Review> Course::getReview(const DbClientPtr &clientPtr) const {
+std::vector<Review> Course::getReview(const DbClientPtr &clientPtr) const
+{
     static const std::string sql = "select * from review where course_id = $1";
     Result r(nullptr);
     {
         auto binder = *clientPtr << sql;
         binder << *id_ << Mode::Blocking >>
-            [&r](const Result &result) { r = result; };
+            [&r](const Result &result)
+        { r = result; };
         binder.exec();
     }
     std::vector<Review> ret;
@@ -1387,15 +1390,15 @@ void Course::getReview(const DbClientPtr &clientPtr,
 {
     static const std::string sql = "select * from review where course_id = $1";
     *clientPtr << sql
-               << *id_
-               >> [rcb = std::move(rcb)](const Result &r){
-                   std::vector<Review> ret;
-                   ret.reserve(r.size());
-                   for (auto const &row : r)
-                   {
-                       ret.emplace_back(Review(row));
-                   }
-                   rcb(ret);
-               }
-               >> ecb;
+               << *id_ >>
+        [rcb = std::move(rcb)](const Result &r)
+    {
+        std::vector<Review> ret;
+        ret.reserve(r.size());
+        for (auto const &row : r)
+        {
+            ret.emplace_back(Review(row));
+        }
+        rcb(ret);
+    } >> ecb;
 }

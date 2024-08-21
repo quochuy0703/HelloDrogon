@@ -4,6 +4,7 @@
 #include "./utils/ExecuteAwaiter.hpp"
 #include "./utils/EmailHelper.hpp"
 #include "./utils/Utils.hpp"
+#include "aop/Application.h"
 
 using namespace drogon;
 
@@ -15,6 +16,7 @@ int main()
 	// drogon::app().addListener("0.0.0.0", 5555);
 	// Load config file
 	drogon::app().loadConfigFile("../config.json");
+        App::Application();
 	// drogon::app().loadConfigFile("../config.yaml");
 	// Run HTTP framework,the method will block in the internal event loop
 	drogon::app().registerHandler("/test_request_coro/{1}", [](drogon::HttpRequestPtr req, std::function<void(const drogon::HttpResponsePtr &)> callback, std::string userId) -> drogon::AsyncTask
