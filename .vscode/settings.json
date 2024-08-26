@@ -18,7 +18,9 @@
     // "MSYSTEM": "MSYS",
     "CHERE_INVOKING": "1"
   },
-"cmake.cmakePath": "C:\\msys64\\mingw64\\bin\\cmake.exe",
+  "cmake.cmakePath": "C:\\msys64\\mingw64\\bin\\cmake.exe",
+  "cmake.configureOnOpen":false,
+  "cmake.configureOnEdit":false,
   "C_Cpp.intelliSenseEngine": "default",
 	"C_Cpp.intelliSenseEngineFallback": "disabled",
 	"C_Cpp.intelliSenseCacheSize": 5120,
@@ -147,7 +149,8 @@
     "source_location": "cpp",
     "rope": "cpp",
     "shared_mutex": "cpp",
-    "text_encoding": "cpp"
+    "text_encoding": "cpp",
+    "usage": "c"
   },
   "editor.defaultFormatter": "ms-vscode.cpptools",
   "editor.formatOnSave": true

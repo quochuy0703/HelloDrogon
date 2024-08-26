@@ -321,6 +321,9 @@
             "name": "SMTPMail"
         },
         {
+            "name": "drogon::plugin::DIPlugin"
+        },
+        {
             //name: The class name of the plugin
             //"name": "drogon::plugin::SecureSSLRedirector",
             //dependencies: Plugins that the plugin depends on. It can be commented out
@@ -348,6 +351,9 @@
         "FTP_USER":"huymq",
         "FTP_PWD":"952e2b105bd188a700b33e1c15d48170", //12345678
         "FTP_UPLOAD_DIR":"/",
-        "REACT_APP_BASE_URL":"https://fakestoreapi.com"
+        "REACT_APP_BASE_URL":"https://fakestoreapi.com",
+        "kafka_manager": {
+            "bootstrap.servers": "localhost:9092"
+        }
     }
 }

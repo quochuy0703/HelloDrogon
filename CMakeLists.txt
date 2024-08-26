@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(VCPKG_TARGET_TRIPLET "x64-mingw-dynamic")
+set(VCPKG_TARGET_TRIPLET "x64-mingw-custom")
 set(VCPKG_HOST_TRIPLET "x64-mingw-dynamic")
+# set(VCPKG_MANIFEST_INSTALL OFF)
 # set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/toolchain-mingw.cmake)
 
 project(HelloDrogon CXX)
@@ -41,6 +42,8 @@ find_package(mailio CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(Boost REQUIRED COMPONENTS date_time)
 find_package(ftplib CONFIG REQUIRED)
+find_package(RdKafka CONFIG REQUIRED)
+find_package(unofficial-modern-cpp-kafka CONFIG REQUIRED)
 
 
 # target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -51,8 +54,9 @@ find_package(ftplib CONFIG REQUIRED)
 #     PICOJSON_USE_LOCALE
 # )
 
-# target_link_directories(${PROJECT_NAME} PRIVATE "C:/LT/vcpkg/vcpkg/installed/x64-windows/lib")
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon Botan::Botan-static cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/include)
+target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon fruit RdKafka::rdkafka unofficial::modern-cpp-kafka::modern-cpp-kafka Botan::Botan-static cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time )
 
 # ##############################################################################
 

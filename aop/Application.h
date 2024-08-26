@@ -15,8 +15,10 @@
 #include <trantor/utils/Utilities.h>
 #include <boost/format.hpp>
 #include <boost/date_time.hpp>
-// #include "../kafkaManager/kafkaManager.h"
-// #include "kafkaManager/AsyncKafkaConsumer.h"
+// #include "../kafkaManager/kafkaManagerNew.h"
+// #include "../kafkaManager/AsyncKafkaConsumerNew.h"
+#include "../kafkaManager/kafkaManager.h"
+#include "../kafkaManager/AsyncKafkaConsumer.h"
 
 // inline TrieService trieService;
 
@@ -121,29 +123,33 @@ namespace App
     Application::Application()
     {
         // 创建一个定时器，每隔10秒执行一次
-        /*drogon::HttpAppFramework::instance().getLoop()->runEvery(10.0, [] {
-            std::cout << "定时器触发了" << std::endl;
-        });*/
+        drogon::HttpAppFramework::instance().getLoop()->runEvery(200.0, []
+                                                                 { std::cout << "Run background task every 200s" << std::endl;
+                                                                 boost::posix_time::ptime current_datetime = boost::posix_time::second_clock::local_time();
+        std::cout << "Current date and time: " << current_datetime << std::endl;
+        std::cout << std::endl << std::endl; });
 
-        // try
-        // {
-        //     // 获取 KafkaManager 的配置
-        //     const std::string brokers = app().getCustomConfig()["kafka_manager"]["bootstrap.servers"].asString();
+        try
+        {
+            // 获取 KafkaManager 的配置
+            const std::string brokers = app().getCustomConfig()["kafka_manager"]["bootstrap.servers"].asString();
 
-        //     // 初始化 KafkaManager
-        //     KafkaManager::instance().initialize(brokers);
+            // 初始化 KafkaManager
+            KafkaManager::instance().initialize(brokers);
 
-        //     // 创建一个消费者实例
-        //     static AsyncKafkaConsumer kafkaConsumer;
-        // }
-        // catch (const std::exception &e)
-        // {
-        //     LOG_ERROR << "Kafka initialization failed: " << e.what();
-        // }
+            // 创建一个消费者实例
+            static AsyncKafkaConsumer kafkaConsumer;
+        }
+        catch (const std::exception &e)
+        {
+            LOG_ERROR << "Kafka initialization failed: " << e.what();
+        }
 
         drogon::app().registerBeginningAdvice([]()
                                               {
+        std::cout <<std::endl <<std::endl;
         std::cout << drogon << std::endl;
+        std::cout <<std::endl;
         std::cout << "A utility for drogon" << std::endl;
         std::cout << std::format("Version: {}", DROGON_VERSION) << std::endl;
         std::cout << std::format("Git commit: {}", DROGON_VERSION_SHA1) << std::endl;

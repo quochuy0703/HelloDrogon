@@ -6,7 +6,7 @@
     //host: server address,localhost by default;
     "host": "127.0.0.1",
     //port: server port, 5432 by default;
-    "port": 5432,
+    "port": 5435,
     //dbname: Database name;
     "dbname": "test",
     //schema: valid for postgreSQL, "public" by default;
@@ -14,12 +14,12 @@
     //user: User name
     "user": "quochuy0703",
     //password or passwd: Password
-    "password": "hguyFtgfR4r9R4r76",
+    "password": "12345678",
     //client_encoding: The character set used by drogon_ctl. it is empty string by default which 
     //means use the default character set.
     //"client_encoding": "",
     //table: An array of tables to be modelized. if the array is empty, all revealed tables are modelized.
-    "tables": [],
+    "tables": ["user_microservice"],
     //convert: the value can be changed by a function call before it is stored into database or
     //after it is read from database
     "convert": {

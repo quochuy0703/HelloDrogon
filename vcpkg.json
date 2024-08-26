@@ -3,7 +3,11 @@
     "name": "drogon",
     "features": [ "ctl", "mysql", "postgres","redis","sqlite3","yaml"]
 
-  }, "botan", "cryptopp", "mailio","ftplib", "jwt-cpp"],
+  }, "botan", "cryptopp", "mailio","ftplib", "jwt-cpp", "librdkafka", "modern-cpp-kafka",{
+    "name": "bext-di",
+    "features": [ "extensions"]
+
+  }],
   "overrides": [
 
   ]

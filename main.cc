@@ -5,7 +5,7 @@
 #include "./utils/ExecuteAwaiter.hpp"
 #include "./utils/EmailHelper.hpp"
 #include "./utils/Utils.hpp"
-
+#include "./plugins/DIPlugin.h"
 
 using namespace drogon;
 
@@ -16,7 +16,8 @@ int main()
 	// Set HTTP listener address and port
 	// drogon::app().addListener("0.0.0.0", 5555);
 	// Load config file
-	drogon::app().loadConfigFile("../config.json");
+	std::cout << "hello world" << std::endl;
+	drogon::app().loadConfigFile("./config.json");
 	App::Application();
 	// drogon::app().loadConfigFile("../config.yaml");
 	// Run HTTP framework,the method will block in the internal event loop
