@@ -318,6 +318,9 @@
             }
         },
         {
+            "name": "drogon::plugin::DIFruitPlugin"
+       },
+        {
             "name": "SMTPMail"
         },
         {
