@@ -10,12 +10,12 @@ namespace app_repositories::unitofwork
     //     // auto db = drogon::app().getDbClient();
     // }
 
-    UnitOfWork::UnitOfWork()
+    // UnitOfWork::UnitOfWork()
 
-    {
-        LOG_INFO << "Init UnitOfWork";
-        dbClient_ = drogon::app().getDbClient();
-    }
+    // {
+    //     LOG_INFO << "Init UnitOfWork";
+    //     dbClient_ = drogon::app().getDbClient();
+    // }
 
     UnitOfWork::~UnitOfWork()
     {

@@ -12,6 +12,10 @@
 #include "../services/IUserMicroserviceService.hpp"
 #include "../repository/UnitOfWork.hpp"
 #include "../plugins/DIPlugin.h"
+#include "../plugins/DIFruitPlugin.h"
+#include "../services/ExampleDI.cpp"
+
+#include "../services/IGreeterNew.hpp"
 
 using UserMicroserviceModel = drogon_model::test::UserMicroservice;
 using UserMicroserviceDto = app_dto::userservice_dto::UserMicroserviceDto;
@@ -127,7 +131,7 @@ private:
     // 将处理 Kafka 消息的逻辑封装为协程
     static Task<> handleKafkaMessage(const std::string &message)
     {
-        auto *DIPluginPtr = app().getPlugin<drogon::plugin::DIPlugin>();
+
         try
         {
             LOG_INFO << "Received message: " << message;
@@ -140,9 +144,12 @@ private:
                 std::cout << key << ": " << root[key].asString() << std::endl;
             };
 
-            // auto *DIPluginPtr = app().getPlugin<drogon::plugin::DIPlugin>();
+            auto *DIPluginPtr = app().getPlugin<drogon::plugin::DIPlugin>();
+            // // auto *DIPluginPtr = app().getPlugin<drogon::plugin::DIFruitPlugin>();
+
             UserMicroserviceDto dto = UserMicroserviceDto::toDto(root);
-            auto userService = DIPluginPtr->get<UserMicroserviceService>();
+            auto userService = DIPluginPtr->get<IUserMicroserviceService>();
+            // auto userService = DIPluginPtr->get();
             LOG_INFO << "userService ptr count: " << userService.use_count();
 
             // UserMicroserviceDto dto = UserMicroserviceDto::toDto(root);
@@ -150,6 +157,10 @@ private:
             // auto userService = std::make_shared<UserMicroserviceService>(uow);
 
             co_await userService->CreateUser(dto, true);
+
+            // auto greeter = DIPluginPtr->get<IGreeterNew>();
+
+            // co_await greeter->greet(dto, true);
 
             LOG_INFO << "Processed message " << message;
         }

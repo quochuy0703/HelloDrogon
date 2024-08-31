@@ -8,8 +8,6 @@ namespace app_repositories::unitofwork
     class IUnitOfWork
     {
     public:
-        virtual ~IUnitOfWork() = default;
-
         virtual drogon::Task<> BeginTransaction() = 0;
         virtual void Commit() = 0;
         virtual void Rollback() = 0;

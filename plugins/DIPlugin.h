@@ -11,6 +11,12 @@
 #include "../repository/UserMicroserviceRepository.hpp"
 #include "../services/UserMicroserviceService.hpp"
 #include "../services/IUserMicroserviceService.hpp"
+#include "../services/ExampleDI.cpp"
+
+#include "../repository/IWriterNew.hpp"
+#include "../repository/StdoutWriterNew.hpp"
+#include "../services/IGreeterNew.hpp"
+#include "../services/GreeterImplNew.hpp"
 
 using namespace app_repositories;
 using namespace app_services;
@@ -46,34 +52,18 @@ namespace drogon::plugin
             // return injector.create<T>();
         }
 
-        // inline auto MakeAppInjector()
-        // {
-        //     auto dbClient = drogon::app().getDbClient();
-
-        //     return di::make_injector(
-        //         di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>(),  // UnitOfWork là singleton
-        //         di::bind<drogon::orm::DbClient>.to(dbClient.get()),              // Inject DbClient vào UnitOfWork
-        //         di::bind<IUserMicroserviceService>.to<UserMicroserviceService>() // UserService nhận UnitOfWork
-        //     );
-        // }
-
-        // using AppInjectorType = decltype(MakeAppInjector());
-
-        // extern const AppInjectorType *g_appInjector;
-
-        // template <typename T>
-        // auto DICreate() -> decltype(g_appInjector->template create<T>())
-        // {
-        //     return g_appInjector->template create<T>();
-        // }
-
     private:
-        // using InjectorType = decltype(di::make_injector(
-        //     di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>(),
-        //     di::bind<drogon::orm::DbClient>.to(drogon::app().getDbClient().get()),
-        //     di::bind<IUserMicroserviceService>.to<UserMicroserviceService>()));
+        using InjectorType = decltype(di::make_injector(
+            di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>().in(di::unique),
+            di::bind<app_services::IUserMicroserviceService>.to<app_services::UserMicroserviceService>().in(di::unique)));
 
-        // InjectorType injector;
-        di::extension::injector<> injector{};
+        // using InjectorType = decltype(di::make_injector(
+        //     di::bind<IWriterNew>().to<StdoutWriterNew>().in(di::unique), di::bind<IGreeterNew>().to<GreeterImplNew>().in(di::unique)));
+
+        // using InjectorType = decltype(di::make_injector(
+        //     di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>().in(di::unique), di::bind<IGreeterNew>().to<GreeterImplNew>().in(di::unique)));
+
+        InjectorType injector;
+        // di::extension::injector<> injector{};
     };
 }

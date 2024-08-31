@@ -1,10 +1,8 @@
 #pragma once
 
-#include "../plugins/DIPlugin.h"
+// #include "../plugins/DIPlugin.h" //--> include chỗ này làm không compile được ???? tại sao lại include?? gây lỗi: error: 'UserMicroserviceService' is not a member of 'app_services'; did you mean 'IUserMicroserviceService'?
 #include "../repository/IUnitOfWork.hpp"
-#include "../repository/UnitOfWork.hpp"
 #include <memory>
-#include <iostream>
 #include <iostream>
 #include <drogon/drogon.h>
 #include "../models/UserMicroservice.h"
@@ -13,8 +11,12 @@
 #include "../utils/Utils.hpp"
 #include <trantor/utils/Date.h>
 #include "IUserMicroserviceService.hpp"
+// #include <fruit/fruit.h>
 
 using namespace drogon;
+
+// using fruit::Component;
+// using fruit::Injector;
 
 using UserMicroserviceDto = app_dto::userservice_dto::UserMicroserviceDto;
 using UserMicroserviceModel = drogon_model::test::UserMicroservice;
@@ -34,40 +36,7 @@ namespace app_services
             LOG_INFO << "Destructor UserMicroserviceService";
         }
 
-        drogon::Task<UserMicroserviceDto> CreateUser(const UserMicroserviceDto &data, bool useTransaction = true) override
-        {
-
-            UserMicroserviceModel user = UserMicroserviceDto::toModel(data);
-            user.setCreatedat(::trantor::Date().now());
-            try
-            {
-                if (useTransaction)
-                {
-                    co_await uow->BeginTransaction();
-                }
-                // auto *DIPluginPtr = app().getPlugin<drogon::plugin::DIPlugin>();
-
-                // auto unit = DIPluginPtr->get<unitofwork::IUnitOfWork>();
-
-                user = co_await uow->UserMicroservices()->Add(user);
-
-                if (useTransaction)
-                {
-                    uow->Commit();
-                }
-            }
-            catch (const std::exception &ex)
-            {
-                LOG_ERROR << ex.what();
-                if (useTransaction)
-                {
-                    uow->Rollback();
-                }
-                throw std::runtime_error(ex.what());
-            }
-
-            co_return UserMicroserviceDto::fromModel(user);
-        }
+        virtual drogon::Task<UserMicroserviceDto> CreateUser(const UserMicroserviceDto &data, bool useTransaction = true) override;
 
     private:
         std::shared_ptr<unitofwork::IUnitOfWork> uow;

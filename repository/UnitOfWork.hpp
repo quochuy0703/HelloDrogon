@@ -9,13 +9,17 @@ namespace app_repositories::unitofwork
     {
     public:
         // UnitOfWork(const drogon::orm::DbClientPtr &client);
-        UnitOfWork();
+        UnitOfWork()
+        {
+            LOG_INFO << "Init UnitOfWork";
+            dbClient_ = drogon::app().getDbClient();
+        };
         ~UnitOfWork();
 
         drogon::Task<> BeginTransaction() override;
         void Commit() override;
         void Rollback() override;
-        std::shared_ptr<UserMicroserviceRepository> UserMicroservices();
+        std::shared_ptr<UserMicroserviceRepository> UserMicroservices() override;
 
     private:
         drogon::orm::DbClientPtr dbClient_;
