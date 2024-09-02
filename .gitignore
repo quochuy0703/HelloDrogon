@@ -192,6 +192,7 @@ modules.xml
 !.vscode/settings.json
 !.vscode/c_cpp_properties.json
 *.code-workspace
+static/*
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
