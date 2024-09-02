@@ -4,6 +4,10 @@
 #include "../dto/UserLoginDto.hpp"
 #include "../dto/UserDto.cpp"
 
+#include "../utils/lodash.hpp"
+#include "../utils/moment.hpp"
+#include "../utils/ArrayHelper.hpp"
+
 using namespace drogon;
 
 namespace demo

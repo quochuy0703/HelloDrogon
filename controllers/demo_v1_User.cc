@@ -644,6 +644,10 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     //         std::cout << msg << std::endl;
     //     });
 
+    app_helpers::array_helper::Array<int> numbers;
+
+    numbers.concat({1, 2, 10, 5, 7});
+
     Json::Value ret;
     ret["result"] = "ok";
     ret["user_name"] = "Jack";
@@ -663,6 +667,13 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     ret["hmac"] = hmac;
     ret["gender"] = 1;
     ret["format"] = app_helpers::format("{0} is {1} years old and has {2} children.", "John", 30, 2);
+
+    ret["array"] = numbers.filter([](auto item, auto index)
+                                  { return item > 5; })
+                       .reduce([](auto acc, auto item, auto index)
+                               { return acc + item; },
+                               0);
+    ret["moment"] = moment::moment().toString();
 
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
