@@ -7,7 +7,7 @@
     "name": "bext-di",
     "features": [ "extensions"]
 
-  },"fruit"],
+  },"fruit", "date"],
   "overrides": [
 
   ]
