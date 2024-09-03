@@ -29,6 +29,8 @@ using CryptoPP::HexDecoder;
 using CryptoPP::HexEncoder;
 #include <cryptopp/scrypt.h>
 
+#include <cryptopp/base64.h>
+
 #include <drogon/drogon.h>
 
 using namespace std;
@@ -80,7 +82,7 @@ namespace app_helpers::crypto_helper
             std::vector<CryptoPP::byte> saltBytes(salt.begin(), salt.end());
 
             CryptoPP::Scrypt scrypt;
-            scrypt.DeriveKey(derived, derived.size(), (CryptoPP::byte *)byteString.data(), token.length(), (CryptoPP::byte*)saltBytes.data(), salt.length(), 16384, 8, 1);
+            scrypt.DeriveKey(derived, derived.size(), (CryptoPP::byte *)byteString.data(), token.length(), (CryptoPP::byte *)saltBytes.data(), salt.length(), 16384, 8, 1);
 
             CryptoPP::byte temp[32];
             memcpy(temp, derived, 32);
@@ -136,7 +138,7 @@ namespace app_helpers::crypto_helper
             std::vector<CryptoPP::byte> saltBytes(salt.begin(), salt.end());
 
             CryptoPP::Scrypt scrypt;
-            scrypt.DeriveKey(derived, derived.size(), (CryptoPP::byte *)byteString.data(), token.length(), (CryptoPP::byte*)saltBytes.data(), salt.length(), 16384, 8, 1);
+            scrypt.DeriveKey(derived, derived.size(), (CryptoPP::byte *)byteString.data(), token.length(), (CryptoPP::byte *)saltBytes.data(), salt.length(), 16384, 8, 1);
 
             CryptoPP::byte temp[32];
             memcpy(temp, derived, 32);
@@ -176,10 +178,10 @@ namespace app_helpers::crypto_helper
     {
         return boost::algorithm::to_lower_copy(encrypt(rawPassword, hashToken)).compare(boost::algorithm::to_lower_copy(hashPassword)) == 0;
     }
-    app_helpers::execute_awaiter::ExecuteReturnAwaiter<bool> matchesCoro(const std::string& rawPassword, const std::string& hashPassword, const std::string& hashToken)
+    app_helpers::execute_awaiter::ExecuteReturnAwaiter<bool> matchesCoro(const std::string &rawPassword, const std::string &hashPassword, const std::string &hashToken)
     {
         return app_helpers::execute_awaiter::executeIntensiveReturnFunction<bool>([&]() -> bool
-            { return boost::algorithm::to_lower_copy(encrypt(rawPassword, hashToken)).compare(boost::algorithm::to_lower_copy(hashPassword)) == 0; });
+                                                                                  { return boost::algorithm::to_lower_copy(encrypt(rawPassword, hashToken)).compare(boost::algorithm::to_lower_copy(hashPassword)) == 0; });
     }
     std::string generateHMAC(const std::string &plain, const std::string &keyPlain)
     {
@@ -277,5 +279,29 @@ namespace app_helpers::crypto_helper
     {
         return app_helpers::execute_awaiter::executeIntensiveReturnFunction<std::string>([&]()
                                                                                          { return app_helpers::crypto_helper::generateHMAC(plain, keyPlain); });
+    }
+
+    std::string Base64Encode(const std::string &plain)
+    {
+        std::string encoded;
+
+        // Encode input to Base64
+        CryptoPP::StringSource ss(plain, true,
+                                  new CryptoPP::Base64Encoder(
+                                      new CryptoPP::StringSink(encoded)));
+
+        return encoded;
+    }
+
+    std::string Base64Decode(const std::string &encoded)
+    {
+        std::string decoded;
+
+        // Decode chuỗi Base64
+        CryptoPP::StringSource ss(encoded, true,
+                                  new CryptoPP::Base64Decoder(
+                                      new CryptoPP::StringSink(decoded)));
+
+        return decoded;
     }
 }
