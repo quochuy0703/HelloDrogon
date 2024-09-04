@@ -665,6 +665,13 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     // ret["delete"] = result.toJson();
     auto hmac = co_await app_helpers::crypto_helper::generateHMACCoro("HMAC Test");
     ret["hmac"] = hmac;
+
+    std::string base64encode = app_helpers::crypto_helper::Base64Encode("Hello world!");
+    ret["base64"] = base64encode;
+    ret["plainbase64"] = app_helpers::crypto_helper::Base64Decode(base64encode);
+
+    ret["Md5"] = app_helpers::crypto_helper::generateMD5("Hello world!");
+
     ret["gender"] = 1;
     ret["format"] = app_helpers::format("{0} is {1} years old and has {2} children.", "John", 30, 2);
 

@@ -304,4 +304,17 @@ namespace app_helpers::crypto_helper
 
         return decoded;
     }
+
+    std::string generateMD5(const std::string &message)
+    {
+        std::string digest;
+
+        CryptoPP::Weak1::MD5 hash;
+        CryptoPP::StringSource(message, true,
+                               new CryptoPP::HashFilter(hash,
+                                                        new CryptoPP::HexEncoder(
+                                                            new CryptoPP::StringSink(digest))));
+
+        return digest;
+    }
 }
