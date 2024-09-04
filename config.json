@@ -236,7 +236,7 @@
         "relaunch_on_error": false,
         //use_sendfile: True by default, if true, the program 
         //uses sendfile() system-call to send static files to clients;
-        "use_sendfile": true,
+        "use_sendfile": false,
         //use_gzip: True by default, use gzip to compress the response body's content;
         "use_gzip": true,
         //use_brotli: False by default, use brotli to compress the response body's content;
@@ -355,6 +355,7 @@
         "FTP_PWD":"952e2b105bd188a700b33e1c15d48170", //12345678
         "FTP_UPLOAD_DIR":"/",
         "REACT_APP_BASE_URL":"https://fakestoreapi.com",
+        "USE_KAFKA": false,
         "kafka_manager": {
             "bootstrap.servers": "localhost:9092"
         }

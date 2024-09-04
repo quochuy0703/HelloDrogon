@@ -129,21 +129,25 @@ namespace App
         std::cout << "Current date and time: " << current_datetime << std::endl;
         std::cout << std::endl << std::endl; });
 
-        try
+        auto isUseKafka = app().getCustomConfig()["USE_KAFKA"].asBool();
+        if (isUseKafka)
         {
-            // 获取 KafkaManager 的配置
-            const std::string brokers = app().getCustomConfig()["kafka_manager"]["bootstrap.servers"].asString();
+            try
+            {
+                // 获取 KafkaManager 的配置
+                const std::string brokers = app().getCustomConfig()["kafka_manager"]["bootstrap.servers"].asString();
 
-            // 初始化 KafkaManager
-            KafkaManager::instance().initialize(brokers);
+                // 初始化 KafkaManager
+                KafkaManager::instance().initialize(brokers);
 
-            // 创建一个消费者实例
-            static AsyncKafkaConsumer kafkaConsumer;
-        }
-        catch (const std::exception &e)
-        {
-            LOG_ERROR << "Kafka initialization failed: " << e.what();
-        }
+                // 创建一个消费者实例
+                static AsyncKafkaConsumer kafkaConsumer;
+            }
+            catch (const std::exception &e)
+            {
+                LOG_ERROR << "Kafka initialization failed: " << e.what();
+            }
+        };
 
         drogon::app().registerBeginningAdvice([]()
                                               {
