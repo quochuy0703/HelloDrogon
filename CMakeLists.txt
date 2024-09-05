@@ -41,6 +41,7 @@ find_package(cryptopp CONFIG REQUIRED)
 find_package(mailio CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(Boost REQUIRED COMPONENTS date_time)
+find_package(Boost REQUIRED COMPONENTS pfr)
 find_package(ftplib CONFIG REQUIRED)
 find_package(RdKafka CONFIG REQUIRED)
 find_package(unofficial-modern-cpp-kafka CONFIG REQUIRED)
@@ -56,7 +57,7 @@ find_package(unofficial-modern-cpp-kafka CONFIG REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon fruit RdKafka::rdkafka unofficial::modern-cpp-kafka::modern-cpp-kafka Botan::Botan-static cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time )
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon fruit RdKafka::rdkafka unofficial::modern-cpp-kafka::modern-cpp-kafka Botan::Botan-static cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time Boost::pfr)
 
 # ##############################################################################
 

@@ -7,7 +7,7 @@
     "name": "bext-di",
     "features": [ "extensions"]
 
-  },"fruit", "date"],
+  },"fruit", "date", "boost-pfr"],
   "overrides": [
 
   ]
