@@ -10,6 +10,7 @@
 #include "../utils/sql.h"
 
 using namespace drogon;
+using namespace sql;
 
 namespace demo
 {

@@ -683,6 +683,21 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
                                0);
     ret["moment"] = moment::moment().toString();
 
+    SelectModel s;
+    s.select("id as user_id", "age", "name", "address")
+        .distinct()
+        .from("user")
+        .join("score")
+        .on(column("user.id") == column("score.id") and column("score.id") > 60)
+        .where(column("score") > 60 and (column("age") >= 20 or column("address").is_not_null()))
+        // .where(column("score") > 60 && (column("age") >= 20 || column("address").is_not_null()))
+        .group_by("age")
+        .having(column("age") > 10)
+        .order_by("age desc")
+        .limit(10)
+        .offset(1);
+    LOG_INFO << "sql: " << s.str();
+
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
 }
