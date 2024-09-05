@@ -671,6 +671,7 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     ret["plainbase64"] = app_helpers::crypto_helper::Base64Decode(base64encode);
 
     ret["Md5"] = app_helpers::crypto_helper::generateMD5("Hello world!");
+    ret["uuid"] = drogon::utils::getUuid();
 
     ret["gender"] = 1;
     ret["format"] = app_helpers::format("{0} is {1} years old and has {2} children.", "John", 30, 2);

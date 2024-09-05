@@ -7,6 +7,7 @@
 #include "../utils/lodash.hpp"
 #include "../utils/moment.hpp"
 #include "../utils/ArrayHelper.hpp"
+#include "../utils/sql.h"
 
 using namespace drogon;
 
