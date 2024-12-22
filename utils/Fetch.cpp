@@ -7,7 +7,75 @@ bool IsNullOrEmpty(const std::string &str)
     return str.empty();
 }
 
-drogon::Task<ApiResponse<Json::Value>> sendRequest(const std::string &path, drogon::HttpMethod method, const std::string &endpoint, Json::Value body = Json::Value())
+// Hàm chuyển đổi map thành chuỗi query string
+std::string MapToQueryString(const std::map<std::string, std::string> &queries)
+{
+    std::string queryUri;
+    for (const auto &[key, value] : queries)
+    {
+        if (!IsNullOrEmpty(value))
+        {
+            queryUri += key + "=" + value + "&";
+        }
+    }
+    if (!queryUri.empty())
+    {
+        queryUri.pop_back(); // Loại bỏ ký tự '&' cuối cùng
+    }
+    return queryUri;
+};
+
+app_helpers::fetch_helper::Fetch::Fetch(const std::string &baseUrl)
+{
+    this->baseURL = baseUrl;
+}
+
+drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Get(const std::string &url, const std::map<std::string, std::string> &queries)
+{
+
+    std::string path = "";
+
+    if (!queries.empty())
+    {
+        std::string queryUri = MapToQueryString(queries);
+        if (!queryUri.empty())
+        {
+            path = url + "?" + queryUri;
+        }
+    }
+
+    auto result = co_await this->sendRequest(path, drogon::HttpMethod::Get);
+    co_return result;
+}
+drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Post(const std::string &url, Json::Value body)
+{
+
+    auto result = co_await this->sendRequest(url, drogon::HttpMethod::Post, body);
+    co_return result;
+}
+drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Put(const std::string &url, Json::Value body)
+{
+
+    auto result = co_await this->sendRequest(url, drogon::HttpMethod::Put, body);
+    co_return result;
+};
+
+drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Delete(const std::string &url, const std::map<std::string, std::string> &queries)
+{
+    std::string path = "";
+
+    if (!queries.empty())
+    {
+        std::string queryUri = MapToQueryString(queries);
+        if (!queryUri.empty())
+        {
+            path = url + "?" + queryUri;
+        }
+    }
+    auto result = co_await this->sendRequest(path, drogon::HttpMethod::Delete);
+    co_return result;
+}
+drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::sendRequest(const std::string &path, drogon::HttpMethod method, Json::Value body)
 {
     std::string_view json = "";
     drogon::HttpResponsePtr result;
@@ -16,7 +84,7 @@ drogon::Task<ApiResponse<Json::Value>> sendRequest(const std::string &path, drog
 
     try
     {
-        auto client = drogon::HttpClient::newHttpClient(endpoint);
+        auto client = drogon::HttpClient::newHttpClient(this->baseURL);
         auto httpReq = drogon::HttpRequest::newHttpRequest();
         httpReq->setPath(path);
         httpReq->setMethod(method);
@@ -38,73 +106,4 @@ drogon::Task<ApiResponse<Json::Value>> sendRequest(const std::string &path, drog
     }
 
     co_return *(res.build());
-};
-
-// Hàm chuyển đổi map thành chuỗi query string
-std::string MapToQueryString(const std::map<std::string, std::string> &queries)
-{
-    std::string queryUri;
-    for (const auto &[key, value] : queries)
-    {
-        if (!IsNullOrEmpty(value))
-        {
-            queryUri += key + "=" + value + "&";
-        }
-    }
-    if (!queryUri.empty())
-    {
-        queryUri.pop_back(); // Loại bỏ ký tự '&' cuối cùng
-    }
-    return queryUri;
-};
-
-drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Get(const std::string &url, const std::map<std::string, std::string> &queries,
-                                                                             const std::string &endpoint)
-{
-    Json::Value config = drogon::app().getCustomConfig();
-    std::string fetchServer = config["REACT_APP_BASE_URL"].asString();
-    std::string baseUrl = (endpoint.empty() ? fetchServer : endpoint);
-    std::string path = "";
-
-    if (!queries.empty())
-    {
-        std::string queryUri = MapToQueryString(queries);
-        if (!queryUri.empty())
-        {
-            path = url + "?" + queryUri;
-        }
-    }
-
-    auto result = co_await sendRequest(path, drogon::HttpMethod::Get, baseUrl);
-    co_return result;
-}
-drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Post(const std::string &url, Json::Value body, const std::string &endpoint)
-{
-    Json::Value config = drogon::app().getCustomConfig();
-    std::string fetchServer = config["REACT_APP_BASE_URL"].asString();
-    std::string baseUrl = (endpoint.empty() ? fetchServer : endpoint);
-
-    auto result = co_await sendRequest(url, drogon::HttpMethod::Post, baseUrl, body);
-    co_return result;
-}
-drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Put(const std::string &url, Json::Value body, const std::string &endpoint)
-{
-    Json::Value config = drogon::app().getCustomConfig();
-    std::string fetchServer = config["REACT_APP_BASE_URL"].asString();
-    std::string baseUrl = (endpoint.empty() ? fetchServer : endpoint);
-
-    auto result = co_await sendRequest(url, drogon::HttpMethod::Put, baseUrl, body);
-    co_return result;
-};
-
-drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Delete(const std::string &url,
-                                                                                const std::string &endpoint)
-{
-    Json::Value config = drogon::app().getCustomConfig();
-    std::string fetchServer = config["REACT_APP_BASE_URL"].asString();
-    std::string baseUrl = (endpoint.empty() ? fetchServer : endpoint);
-    std::string path = url;
-
-    auto result = co_await sendRequest(path, drogon::HttpMethod::Delete, baseUrl);
-    co_return result;
 };

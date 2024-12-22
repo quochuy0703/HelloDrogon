@@ -13,13 +13,14 @@ namespace app_helpers::fetch_helper
     class Fetch : public IFetch<drogon::Task<ApiResponse<Json::Value>>>
     {
     public:
-        drogon::Task<ApiResponse<Json::Value>> Get(const std::string &url, const std::map<std::string, std::string> &queries = {},
-                                                   const std::string &endpoint = "") override;
-        drogon::Task<ApiResponse<Json::Value>> Post(const std::string &url, Json::Value body = Json::Value(),
-                                                    const std::string &endpoint = "") override;
-        drogon::Task<ApiResponse<Json::Value>> Put(const std::string &url, Json::Value body = Json::Value(),
-                                                   const std::string &endpoint = "") override;
-        drogon::Task<ApiResponse<Json::Value>> Delete(const std::string &url,
-                                                      const std::string &endpoint = "") override;
+        Fetch(const std::string &baseUrl);
+        drogon::Task<ApiResponse<Json::Value>> Get(const std::string &url, const std::map<std::string, std::string> &queries = {}) override;
+        drogon::Task<ApiResponse<Json::Value>> Post(const std::string &url, Json::Value body = Json::Value()) override;
+        drogon::Task<ApiResponse<Json::Value>> Put(const std::string &url, Json::Value body = Json::Value()) override;
+        drogon::Task<ApiResponse<Json::Value>> Delete(const std::string &url, const std::map<std::string, std::string> &queries = {}) override;
+
+    private:
+        std::string baseURL;
+        drogon::Task<ApiResponse<Json::Value>> sendRequest(const std::string &path, drogon::HttpMethod method, Json::Value body = Json::Value());
     };
 }
