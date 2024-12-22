@@ -15,15 +15,15 @@ std::string app_helpers::jwt_helper::generateAccessToken(const std::string &payl
     return tokenAcc;
 }
 
-jwt::decoded_jwt<jwt::traits::kazuho_picojson> app_helpers::jwt_helper::verifyToken(const std::string &token)
+jwt::decoded_jwt<jwt::traits::nlohmann_json> app_helpers::jwt_helper::verifyToken(const std::string &token)
 {
     const std::string secret = drogon::app().getCustomConfig()["jwt-secret"].asString();
     const std::string issuer = drogon::app().getCustomConfig()["jwt-issuer"].asString();
     const int duration = drogon::app().getCustomConfig()["jwt-accessTime"].asInt();
 
-    auto decoded = jwt::decode(token);
+    auto decoded = jwt::decode<jwt::traits::nlohmann_json>(token);
 
-    auto verifier = jwt::verify()
+    auto verifier = jwt::verify<jwt::traits::nlohmann_json>()
                         .allow_algorithm(jwt::algorithm::hs256{secret})
                         .with_issuer(issuer);
 
