@@ -123,6 +123,8 @@ drogon::AsyncTask document::getInfo(HttpRequestPtr req,
         Json::Value tokenPayload;
         tokenPayload["cid"] = "nok.com.vn";
 
+        auto uid = req->getParameter("username");
+
         string accessToken = co_await app_helpers::jwt_helper::generateAccessTokenCoro(writer.write(tokenPayload));
 
         ret["result"] = "ok";

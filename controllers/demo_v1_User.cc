@@ -621,8 +621,8 @@ drogon::AsyncTask User::getInfo(HttpRequestPtr req,
     // https://dummyjson.com/products/1
     Json::Value reqBody;
     reqBody["title"] = "iPhone Galaxy +1";
-    app_helpers::fetch_helper::Fetch fetch;
-    ApiResponse<Json::Value> result = co_await fetch.Put("/products/1", reqBody, "https://dummyjson.com");
+    app_helpers::fetch_helper::Fetch fetch("https://dummyjson.com");
+    ApiResponse<Json::Value> result = co_await fetch.Put("/products/1", reqBody);
 
     // https://dummyjson.com/products/1
     // app_helpers::fetch_helper::Fetch fetch;

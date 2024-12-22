@@ -25,7 +25,7 @@ namespace api
         // ADD_METHOD_TO(User::your_method_name, "/absolute/path/{1}/{2}/list", Get); // path is /absolute/path/{arg1}/{arg2}/list
 
         METHOD_ADD(document::login, "/auth/login", Post);
-        METHOD_ADD(document::getInfo, "/getInfo", Get, "MyMiddleware");
+        METHOD_ADD(document::getInfo, "/getInfo", Get, "MyMiddleware", "VerifyAccessTokenMiddleware");
 
         METHOD_LIST_END
         // your declaration of processing function maybe like this:
