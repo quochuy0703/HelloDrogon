@@ -28,7 +28,7 @@ void AuthViewFilter::doFilter(const HttpRequestPtr &req,
         // };
         if (token == "")
             throw ResourceNotFoundException("Not token!");
-        jwt::decoded_jwt<jwt::traits::kazuho_picojson> decoded = app_helpers::jwt_helper::verifyToken(token);
+        jwt::decoded_jwt<jwt::traits::nlohmann_json> decoded = app_helpers::jwt_helper::verifyToken(token);
 
         // Passed
         if (req->getPath().compare("/demo/v1/user/login") == 0)

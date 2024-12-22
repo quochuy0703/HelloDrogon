@@ -24,7 +24,7 @@ void AuthFilter::doFilter(const HttpRequestPtr &req,
         auto token = req->getHeader("x-access-token");
         if (token == "")
             throw ResourceNotFoundException("Not token!");
-        jwt::decoded_jwt<jwt::traits::kazuho_picojson> decoded = app_helpers::jwt_helper::verifyToken(token);
+        jwt::decoded_jwt<jwt::traits::nlohmann_json> decoded = app_helpers::jwt_helper::verifyToken(token);
 
         // Passed
         fccb();
