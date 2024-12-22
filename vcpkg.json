@@ -1,14 +1,32 @@
 {
-  "dependencies": [ {
-    "name": "drogon",
-    "features": [ "ctl", "mysql", "postgres","redis","sqlite3","yaml"]
-
-  }, "botan", "cryptopp", "mailio","ftplib", "jwt-cpp", "librdkafka", "modern-cpp-kafka",{
-    "name": "bext-di",
-    "features": [ "extensions"]
-
-  },"fruit", "date", "boost-pfr"],
-  "overrides": [
-
-  ]
+  "dependencies": [
+    {
+      "name": "drogon",
+      "features": [
+        "ctl",
+        "mysql",
+        "postgres",
+        "redis",
+        "sqlite3",
+        "yaml"
+      ]
+    },
+    "botan",
+    "cryptopp",
+    "mailio",
+    "ftplib",
+    "jwt-cpp",
+    "librdkafka",
+    "modern-cpp-kafka",
+    {
+      "name": "bext-di",
+      "features": [
+        "extensions"
+      ]
+    },
+    "fruit",
+    "date",
+    "boost-pfr","inja"
+  ],
+  "overrides": []
 }
