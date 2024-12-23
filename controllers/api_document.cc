@@ -120,6 +120,10 @@ drogon::AsyncTask document::getInfo(HttpRequestPtr req,
     {
         Json::FastWriter writer;
 
+        FakeApiService fetch;
+        auto data = co_await fetch.searchProduct({{"q", "phone"}});
+        ret["resp"] = data;
+
         Json::Value tokenPayload;
         tokenPayload["cid"] = "nok.com.vn";
 
