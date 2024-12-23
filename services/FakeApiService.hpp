@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <map>
 #include <string>
 #include "../utils/Fetch.hpp"
@@ -14,7 +15,7 @@ namespace app_services
         FakeApiService()
         {
             LOG_INFO << "Init FakeApiService";
-            fetch = new Fetch(BaseURL);
+            fetch = std::make_shared<Fetch>(BaseURL);
         }
         ~FakeApiService()
         {
@@ -25,7 +26,7 @@ namespace app_services
 
     private:
         const std::string BaseURL = "https://dummyjson.com";
-        Fetch *fetch;
+        std::shared_ptr<Fetch> fetch;
     };
 
 }
