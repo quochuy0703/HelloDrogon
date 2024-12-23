@@ -1,6 +1,6 @@
 #include <drogon/HttpMiddleware.h>
 #include "../constants/app.hpp"
-#include "../utils/ArrayHelper.hpp"
+#include "../utils/ArrayVector.hpp"
 #include "../errors/ResourceNotFoundException.hpp"
 #include "../utils/ApiResponse.hpp"
 #include "../utils/JwtHelper.hpp"

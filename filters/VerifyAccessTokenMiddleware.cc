@@ -10,17 +10,16 @@ Task<HttpResponsePtr> VerifyAccessTokenMiddleware::invoke(const HttpRequestPtr &
 
     std::string uid = "";
 
-    // app_helpers::array_helper::Array<std::string> routeExcept;
-    // routeExcept.concat({"huy", "hoang"});
-    // auto idx = routeExcept.findIndex([](auto item, auto index)
-    //                                  { return (item.find("huy") != std::string::npos); });
+    app_helpers::array_helper::ArrayVector<std::string> routeExcept(constants::EXCEPT_ROUTE);
+    auto idx = routeExcept.findIndex([req](auto item)
+                                     { return (item.find(req->path()) != std::string::npos); });
 
-    int idx = -1;
+    // int idx = -1;
     try
     {
         if (idx >= 0)
         {
-            auto resp = co_await next;
+            resp = co_await next;
         }
         else
         {
