@@ -2,6 +2,7 @@
 #define _ARRAYHELPER_HPP_
 
 #include <initializer_list>
+#include <array>
 
 namespace app_helpers::array_helper
 {
@@ -22,6 +23,7 @@ namespace app_helpers::array_helper
         Array(const int capacity = 10);
         Array(const Array &arr);
         Array(const T *arr, const int size);
+
         ~Array();
 
         T operator[](int index);
@@ -56,7 +58,17 @@ namespace app_helpers::array_helper
         T reduce(T (*callback)(T acc, T item, int index));
         T find(bool (*callback)(T item, int index));
         int findIndex(bool (*callback)(T item, int index));
+
+        template <std::size_t N>
+        Array(const std::array<T, N> &stdArr) : size(N), capacity(N)
+        {
+            arr = new T[capacity];
+            for (int i = 0; i < size; ++i)
+            {
+                arr[i] = stdArr[i];
+            }
+        }
     };
 }
 
-#endif;
+#endif

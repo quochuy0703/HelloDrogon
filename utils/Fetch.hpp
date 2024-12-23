@@ -3,6 +3,7 @@
 #include <iostream>
 #include "IFetch.cpp"
 #include <drogon/drogon.h>
+#include <drogon/HttpClient.h>
 #include "../utils/ApiResponse.hpp"
 
 using namespace app_helpers::api_res_helper;

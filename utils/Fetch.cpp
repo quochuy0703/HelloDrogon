@@ -1,5 +1,4 @@
 #include "Fetch.hpp"
-#include <drogon/HttpClient.h>
 
 // Hàm kiểm tra xâu rỗng
 bool IsNullOrEmpty(const std::string &str)
@@ -34,50 +33,84 @@ drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Get(con
 {
 
     std::string path = "";
-
-    if (!queries.empty())
+    app_helpers::api_res_helper::ApiResponse<Json::Value> result;
+    try
     {
-        std::string queryUri = MapToQueryString(queries);
-        if (!queryUri.empty())
+        if (!queries.empty())
         {
-            path = url + "?" + queryUri;
+            std::string queryUri = MapToQueryString(queries);
+            if (!queryUri.empty())
+            {
+                path = url + "?" + queryUri;
+            }
         }
+
+        result = co_await this->sendRequest(path, drogon::HttpMethod::Get);
+    }
+    catch (std::runtime_error &ex)
+    {
+        throw std::runtime_error(ex.what());
     }
 
-    auto result = co_await this->sendRequest(path, drogon::HttpMethod::Get);
     co_return result;
 }
 drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Post(const std::string &url, Json::Value body)
 {
 
-    auto result = co_await this->sendRequest(url, drogon::HttpMethod::Post, body);
+    app_helpers::api_res_helper::ApiResponse<Json::Value> result;
+    try
+    {
+        result = co_await this->sendRequest(url, drogon::HttpMethod::Post, body);
+    }
+    catch (std::runtime_error &ex)
+    {
+        throw std::runtime_error(ex.what());
+    }
+
     co_return result;
 }
 drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Put(const std::string &url, Json::Value body)
 {
+    app_helpers::api_res_helper::ApiResponse<Json::Value> result;
+    try
+    {
+        result = co_await this->sendRequest(url, drogon::HttpMethod::Put, body);
+    }
+    catch (std::runtime_error &ex)
+    {
+        throw std::runtime_error(ex.what());
+    }
 
-    auto result = co_await this->sendRequest(url, drogon::HttpMethod::Put, body);
     co_return result;
 };
 
 drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::Delete(const std::string &url, const std::map<std::string, std::string> &queries)
 {
     std::string path = "";
-
-    if (!queries.empty())
+    app_helpers::api_res_helper::ApiResponse<Json::Value> result;
+    try
     {
-        std::string queryUri = MapToQueryString(queries);
-        if (!queryUri.empty())
+        if (!queries.empty())
         {
-            path = url + "?" + queryUri;
+            std::string queryUri = MapToQueryString(queries);
+            if (!queryUri.empty())
+            {
+                path = url + "?" + queryUri;
+            }
         }
+
+        result = co_await this->sendRequest(path, drogon::HttpMethod::Delete);
     }
-    auto result = co_await this->sendRequest(path, drogon::HttpMethod::Delete);
+    catch (std::runtime_error &ex)
+    {
+        throw std::runtime_error(ex.what());
+    }
+
     co_return result;
 }
 drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::sendRequest(const std::string &path, drogon::HttpMethod method, Json::Value body)
 {
-    std::string_view json = "";
+    Json::Value json;
     drogon::HttpResponsePtr result;
     ApiResponse<Json::Value> api;
     auto res = api.create();
@@ -95,14 +128,15 @@ drogon::Task<ApiResponse<Json::Value>> app_helpers::fetch_helper::Fetch::sendReq
             httpReq->setBody(body.toStyledString());
         }
         result = co_await client->sendRequestCoro(httpReq);
-        json = result->getBody();
-        LOG_INFO << std::string(json);
-        res.data(std::string(json)).message("Sucesss").success(true).statusCode(static_cast<int>(result->getStatusCode()));
+        json = *(result->getJsonObject());
+        // LOG_INFO << json.toStyledString();
+        res.data(json).message("Sucesss").success(true).statusCode(static_cast<int>(result->getStatusCode()));
     }
     catch (drogon::HttpException ex)
     {
         LOG_INFO << ex.what() << "," << ex.code();
-        res.data(std::string(json)).message(ex.what()).success(false).statusCode(0);
+        // res.data(json).message(ex.what()).success(false).statusCode(0);
+        throw std::runtime_error(ex.what());
     }
 
     co_return *(res.build());

@@ -16,6 +16,7 @@ namespace app_helpers::api_res_helper
         bool success_;
 
     public:
+        T data();
         class Builder
         {
         private:
@@ -66,5 +67,11 @@ namespace app_helpers::api_res_helper
             return ret;
         };
     };
+
+    template <typename T>
+    inline T ApiResponse<T>::data()
+    {
+        return data_;
+    }
 
 }
