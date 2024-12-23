@@ -9,8 +9,11 @@
 #include "../utils/sql.h"
 #include "../filters/MyMiddleware.h"
 
+#include "../services/FakeApiService.hpp"
+
 using namespace drogon;
 using namespace sql;
+using namespace app_services;
 
 namespace api
 {
