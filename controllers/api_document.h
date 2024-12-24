@@ -29,6 +29,7 @@ namespace api
 
         METHOD_ADD(document::login, "/auth/login", Post);
         METHOD_ADD(document::getInfo, "/getInfo", Get, "MyMiddleware", "VerifyAccessTokenMiddleware");
+        METHOD_ADD(document::submit, "/submit", Post, "MyMiddleware", "VerifyAccessTokenMiddleware");
 
         METHOD_LIST_END
         // your declaration of processing function maybe like this:
@@ -38,6 +39,8 @@ namespace api
                                 std::function<void(const HttpResponsePtr &)> callback, app_dto::user_login::UserLoginDto &&userLogin);
         drogon::AsyncTask getInfo(HttpRequestPtr req,
                                   std::function<void(const HttpResponsePtr &)> callback) const;
+        drogon::AsyncTask submit(const HttpRequestPtr req,
+                                 std::function<void(const HttpResponsePtr &)> callback);
     };
 
 }

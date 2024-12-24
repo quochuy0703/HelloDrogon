@@ -19,6 +19,7 @@
 #include "../utils/FileHelper.hpp"
 #include "../utils/Utils.hpp"
 #include "../utils/Fetch.hpp"
+#include "../constants/app.hpp"
 
 #include "../services/UserService.hpp"
 
@@ -34,6 +35,34 @@ using InstructorModel = drogon_model::test::Instructor;
 using InstructorDetailModel = drogon_model::test::Instructordetail;
 using CourseModel = drogon_model::test::Course;
 using ReviewModel = drogon_model::test::Review;
+
+// Hàm xử lý cho từng bước
+std::string start(const HttpRequestPtr req);
+
+std::string createRequest(const HttpRequestPtr req);
+
+std::string sectionApproval(const HttpRequestPtr req);
+
+std::string qcConfirm(const HttpRequestPtr req);
+
+std::string sectionFeedback(const HttpRequestPtr req);
+
+std::string qcApproval(const HttpRequestPtr req);
+
+std::string sectionAddFile(const HttpRequestPtr req);
+
+std::string departmentQCApproval(const HttpRequestPtr req);
+
+// Bản đồ ánh xạ từ các bước SAR_STEPS đến hàm xử lý tương ứng
+std::unordered_map<constants::SAR_STEPS, std::function<std::string(const HttpRequestPtr)>> STEP_HANDLERS = {
+    {constants::SAR_STEPS::START, start},
+    {constants::SAR_STEPS::CREATE_REQUEST, createRequest},
+    {constants::SAR_STEPS::SECTION_APPROVAL, sectionApproval},
+    {constants::SAR_STEPS::QC_CONFIRM, qcConfirm},
+    {constants::SAR_STEPS::SECTION_FEEDBACK, sectionFeedback},
+    {constants::SAR_STEPS::QC_APPROVAL, qcApproval},
+    {constants::SAR_STEPS::SECTION_ADD_FILE, sectionAddFile},
+    {constants::SAR_STEPS::DEPARTMENT_QC_APPROVAL, departmentQCApproval}};
 
 // Add definition of your processing function here
 
@@ -141,4 +170,85 @@ drogon::AsyncTask document::getInfo(HttpRequestPtr req,
     }
     auto resp = HttpResponse::newHttpJsonResponse(ret);
     callback(resp);
+}
+
+drogon::AsyncTask document::submit(const HttpRequestPtr req,
+                                   std::function<void(const HttpResponsePtr &)> callback)
+{
+    Json::Value ret;
+
+    try
+    {
+        // Chạy hàm tương ứng step hiện tại
+        constants::SAR_STEPS currentStep = constants::SAR_STEPS::CREATE_REQUEST;
+        auto response = STEP_HANDLERS[currentStep](req);
+
+        Json::FastWriter writer;
+
+        Json::Value tokenPayload;
+        tokenPayload["cid"] = "nok.com.vn";
+
+        auto uid = req->getParameter("username");
+
+        string accessToken = co_await app_helpers::jwt_helper::generateAccessTokenCoro(writer.write(tokenPayload));
+
+        ret["result"] = "ok";
+        ret["step"] = response;
+        // ret["token"] = accessToken;
+    }
+    catch (exception &ex)
+    {
+        cout << "Error: " << ex.what() << endl;
+        ret["error"] = ex.what();
+    }
+    auto resp = HttpResponse::newHttpJsonResponse(ret);
+    callback(resp);
+}
+
+std::string start(const HttpRequestPtr req)
+{
+    std::cout << "Executing start step." << std::endl;
+    return "start";
+}
+
+std::string createRequest(const HttpRequestPtr req)
+{
+    std::cout << "Executing createRequest step." << std::endl;
+    return "createRequest";
+}
+
+std::string sectionApproval(const HttpRequestPtr req)
+{
+    std::cout << "Executing sectionApproval step." << std::endl;
+    return "sectionApproval";
+}
+
+std::string qcConfirm(const HttpRequestPtr req)
+{
+    std::cout << "Executing qcConfirm step." << std::endl;
+    return "qcConfirm";
+}
+
+std::string sectionFeedback(const HttpRequestPtr req)
+{
+    std::cout << "Executing sectionFeedback step." << std::endl;
+    return "sectionFeedback";
+}
+
+std::string qcApproval(const HttpRequestPtr req)
+{
+    std::cout << "Executing qcApproval step." << std::endl;
+    return "qcApproval";
+}
+
+std::string sectionAddFile(const HttpRequestPtr req)
+{
+    std::cout << "Executing sectionAddFile step." << std::endl;
+    return "sectionAddFile";
+}
+
+std::string departmentQCApproval(const HttpRequestPtr req)
+{
+    std::cout << "Executing departmentQCApproval step." << std::endl;
+    return "departmentQCApproval";
 }
