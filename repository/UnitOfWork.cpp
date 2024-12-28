@@ -34,6 +34,7 @@ namespace app_repositories::unitofwork
             transaction_ = co_await dbClient_->newTransactionCoro();
 
             usermicroserviceRepository_ = std::make_shared<UserMicroserviceRepository>(transaction_);
+            pcPartRepository_ = std::make_shared<PcPartRepository>(transaction_);
         }
     }
 
@@ -58,5 +59,10 @@ namespace app_repositories::unitofwork
     std::shared_ptr<UserMicroserviceRepository> UnitOfWork::UserMicroservices()
     {
         return this->usermicroserviceRepository_;
+    }
+
+    std::shared_ptr<PcPartRepository> UnitOfWork::PcPartRepositorys()
+    {
+        return this->pcPartRepository_;
     }
 }

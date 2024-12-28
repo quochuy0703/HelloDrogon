@@ -2,6 +2,7 @@
 #include <memory>
 #include <drogon/drogon.h>
 #include "UserMicroserviceRepository.hpp"
+#include "PcPartRepository.hpp"
 
 namespace app_repositories::unitofwork
 {
@@ -12,6 +13,7 @@ namespace app_repositories::unitofwork
         virtual void Commit() = 0;
         virtual void Rollback() = 0;
         virtual std::shared_ptr<UserMicroserviceRepository> UserMicroservices() = 0;
+        virtual std::shared_ptr<PcPartRepository> PcPartRepositorys() = 0;
     };
 
 }

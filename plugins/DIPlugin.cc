@@ -13,6 +13,7 @@ namespace drogon::plugin
 
             injector = di::make_injector(
                 di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>().in(di::unique),  // UnitOfWork là singleton
+                di::bind<IPcPartService>.to<PcPartService>().in(di::unique),
                 di::bind<IUserMicroserviceService>.to<UserMicroserviceService>().in(di::unique) // UserService nhận UnitOfWork
             );
 

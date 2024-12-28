@@ -13,6 +13,9 @@
 #include "../services/IUserMicroserviceService.hpp"
 #include "../services/ExampleDI.cpp"
 
+#include "../services/IPcPartService.hpp"
+#include "../services/PcPartService.hpp"
+
 #include "../repository/IWriterNew.hpp"
 #include "../repository/StdoutWriterNew.hpp"
 #include "../services/IGreeterNew.hpp"
@@ -55,6 +58,7 @@ namespace drogon::plugin
     private:
         using InjectorType = decltype(di::make_injector(
             di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>().in(di::unique),
+            di::bind<IPcPartService>.to<PcPartService>().in(di::unique),
             di::bind<app_services::IUserMicroserviceService>.to<app_services::UserMicroserviceService>().in(di::unique)));
 
         // using InjectorType = decltype(di::make_injector(
