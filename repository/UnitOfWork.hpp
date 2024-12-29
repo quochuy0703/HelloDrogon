@@ -11,11 +11,7 @@ namespace app_repositories::unitofwork
     {
     public:
         // UnitOfWork(const drogon::orm::DbClientPtr &client);
-        UnitOfWork()
-        {
-            LOG_INFO << "Init UnitOfWork";
-            dbClient_ = drogon::app().getDbClient();
-        };
+        UnitOfWork();
         ~UnitOfWork();
 
         drogon::Task<> BeginTransaction() override;

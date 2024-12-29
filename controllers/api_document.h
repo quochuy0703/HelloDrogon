@@ -9,6 +9,9 @@
 #include "../utils/sql.h"
 #include "../filters/MyMiddleware.h"
 
+#include "../services/IPcPartService.hpp"
+#include "../plugins/DIPlugin.h"
+
 #include "../services/FakeApiService.hpp"
 
 using namespace drogon;

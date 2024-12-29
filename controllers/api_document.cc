@@ -190,10 +190,19 @@ drogon::AsyncTask document::submit(const HttpRequestPtr req,
 
         auto uid = req->getParameter("username");
 
+        auto *DIPluginPtr = app().getPlugin<drogon::plugin::DIPlugin>();
+
+        auto pcPartService = DIPluginPtr->get<IPcPartService>();
+
+        LOG_INFO << "userService ptr count: " << pcPartService.use_count();
+
+        auto listPart = co_await pcPartService->GetAll();
+
         string accessToken = co_await app_helpers::jwt_helper::generateAccessTokenCoro(writer.write(tokenPayload));
 
         ret["result"] = "ok";
         ret["step"] = response;
+        ret["uid"] = uid;
         // ret["token"] = accessToken;
     }
     catch (exception &ex)

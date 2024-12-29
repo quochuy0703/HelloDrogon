@@ -10,12 +10,12 @@ namespace app_repositories::unitofwork
     //     // auto db = drogon::app().getDbClient();
     // }
 
-    // UnitOfWork::UnitOfWork()
+    UnitOfWork::UnitOfWork()
 
-    // {
-    //     LOG_INFO << "Init UnitOfWork";
-    //     dbClient_ = drogon::app().getDbClient();
-    // }
+    {
+        LOG_INFO << "Init UnitOfWork";
+        dbClient_ = drogon::app().getDbClient();
+    }
 
     UnitOfWork::~UnitOfWork()
     {
@@ -32,6 +32,8 @@ namespace app_repositories::unitofwork
         {
             auto db = drogon::app().getDbClient();
             transaction_ = co_await dbClient_->newTransactionCoro();
+            transaction_->setCommitCallback([](bool flag)
+                                            { LOG_INFO << "Commit successfully!"; });
 
             usermicroserviceRepository_ = std::make_shared<UserMicroserviceRepository>(transaction_);
             pcPartRepository_ = std::make_shared<PcPartRepository>(transaction_);
@@ -44,7 +46,7 @@ namespace app_repositories::unitofwork
         // {
         //     transaction_->commit();
         // }
-        LOG_ERROR << "transaction_ ptr count: " << transaction_.use_count();
+        LOG_INFO << "transaction_ ptr count: " << transaction_.use_count();
         // transaction_.reset();
     }
 
