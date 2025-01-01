@@ -27,7 +27,7 @@ namespace app_services
     class UserMicroserviceService : public IUserMicroserviceService
     {
     public:
-        UserMicroserviceService(std::shared_ptr<unitofwork::IUnitOfWork> uow) : uow(uow)
+        UserMicroserviceService(std::shared_ptr<unitofwork::IUnitOfWork> uow) : uow(std::move(uow))
         {
             LOG_INFO << "Init UserMicroserviceService";
         }
@@ -37,6 +37,7 @@ namespace app_services
         }
 
         virtual drogon::Task<UserMicroserviceDto> CreateUser(const UserMicroserviceDto &data, bool useTransaction = true) override;
+        virtual drogon::Task<std::vector<UserMicroserviceDto>> GetAll(bool useTransaction = true) override;
 
     private:
         std::shared_ptr<unitofwork::IUnitOfWork> uow;
