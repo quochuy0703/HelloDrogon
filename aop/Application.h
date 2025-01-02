@@ -20,6 +20,8 @@
 #include "../kafkaManager/kafkaManager.h"
 #include "../kafkaManager/AsyncKafkaConsumer.h"
 
+#include "../plugins/DIFruitPlugin.h"
+
 // inline TrieService trieService;
 
 inline ThreadPool pool(2);
@@ -176,8 +178,19 @@ namespace App
                                                   drogon::AdviceChainCallback &&accb)
                                                {
         // todo ...
-        std::cout << "preRouting1!" << std::endl;
+        LOG_INFO << "preRouting1!";
+        const auto uuidRequest = drogon::utils::getUuid();
+        req->setParameter("uuidRequest", uuidRequest);
+        auto DIPluginPtr = app().getPlugin<plugin::DIFruitPlugin>();
+        DIPluginPtr->createSession(uuidRequest);
         accb(); });
+        drogon::app().registerPostHandlingAdvice([](const HttpRequestPtr &req, const HttpResponsePtr &res)
+                                                 {
+        // todo ...
+        LOG_INFO << "PostHandling!"; 
+        LOG_INFO << "uuidRequest: " <<req->getParameter("uuidRequest"); 
+        auto DIPluginPtr = app().getPlugin<plugin::DIFruitPlugin>();
+        DIPluginPtr->endSession(req->getParameter("uuidRequest")); });
     }
 } // namespace App
 
