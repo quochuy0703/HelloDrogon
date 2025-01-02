@@ -1,5 +1,6 @@
 #include "UnitOfWork.hpp"
 #include <drogon/drogon.h>
+#include <fruit/fruit.h>
 
 namespace app_repositories::unitofwork
 {

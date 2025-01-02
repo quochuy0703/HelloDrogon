@@ -12,7 +12,8 @@
 #include "../utils/Utils.hpp"
 #include <trantor/utils/Date.h>
 #include "IFatService.hpp"
-// #include <fruit/fruit.h>
+
+#include <fruit/fruit.h>
 
 using namespace drogon;
 
@@ -28,7 +29,7 @@ namespace app_services
     class FatService : public IFatService
     {
     public:
-        FatService(std::shared_ptr<unitofwork::IUnitOfWork> &&uow, std::shared_ptr<PcPartService> &&pcPartService, std::shared_ptr<UserMicroserviceService> &&userMicroserviceService) : uow(std::move(uow)), pcPartService(std::move(pcPartService)), userMicroserviceService(std::move(userMicroserviceService))
+        INJECT(FatService(std::shared_ptr<unitofwork::IUnitOfWork> uow, std::shared_ptr<PcPartService> pcPartService, std::shared_ptr<UserMicroserviceService> userMicroserviceService)) : uow(uow), pcPartService(pcPartService), userMicroserviceService(userMicroserviceService)
         {
             LOG_INFO << "Init FatService";
         }

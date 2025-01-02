@@ -11,6 +11,7 @@ namespace app_services
     {
     public:
         virtual drogon::Task<UserMicroserviceDto> CreateUser(const UserMicroserviceDto &data, bool useTransaction) = 0;
+        virtual drogon::Task<std::vector<UserMicroserviceDto>> GetAll(bool useTransaction = true)= 0;
     };
 
 }

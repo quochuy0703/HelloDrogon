@@ -10,7 +10,7 @@
 #include "../utils/Utils.hpp"
 #include <trantor/utils/Date.h>
 #include "IPcPartService.hpp"
-// #include <fruit/fruit.h>
+#include <fruit/fruit.h>
 
 using namespace drogon;
 
@@ -25,7 +25,7 @@ namespace app_services
     class PcPartService : public IPcPartService
     {
     public:
-        PcPartService(std::shared_ptr<unitofwork::IUnitOfWork> uow) : uow(uow)
+        INJECT(PcPartService(std::shared_ptr<unitofwork::IUnitOfWork> uow)) : uow(uow)
         {
             LOG_INFO << "Init UserMicroserviceService";
         }

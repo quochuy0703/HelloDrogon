@@ -3,6 +3,8 @@
 #include <drogon/drogon.h>
 #include "UserMicroserviceRepository.hpp"
 
+#include <fruit/fruit.h>
+
 using namespace app_repositories;
 
 namespace app_repositories::unitofwork
@@ -11,7 +13,7 @@ namespace app_repositories::unitofwork
     {
     public:
         // UnitOfWork(const drogon::orm::DbClientPtr &client);
-        UnitOfWork();
+        INJECT(UnitOfWork());
         ~UnitOfWork();
 
         drogon::Task<> BeginTransaction() override;

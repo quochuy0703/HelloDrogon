@@ -11,7 +11,7 @@
 #include "../utils/Utils.hpp"
 #include <trantor/utils/Date.h>
 #include "IUserMicroserviceService.hpp"
-// #include <fruit/fruit.h>
+#include <fruit/fruit.h>
 
 using namespace drogon;
 
@@ -27,7 +27,7 @@ namespace app_services
     class UserMicroserviceService : public IUserMicroserviceService
     {
     public:
-        UserMicroserviceService(std::shared_ptr<unitofwork::IUnitOfWork> uow) : uow(std::move(uow))
+        INJECT(UserMicroserviceService(std::shared_ptr<unitofwork::IUnitOfWork> uow)): uow(std::move(uow))
         {
             LOG_INFO << "Init UserMicroserviceService";
         }
