@@ -11,6 +11,7 @@
 
 #include "../services/IPcPartService.hpp"
 #include "../plugins/DIPlugin.h"
+#include "../plugins/DIFruitPlugin.h"
 
 #include "../services/FakeApiService.hpp"
 

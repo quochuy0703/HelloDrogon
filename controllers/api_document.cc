@@ -190,11 +190,12 @@ drogon::AsyncTask document::submit(const HttpRequestPtr req,
 
         auto uid = req->getParameter("username");
 
-        auto *DIPluginPtr = app().getPlugin<drogon::plugin::DIPlugin>();
+        auto *DIPluginPtr = app().getPlugin<drogon::plugin::DIFruitPlugin>();
 
-        auto pcPartService = DIPluginPtr->get<IPcPartService>();
+        const auto uuidRequest = req->getParameter("uuidRequest");
+        auto pcPartService = DIPluginPtr->get<IPcPartService>(uuidRequest);
 
-        LOG_INFO << "userService ptr count: " << pcPartService.use_count();
+        // LOG_INFO << "userService ptr count: " << pcPartService.use_count();
 
         auto listPart = co_await pcPartService->GetAll();
 
