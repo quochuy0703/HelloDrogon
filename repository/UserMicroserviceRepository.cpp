@@ -41,7 +41,7 @@ namespace app_repositories
         std::vector<UserMicroserviceModel> users;
         try
         {
-            auto rows = co_await tranPtr_->execSqlCoro("SELECT * FROM users_microservice;");
+            auto rows = co_await tranPtr_->execSqlCoro("SELECT * FROM user_microservice;");
             for (auto row : rows)
             {
                 users.push_back(UserMicroserviceModel(row));

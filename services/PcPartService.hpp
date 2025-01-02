@@ -27,11 +27,11 @@ namespace app_services
     public:
         INJECT(PcPartService(std::shared_ptr<unitofwork::IUnitOfWork> uow)) : uow(uow)
         {
-            LOG_INFO << "Init UserMicroserviceService";
+            LOG_INFO << "Init PcPartService";
         }
         ~PcPartService()
         {
-            LOG_INFO << "Destructor UserMicroserviceService";
+            LOG_INFO << "Destructor PcPartService";
         }
 
         virtual drogon::Task<std::vector<Dto>> GetAll(bool useTransaction = true) override;
