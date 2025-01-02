@@ -3,26 +3,18 @@
 
 namespace drogon::plugin
 {
+    Component<app_services::IUserMicroserviceService, IPcPartService, IFatService> getFruitComponent()
+    {
+
+        return fruit::createComponent().bind<unitofwork::IUnitOfWork, unitofwork::UnitOfWork>().bind<IPcPartService, PcPartService>().bind<app_services::IUserMicroserviceService, app_services::UserMicroserviceService>().bind<IFatService, FatService>();
+    }
+
     void DIFruitPlugin::initAndStart(const Json::Value &config)
     {
         try
         {
-            /// Initialize and start the plugin
+
             LOG_INFO << "DIFruitPlugin  initialized and started";
-            // Cấu hình injector ở đây
-            // auto dbClient = drogon::app().getDbClient();
-
-            // auto injector = di::make_injector(
-            //     di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>(),  // UnitOfWork là singleton
-            //     di::bind<drogon::orm::DbClient>.to(dbClient.get()),              // Inject DbClient vào UnitOfWork
-            //     di::bind<IUserMicroserviceService>.to<UserMicroserviceService>() // UserService nhận UnitOfWork
-            // );
-
-            // injector.install(di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>().in(di::unique),  // UnitOfWork là singleton
-            //                  di::bind<IUserMicroserviceService>.to<UserMicroserviceService>().in(di::unique) // UserService nhận UnitOfWork)
-            // );
-
-            // injector.install(di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>().in(di::unique));
         }
         catch (const std::runtime_error &ex)
         {
@@ -36,4 +28,21 @@ namespace drogon::plugin
         /// Shutdown the plugin
         LOG_INFO << "DIFruitPlugin shutdown";
     }
+    bool DIFruitPlugin::createSession(const std::string &sessionId)
+    {
+        auto injector = std::make_shared<InjectorType>(getFruitComponent);
+        // std::cout << sizeof(injector) << std::endl;
+        // sessions_[sessionId] = std::move(injector);
+
+        sessions_.emplace(sessionId, std::move(injector));
+        std::cout << "Session start: " << sessionId << std::endl;
+        return true;
+    }
+    bool DIFruitPlugin::endSession(const std::string &sessionId)
+    {
+        sessions_.erase(sessionId);
+        std::cout << "Session end: " << sessionId << std::endl;
+        return true;
+    }
+
 }

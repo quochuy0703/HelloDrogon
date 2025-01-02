@@ -13,6 +13,14 @@
 #include "../services/IUserMicroserviceService.hpp"
 #include <fruit/fruit.h>
 
+#include "../services/IPcPartService.hpp"
+#include "../services/PcPartService.hpp"
+
+#include "../services/IFatService.hpp"
+#include "../services/FatService.hpp"
+
+#include "../services/PcPartService.hpp"
+
 using namespace app_repositories;
 using namespace app_services;
 
@@ -26,6 +34,7 @@ namespace drogon::plugin
     class DIFruitPlugin : public drogon::Plugin<DIFruitPlugin>
     {
     public:
+        using InjectorType = Injector<app_services::IUserMicroserviceService, IPcPartService, IFatService>;
         DIFruitPlugin() = default;
 
         /// This method must be called by drogon to initialize and start the plugin.
@@ -36,28 +45,20 @@ namespace drogon::plugin
         /// It must be implemented by the user.
         void shutdown() override;
 
-        // Component<app_services::IUserMicroserviceService> getUserMicroserviceServiceComponent()
-        // {
-        //     return fruit::createComponent().bind<unitofwork::IUnitOfWork, unitofwork::UnitOfWork>().bind<app_services::IUserMicroserviceService, app_services::UserMicroserviceService>();
-        // }
+        template <typename T>
+        T *get(const std ::string &sessionId)
+        {
+            auto it = sessions_.find(sessionId);
 
-        // template <typename T>
-        // std::shared_ptr<T> get()
-        // {
-        //     Injector<IUserMicroserviceService> injector(getUserMicroserviceServiceComponent);
-        //     return injector.get<std::shared_ptr<T>>();
-        //     // return injector.create<std::shared_ptr<T>>();
-        //     // return injector.create<T>();
-        // }
-
-        // std::shared_ptr<app_services::IUserMicroserviceService> get()
-        // {
-        //     // auto component = getUserMicroserviceServiceComponent();
-        //     Injector<app_services::IUserMicroserviceService> injector(getUserMicroserviceServiceComponent);
-        //     return injector.get<std::shared_ptr<IUserMicroserviceService>>();
-        //     // return injector.create<std::shared_ptr<T>>();
-        //     // return injector.create<T>();
-        // }
+            if (it != sessions_.end())
+            {
+                return it->second->get<T *>();
+            }
+            else
+            {
+                throw std::runtime_error("Session not found: " + sessionId);
+            }
+        }
 
         // template <typename T>
         // T getUnique()
@@ -66,34 +67,10 @@ namespace drogon::plugin
         //     // return injector.create<T>();
         // }
 
-        // inline auto MakeAppInjector()
-        // {
-        //     auto dbClient = drogon::app().getDbClient();
-
-        //     return di::make_injector(
-        //         di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>(),  // UnitOfWork là singleton
-        //         di::bind<drogon::orm::DbClient>.to(dbClient.get()),              // Inject DbClient vào UnitOfWork
-        //         di::bind<IUserMicroserviceService>.to<UserMicroserviceService>() // UserService nhận UnitOfWork
-        //     );
-        // }
-
-        // using AppInjectorType = decltype(MakeAppInjector());
-
-        // extern const AppInjectorType *g_appInjector;
-
-        // template <typename T>
-        // auto DICreate() -> decltype(g_appInjector->template create<T>())
-        // {
-        //     return g_appInjector->template create<T>();
-        // }
+        bool createSession(const std ::string &sessionId);
+        bool endSession(const std ::string &sessionId);
 
     private:
-        // using InjectorType = decltype(di::make_injector(
-        //     di::bind<unitofwork::IUnitOfWork>.to<unitofwork::UnitOfWork>(),
-        //     di::bind<drogon::orm::DbClient>.to(drogon::app().getDbClient().get()),
-        //     di::bind<IUserMicroserviceService>.to<UserMicroserviceService>()));
-
-        // InjectorType injector;
-        // di::extension::injector<> injector{};
+        std::map<std::string, std::shared_ptr<InjectorType>> sessions_;
     };
 }
