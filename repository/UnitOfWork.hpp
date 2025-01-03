@@ -1,7 +1,6 @@
 #pragma once
 #include "IUnitOfWork.hpp"
 #include <drogon/drogon.h>
-#include "UserMicroserviceRepository.hpp"
 
 #include <fruit/fruit.h>
 
@@ -21,11 +20,15 @@ namespace app_repositories::unitofwork
         void Rollback() override;
         std::shared_ptr<UserMicroserviceRepository> UserMicroservices() override;
         std::shared_ptr<PcPartRepository> PcPartRepositorys() override;
+        std::shared_ptr<SystemSerialDetailRepository> SystemSerialDetailRepositories() override;
 
     private:
         drogon::orm::DbClientPtr dbClient_;
+        drogon::orm::DbClientPtr dbClientSmart_;
         std::shared_ptr<drogon::orm::Transaction> transaction_;
+        std::shared_ptr<drogon::orm::Transaction> transactionSmart_;
         std::shared_ptr<UserMicroserviceRepository> usermicroserviceRepository_;
         std::shared_ptr<PcPartRepository> pcPartRepository_;
+        std::shared_ptr<SystemSerialDetailRepository> systemSerialDetailRepository_;
     };
 }

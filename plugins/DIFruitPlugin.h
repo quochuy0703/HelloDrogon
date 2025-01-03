@@ -19,7 +19,8 @@
 #include "../services/IFatService.hpp"
 #include "../services/FatService.hpp"
 
-#include "../services/PcPartService.hpp"
+#include "../services/ISystemSerialDetailService.hpp"
+#include "../services/SystemSerialDetailService.hpp"
 
 using namespace app_repositories;
 using namespace app_services;
@@ -34,7 +35,7 @@ namespace drogon::plugin
     class DIFruitPlugin : public drogon::Plugin<DIFruitPlugin>
     {
     public:
-        using InjectorType = Injector<app_services::IUserMicroserviceService, IPcPartService, IFatService>;
+        using InjectorType = Injector<app_services::IUserMicroserviceService, IPcPartService, IFatService, ISystemSerialDetailService>;
         DIFruitPlugin() = default;
 
         /// This method must be called by drogon to initialize and start the plugin.

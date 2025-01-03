@@ -3,10 +3,10 @@
 
 namespace drogon::plugin
 {
-    Component<app_services::IUserMicroserviceService, IPcPartService, IFatService> getFruitComponent()
+    Component<app_services::IUserMicroserviceService, IPcPartService, IFatService, ISystemSerialDetailService> getFruitComponent()
     {
 
-        return fruit::createComponent().bind<unitofwork::IUnitOfWork, unitofwork::UnitOfWork>().bind<IPcPartService, PcPartService>().bind<app_services::IUserMicroserviceService, app_services::UserMicroserviceService>().bind<IFatService, FatService>();
+        return fruit::createComponent().bind<unitofwork::IUnitOfWork, unitofwork::UnitOfWork>().bind<IPcPartService, PcPartService>().bind<app_services::IUserMicroserviceService, app_services::UserMicroserviceService>().bind<IFatService, FatService>().bind<ISystemSerialDetailService, SystemSerialDetailService>();
     }
 
     void DIFruitPlugin::initAndStart(const Json::Value &config)

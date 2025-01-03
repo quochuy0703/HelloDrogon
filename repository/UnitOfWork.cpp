@@ -15,15 +15,14 @@ namespace app_repositories::unitofwork
 
     {
         LOG_INFO << "Init UnitOfWork";
-        dbClient_ = drogon::app().getDbClient();
+        dbClient_ = drogon::app().getDbClient("test");
+        dbClientSmart_ = drogon::app().getDbClient("smart");
+
+        std::cout << "dbClient: " << dbClient_.get() << " " << dbClientSmart_.get() << std::endl;
     }
 
     UnitOfWork::~UnitOfWork()
     {
-        // if (transaction_ && !transaction_->isCommitted())
-        // {
-        //     transaction_->rollback();
-        // }
         LOG_INFO << "Destructor UnitOfWork";
     }
 
@@ -33,8 +32,11 @@ namespace app_repositories::unitofwork
         {
             auto db = drogon::app().getDbClient();
             transaction_ = co_await dbClient_->newTransactionCoro();
+            transactionSmart_ = co_await dbClientSmart_->newTransactionCoro();
             transaction_->setCommitCallback([](bool flag)
                                             { LOG_INFO << "Commit successfully!"; });
+            transactionSmart_->setCommitCallback([](bool flag)
+                                                 { LOG_INFO << "Commit Smart successfully!"; });
 
             usermicroserviceRepository_ = std::make_shared<UserMicroserviceRepository>(transaction_);
             pcPartRepository_ = std::make_shared<PcPartRepository>(transaction_);
@@ -47,7 +49,7 @@ namespace app_repositories::unitofwork
         // {
         //     transaction_->commit();
         // }
-        LOG_INFO << "transaction_ ptr count: " << transaction_.use_count();
+        LOG_INFO << "transaction_ ptr count: " << transaction_.use_count() << " " << transactionSmart_.use_count();
         // transaction_.reset();
     }
 
@@ -56,6 +58,7 @@ namespace app_repositories::unitofwork
         if (transaction_)
         {
             transaction_->rollback();
+            transactionSmart_->rollback();
         }
     }
 
@@ -67,5 +70,9 @@ namespace app_repositories::unitofwork
     std::shared_ptr<PcPartRepository> UnitOfWork::PcPartRepositorys()
     {
         return this->pcPartRepository_;
+    }
+    std::shared_ptr<SystemSerialDetailRepository> UnitOfWork::SystemSerialDetailRepositories()
+    {
+        return this->systemSerialDetailRepository_;
     }
 }
