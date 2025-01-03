@@ -53,7 +53,7 @@ drogon::AsyncTask User::login(HttpRequestPtr req,
 
         LOG_INFO << "User: " << userId.asString();
 
-        auto db = drogon::app().getDbClient();
+        auto db = drogon::app().getDbClient("test");
 
         drogon::orm::Mapper<UserModel> usr(db);
 
@@ -123,7 +123,7 @@ void demo::v1::User::loginView(const HttpRequestPtr &req, std::function<void(con
         std::string userId = req->getParameter("userId");
         std::string passwd = req->getParameter("password");
         cout << "User: " << userId << endl;
-        auto db = drogon::app().getDbClient();
+        auto db = drogon::app().getDbClient("test");
 
         drogon::orm::Mapper<UserModel> usr(db);
 
@@ -189,7 +189,7 @@ void demo::v1::User::loginAccount(const HttpRequestPtr &req, std::function<void(
         Json::Value passwd = reqBody["password"];
         cout << "User: " << userId.asString() << endl;
 
-        auto db = drogon::app().getDbClient();
+        auto db = drogon::app().getDbClient("test");
 
         drogon::orm::Mapper<UserSystemModel> usr(db);
 
@@ -313,7 +313,7 @@ void demo::v1::User::listUserView(const HttpRequestPtr &req, std::function<void(
 {
     try
     {
-        auto db = drogon::app().getDbClient();
+        auto db = drogon::app().getDbClient("test");
 
         drogon::orm::Mapper<UserModel> usr(db);
 
@@ -399,7 +399,7 @@ void demo::v1::User::insertUserView(const HttpRequestPtr &req, std::function<voi
     auto nameUser = req->getParameter("name");
     auto emailUser = req->getParameter("email");
 
-    auto db = drogon::app().getDbClient();
+    auto db = drogon::app().getDbClient("test");
     drogon::orm::Mapper<UserModel> usr(db);
 
     UserModel user;
@@ -430,7 +430,7 @@ void demo::v1::User::editUserView(const HttpRequestPtr &req, std::function<void(
 {
     try
     {
-        auto db = drogon::app().getDbClient();
+        auto db = drogon::app().getDbClient("test");
 
         drogon::orm::Mapper<UserModel> usr(db);
 
@@ -474,7 +474,7 @@ void demo::v1::User::updateUserView(const HttpRequestPtr &req, std::function<voi
     auto nameUser = req->getParameter("name");
     auto emailUser = req->getParameter("email");
 
-    auto db = drogon::app().getDbClient();
+    auto db = drogon::app().getDbClient("test");
     drogon::orm::Mapper<UserModel> usr(db);
 
     UserModel user;
@@ -511,7 +511,7 @@ void demo::v1::User::deleteUserView(const HttpRequestPtr &req, std::function<voi
 {
     try
     {
-        auto db = drogon::app().getDbClient();
+        auto db = drogon::app().getDbClient("test");
 
         drogon::orm::Mapper<UserModel> usr(db);
 
