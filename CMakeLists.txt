@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(VCPKG_TARGET_TRIPLET "x64-mingw-custom")
-set(VCPKG_HOST_TRIPLET "x64-mingw-dynamic")
+if(UNIX AND NOT APPLE) # Điều kiện cho Linux (bao gồm Ubuntu)
+    set(VCPKG_HOST_TRIPLET "x64-linux-dynamic")
+elseif(WIN32) # Điều kiện cho Windows
+    set(VCPKG_HOST_TRIPLET "x64-mingw-dynamic")
+else()
+    message(FATAL_ERROR "Unsupported platform for VCPKG_HOST_TRIPLET")
+endif()
+message(VCPKG_HOST_TRIPLET="${VCPKG_HOST_TRIPLET}")
 # set(VCPKG_MANIFEST_INSTALL OFF)
 # set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/toolchain-mingw.cmake)
 
@@ -57,7 +64,7 @@ find_package(unofficial-modern-cpp-kafka CONFIG REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon fruit RdKafka::rdkafka unofficial::modern-cpp-kafka::modern-cpp-kafka Botan::Botan-static cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time Boost::pfr)
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon fruit RdKafka::rdkafka unofficial::modern-cpp-kafka::modern-cpp-kafka Botan::Botan cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time Boost::pfr)
 
 # ##############################################################################
 

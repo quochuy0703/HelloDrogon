@@ -14,8 +14,13 @@ target_include_directories(${ftplib} PUBLIC
 )
 
 # Thêm bất kỳ liên kết thư viện hoặc cài đặt định nghĩa compile cần thiết
-target_link_libraries(${ftplib} PUBLIC ws2_32)
-target_compile_definitions(${ftplib} PUBLIC NOSSL _WIN32 BUILDING_DLL)
+# Liên kết thư viện và cài đặt chỉ thị compile
+if(WIN32)
+    target_link_libraries(${ftplib} PUBLIC ws2_32)
+    target_compile_definitions(${ftplib} PUBLIC NOSSL _WIN32 BUILDING_DLL)
+elseif(UNIX AND NOT APPLE) # Áp dụng cho Linux (không bao gồm macOS)
+    target_compile_definitions(${ftplib} PUBLIC NOSSL)
+endif()
 
 # Định nghĩa target install cho thư viện
 install(TARGETS ${ftplib}
