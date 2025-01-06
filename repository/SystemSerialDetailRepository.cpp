@@ -43,10 +43,13 @@ namespace app_repositories
         try
         {
             auto rows = co_await tranPtr_->execSqlCoro("SELECT * FROM system_serial_detail;");
-            for (auto row : rows)
-            {
-                users.push_back(Model(row));
-            }
+            std::map<std::string, std::any> resultMap;
+            std::map<std::string, std::type_index> typesToCheck;
+            app_helpers::groupJoinDrogon<app_dto::models::SystemSerialDetailModel, app_dto::models::SystemSerialDetailModel>(rows, resultMap, typesToCheck);
+            // for (auto row : rows)
+            // {
+            //     users.push_back(Model(row));
+            // }
         }
         catch (const drogon::orm::DrogonDbException &ex)
         {

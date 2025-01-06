@@ -3,6 +3,8 @@
 #include "../models/SystemSerialDetail.h"
 #include <memory>
 #include <string>
+#include "../utils/MapJson.hpp"
+#include "../dto/models/SystemSerialDetailModel.hpp"
 
 namespace app_repositories
 {
