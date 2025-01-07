@@ -472,13 +472,17 @@ namespace app_helpers
     template <typename TypeB, typename TypeParent>
     TypeB groupRowOneToMany(Json::Value row, std::map<std::string, std::any> &resultMap, std::map<std::string, std::type_index> &typesToCheck, std::string prefix = std::string{""}, std::string parent = std::string{""})
     {
-        if (!row.isObject())
+        if constexpr (!is_struct_v<TypeB>)
         {
-
-            // static_assert(std::is_same_v<TypeB, decltype(row)>, "Value is not an int");
-
-            return (TypeB)row;
+            return row.template as<TypeB>();
         }
+        // if (!row.isObject())
+        // {
+
+        //     // static_assert(std::is_same_v<TypeB, decltype(row)>, "Value is not an int");
+
+        //     return (TypeB)row;
+        // }
         else
         {
             TypeB objB;
@@ -771,7 +775,7 @@ namespace app_helpers
         // std::map<std::string, std::any> resultMap;
         // std::cout << "TypeB: " << get_type<TypeB>() << " TypeParent: " << get_type<TypeParent>() << std::endl;
         // std::cout << "TypeB process: " << get_type<TypeB>() << " ,is array: " << j.is_array() << " ,size: " << j.size() << " ,value: " << j.dump() << std::endl;
-        if (j.is_array())
+        if (j.isArray())
         {
             for (const auto &row : j)
             {
@@ -935,7 +939,7 @@ namespace app_helpers
                                 {
                                     if (!row[mapRow[prefixName]].isNull())
                                     {
-                                        fieldCheck = row[mapRow[prefixName]].template at<decltype(temp)>();
+                                        fieldCheck = row[mapRow[prefixName]].template as<decltype(temp)>();
                                         parent = parent + prefix + to_string_generic(fieldCheck);
                                     }
                                     else
@@ -1069,7 +1073,7 @@ namespace app_helpers
                     {
                         if (!row[mapRow[name]].isNull())
                         {
-                            BaseType value = row[mapRow[name]].template at<BaseType>();
+                            BaseType value = row[mapRow[name]].template as<BaseType>();
                             fieldB = value;
                             std::cout << name << ", " << "Optional: " << get_type<decltype(fieldB)>() << std::endl;
                         }
@@ -1082,7 +1086,7 @@ namespace app_helpers
 
                 else if constexpr (is_struct_v<decltype(tmp)> && !std::is_same<decltype(tmp), std::string>::value)
                 {
-                    fieldB = groupRowOneToMany<decltype(tmp)>(row, resultMap, typesToCheck);
+                    fieldB = groupRowOneToManyDrogon<decltype(tmp)>(row, resultMap, typesToCheck);
                     std::cout
                         << name << ", " << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(fieldB)>>().pretty_name() << std::endl;
                     // objAs.push_back(fieldB);
@@ -1207,7 +1211,7 @@ namespace app_helpers
                         {
                             if (!row[mapRow[prefixName]].isNull())
                             {
-                                fieldCheck = row[mapRow[prefixName]].template at<decltype(temp)>();
+                                fieldCheck = row[mapRow[prefixName]].template as<decltype(temp)>();
                                 parent = parent + prefix + to_string_generic(fieldCheck);
                             }
                             else
@@ -1219,7 +1223,7 @@ namespace app_helpers
                 });
 
             TypeB *obj = new TypeB();
-            *obj = groupRowOneToMany<TypeB, TypeParent>(row, resultMap, typesToCheck, prefix, parent);
+            *obj = groupRowOneToManyDrogon<TypeB, TypeParent>(row, resultMap, typesToCheck, prefix, parent);
 
             constexpr auto namesField = boost::pfr::names_as_array<TypeB>();
 

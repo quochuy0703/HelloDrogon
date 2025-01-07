@@ -33,33 +33,6 @@ namespace app_helpers
         return oss.str();
     }
 
-    template <typename T>
-    void setObject(T &obj, std::map<std::string, std::string> json)
-    {
-        // constexpr auto names = boost::pfr::names_as_array<T>();
-        typename std::remove_reference<decltype(obj)>::type tmp;
-        constexpr auto names = boost::pfr::names_as_array<decltype(tmp)>();
-        boost::pfr::for_each_field(
-            obj,
-            [&](auto &field, std::size_t idx)
-            {
-                const std::string name = std::string(names[idx]);
-                field = json[name];
-            });
-    }
-
-    template <typename T>
-    void printObject(const T &obj)
-    {
-        typename std::remove_reference<decltype(obj)>::type tmp;
-        constexpr auto names = boost::pfr::names_as_array<decltype(tmp)>();
-        // constexpr auto names = boost::pfr::names_as_array<T>();
-        boost::pfr::for_each_field(
-            obj,
-            [&names](const auto &field, std::size_t idx)
-            { std::cout << idx << ": " << names[idx] << " = " << field << '\n'; });
-    }
-
     // template <typename... Args>
     // std::vector<std::string> formatArgs(Args... args)
     // {
