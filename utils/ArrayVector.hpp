@@ -374,4 +374,4 @@ namespace app_helpers::array_helper
     };
 }
 
-#endif;
+#endif

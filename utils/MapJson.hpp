@@ -1,7 +1,5 @@
-// #ifndef UTILS_HPP
-// #define UTILS_HPP
-
-#pragma once
+#ifndef MAP_JSON_HPP
+#define MAP_JSON_HPP
 
 #include <iostream>
 #include <boost/pfr/core.hpp>
@@ -17,11 +15,12 @@
 #include <chrono>
 #include <json/json.h>
 #include <drogon/drogon.h>
-#include <type_traits>
 
 using namespace drogon::orm;
 
-namespace app_helpers
+// sử dụng inline cho những hàm không phải template, vì chỉ sử dụng một file .hpp để define hàm nếu không sẽ bị lỗi
+//  multiple definition, first defined here errors
+namespace app_helpers::map_json
 {
     template <typename T>
     std::string to_string_generic(const T &value);
@@ -86,21 +85,21 @@ namespace app_helpers
     }
 
     // Extracts the prefix of a key (before the last dot)
-    std::string keyPrefixString(const std::string &key)
+    inline std::string keyPrefixString(const std::string &key)
     {
         auto pos = key.find_last_of('.');
         return (pos != std::string::npos) ? key.substr(0, pos) : "";
     }
 
     // Removes the prefix from the key (after the last dot)
-    std::string removeKeyPrefix(const std::string &key)
+    inline std::string removeKeyPrefix(const std::string &key)
     {
         auto pos = key.find_last_of('.');
         return (pos != std::string::npos) ? key.substr(pos + 1) : key;
     }
 
     // Splits a string by '.' into an array of strings
-    std::vector<std::string> keyPrefix(const std::string &key)
+    inline std::vector<std::string> keyPrefix(const std::string &key)
     {
         std::vector<std::string> result;
         std::stringstream ss(key);
@@ -113,25 +112,13 @@ namespace app_helpers
     }
 
     // Extract the last key prefix
-    std::string lastKeyPrefix(const std::string &key)
+    inline std::string lastKeyPrefix(const std::string &key)
     {
         auto parts = keyPrefix(key);
         return (!parts.empty()) ? parts.back() : "";
     }
 
-    std::string setNameFeild(const std::string &inputString, const std::string &insertString);
-
-    struct S
-    {
-        std::string one = "one 1";
-        std::string two = "two 2";
-        std::string three = "three 3";
-
-        void foo()
-        {
-            std::cout << "Hello" << std::endl;
-        }
-    };
+    inline std::string setNameFeild(const std::string &inputString, const std::string &insertString);
 
     template <typename T>
     struct DefaultValue
@@ -140,9 +127,9 @@ namespace app_helpers
     };
 
     // loại bỏ namespace
-    std::string remove_namespace(const std::string &type_name)
+    inline std::string remove_namespace(const std::string &type_name)
     {
-        size_t pos = type_name.find_last_of("::");
+        std::size_t pos = type_name.find_last_of("::");
         if (pos != std::string::npos)
         {
             return type_name.substr(pos + 1);
@@ -412,11 +399,11 @@ namespace app_helpers
         return arrays;
     }
 
-    std::string getNameFeild(const std::string &inputString, const std::string &excludeString)
+    inline std::string getNameFeild(const std::string &inputString, const std::string &excludeString)
     {
 
         // Tìm vị trí của ký tự "_" cuối cùng trong chuỗi
-        size_t lastUnderscorePos = inputString.find_last_of(excludeString);
+        std::size_t lastUnderscorePos = inputString.find_last_of(excludeString);
 
         std::string ret;
         if (lastUnderscorePos != std::string::npos)
@@ -428,7 +415,7 @@ namespace app_helpers
         return ret;
     }
 
-    std::string setNameFeild(const std::string &inputString, const std::string &insertString)
+    inline std::string setNameFeild(const std::string &inputString, const std::string &insertString)
     {
 
         return inputString + "_" + insertString;
@@ -1083,7 +1070,28 @@ namespace app_helpers
                         }
                     }
                 }
-
+                else if constexpr (is_struct_v<decltype(tmp)> && std::is_same<decltype(tmp), trantor::Date>::value)
+                {
+                    auto timeStr = row[mapRow[name]].as<std::string>();
+                    struct tm stm;
+                    memset(&stm, 0, sizeof(stm));
+                    auto p = strptime(timeStr.c_str(), "%Y-%m-%d %H:%M:%S", &stm);
+                    time_t t = mktime(&stm);
+                    size_t decimalNum = 0;
+                    if (p)
+                    {
+                        if (*p == '.')
+                        {
+                            std::string decimals(p + 1, &timeStr[timeStr.length()]);
+                            while (decimals.length() < 6)
+                            {
+                                decimals += "0";
+                            }
+                            decimalNum = (size_t)atol(decimals.c_str());
+                        }
+                        fieldB = trantor::Date(t * 1000000 + decimalNum);
+                    }
+                }
                 else if constexpr (is_struct_v<decltype(tmp)> && !std::is_same<decltype(tmp), std::string>::value)
                 {
                     fieldB = groupRowOneToManyDrogon<decltype(tmp)>(row, resultMap, typesToCheck);
@@ -1261,3 +1269,5 @@ namespace app_helpers
     }
 
 }
+
+#endif
