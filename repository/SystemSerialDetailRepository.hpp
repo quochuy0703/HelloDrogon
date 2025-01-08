@@ -1,4 +1,6 @@
 #pragma once
+
+#include <iostream>
 #include "IRepository.hpp"
 #include "../models/SystemSerialDetail.h"
 #include <memory>
@@ -15,9 +17,9 @@ namespace app_repositories
         SystemSerialDetailRepository(std::shared_ptr<drogon::orm::Transaction> tranPtr); // Sử dụng transaction.
         ~SystemSerialDetailRepository();
 
-        drogon::Task<Model> getById(std::string code);
-        drogon::Task<std::vector<Model>> getAll();
-        drogon::Task<Model> add(const Model &entity);
+        drogon::Task<Model> GetById(std::string code) override;
+        drogon::Task<std::vector<Model>> GetAll() override;
+        drogon::Task<Model> Add(const Model &entity) override;
 
     private:
         std::shared_ptr<drogon::orm::Transaction> tranPtr_;

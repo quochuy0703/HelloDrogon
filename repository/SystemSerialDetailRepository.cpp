@@ -1,18 +1,17 @@
 #include "SystemSerialDetailRepository.hpp"
-#include <iostream>
 
 namespace app_repositories
 {
     SystemSerialDetailRepository::SystemSerialDetailRepository(std::shared_ptr<drogon::orm::Transaction> txn)
-        : tranPtr_(txn) { LOG_INFO << "Init PcPartRepository"; }
+        : tranPtr_(txn) { LOG_INFO << "Init SystemSerialDetailRepository"; }
 
     SystemSerialDetailRepository::~SystemSerialDetailRepository()
     {
         // Destructor không cần làm gì thêm vì pqxx sẽ tự động quản lý
-        LOG_INFO << "Destructor PcPartRepository";
+        LOG_INFO << "Destructor SystemSerialDetailRepository";
     }
 
-    drogon::Task<SystemSerialDetailRepository::Model> SystemSerialDetailRepository::getById(std::string code)
+    drogon::Task<SystemSerialDetailRepository::Model> SystemSerialDetailRepository::GetById(std::string code)
     {
 
         Model user;
@@ -36,16 +35,16 @@ namespace app_repositories
         co_return user;
     }
 
-    drogon::Task<std::vector<SystemSerialDetailRepository::Model>> SystemSerialDetailRepository::getAll()
+    drogon::Task<std::vector<SystemSerialDetailRepository::Model>> SystemSerialDetailRepository::GetAll()
     {
 
-        std::vector<Model> users;
+        std::vector<SystemSerialDetailRepository::Model> users;
         try
         {
             auto rows = co_await tranPtr_->execSqlCoro("SELECT * FROM system_serial_detail;");
             std::map<std::string, std::any> resultMap;
             std::map<std::string, std::type_index> typesToCheck;
-            app_helpers::groupJoinDrogon<app_dto::models::SystemSerialDetailModel, app_dto::models::SystemSerialDetailModel>(rows, resultMap, typesToCheck);
+            auto result = app_helpers::map_json::groupJoinDrogon<app_dto::models::SystemSerialDetailModel, app_dto::models::SystemSerialDetailModel>(rows, resultMap, typesToCheck);
             // for (auto row : rows)
             // {
             //     users.push_back(Model(row));
@@ -60,7 +59,7 @@ namespace app_repositories
         co_return users;
     }
 
-    drogon::Task<SystemSerialDetailRepository::Model> SystemSerialDetailRepository::add(const Model &Model)
+    drogon::Task<SystemSerialDetailRepository::Model> SystemSerialDetailRepository::Add(const Model &Model)
     {
 
         try

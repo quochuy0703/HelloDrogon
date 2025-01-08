@@ -28,7 +28,7 @@ namespace app_repositories::unitofwork
 
     drogon::Task<> UnitOfWork::BeginTransaction()
     {
-        if (!transaction_)
+        if (!transaction_ && !transactionSmart_)
         {
             auto db = drogon::app().getDbClient();
             transaction_ = co_await dbClient_->newTransactionCoro();
@@ -40,6 +40,7 @@ namespace app_repositories::unitofwork
 
             usermicroserviceRepository_ = std::make_shared<UserMicroserviceRepository>(transaction_);
             pcPartRepository_ = std::make_shared<PcPartRepository>(transaction_);
+            systemSerialDetailRepository_ = std::make_shared<SystemSerialDetailRepository>(transactionSmart_);
         }
     }
 
@@ -55,7 +56,7 @@ namespace app_repositories::unitofwork
 
     void UnitOfWork::Rollback()
     {
-        if (transaction_)
+        if (transaction_ && transactionSmart_)
         {
             transaction_->rollback();
             transactionSmart_->rollback();

@@ -16,7 +16,7 @@ namespace app_services
                 co_await uow->BeginTransaction();
             }
 
-            auto models = co_await uow->SystemSerialDetailRepositories()->getAll();
+            auto models = co_await uow->SystemSerialDetailRepositories()->GetAll();
 
             for (auto model : models)
             {

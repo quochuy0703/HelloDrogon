@@ -193,7 +193,7 @@ drogon::AsyncTask document::submit(const HttpRequestPtr req,
         auto *DIPluginPtr = app().getPlugin<drogon::plugin::DIFruitPlugin>();
 
         const auto uuidRequest = req->getParameter("uuidRequest");
-        auto pcPartService = DIPluginPtr->get<IPcPartService>(uuidRequest);
+        auto pcPartService = DIPluginPtr->get<ISystemSerialDetailService>(uuidRequest);
 
         // LOG_INFO << "userService ptr count: " << pcPartService.use_count();
 
