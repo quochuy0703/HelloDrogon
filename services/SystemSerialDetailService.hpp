@@ -37,6 +37,7 @@ namespace app_services
         }
 
         virtual drogon::Task<std::vector<ISystemSerialDetailService::Dto>> GetAll(bool useTransaction = true) override;
+        virtual drogon::Task<std::vector<ISystemSerialDetailService::DtoModel>> GetAllDto(bool useTransaction = true) override;
 
     private:
         std::shared_ptr<unitofwork::IUnitOfWork> uow;

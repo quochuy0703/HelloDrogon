@@ -197,7 +197,7 @@ drogon::AsyncTask document::submit(const HttpRequestPtr req,
 
         // LOG_INFO << "userService ptr count: " << pcPartService.use_count();
 
-        auto listPart = co_await pcPartService->GetAll();
+        auto listPart = co_await pcPartService->GetAllDto();
 
         string accessToken = co_await app_helpers::jwt_helper::generateAccessTokenCoro(writer.write(tokenPayload));
 

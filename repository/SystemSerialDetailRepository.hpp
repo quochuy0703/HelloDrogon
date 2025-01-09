@@ -19,6 +19,7 @@ namespace app_repositories
 
         drogon::Task<Model> GetById(std::string code) override;
         drogon::Task<std::vector<Model>> GetAll() override;
+        drogon::Task<std::vector<app_dto::models::SystemSerialDetailModel>> GetAllDto();
         drogon::Task<Model> Add(const Model &entity) override;
 
     private:

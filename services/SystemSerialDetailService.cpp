@@ -41,4 +41,34 @@ namespace app_services
         co_return lists;
     }
 
+    drogon::Task<std::vector<ISystemSerialDetailService::DtoModel>> SystemSerialDetailService::GetAllDto(bool useTransaction)
+    {
+        std::vector<ISystemSerialDetailService::DtoModel> lists;
+
+        try
+        {
+            if (useTransaction)
+            {
+                co_await uow->BeginTransaction();
+            }
+
+            lists = co_await uow->SystemSerialDetailRepositories()->GetAllDto();
+
+            if (useTransaction)
+            {
+                uow->Commit();
+            }
+        }
+        catch (const std::exception &ex)
+        {
+            LOG_ERROR << ex.what();
+            if (useTransaction)
+            {
+                uow->Rollback();
+            }
+            throw std::runtime_error(ex.what());
+        }
+
+        co_return lists;
+    }
 }

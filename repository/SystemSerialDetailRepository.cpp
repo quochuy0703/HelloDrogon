@@ -42,13 +42,30 @@ namespace app_repositories
         try
         {
             auto rows = co_await tranPtr_->execSqlCoro("SELECT * FROM system_serial_detail;");
+            for (auto row : rows)
+            {
+                users.push_back(Model(row));
+            }
+        }
+        catch (const drogon::orm::DrogonDbException &ex)
+        {
+            LOG_ERROR << ex.base().what();
+            throw std::runtime_error(ex.base().what());
+        }
+
+        co_return users;
+    }
+
+    drogon::Task<std::vector<app_dto::models::SystemSerialDetailModel>> SystemSerialDetailRepository::GetAllDto()
+    {
+
+        std::vector<app_dto::models::SystemSerialDetailModel> users;
+        try
+        {
+            auto rows = co_await tranPtr_->execSqlCoro("SELECT * FROM system_serial_detail;");
             std::map<std::string, std::any> resultMap;
             std::map<std::string, std::type_index> typesToCheck;
-            auto result = app_helpers::map_json::groupJoinDrogon<app_dto::models::SystemSerialDetailModel, app_dto::models::SystemSerialDetailModel>(rows, resultMap, typesToCheck);
-            // for (auto row : rows)
-            // {
-            //     users.push_back(Model(row));
-            // }
+            users = app_helpers::map_json::groupJoinDrogon<app_dto::models::SystemSerialDetailModel, app_dto::models::SystemSerialDetailModel>(rows, resultMap, typesToCheck);
         }
         catch (const drogon::orm::DrogonDbException &ex)
         {
