@@ -199,6 +199,8 @@ drogon::AsyncTask document::submit(const HttpRequestPtr req,
 
         auto listPart = co_await pcPartService->GetAllDto();
 
+        ret["listPart"] = app_helpers::map_json::toJsonExt(listPart[0]);
+
         string accessToken = co_await app_helpers::jwt_helper::generateAccessTokenCoro(writer.write(tokenPayload));
 
         ret["result"] = "ok";

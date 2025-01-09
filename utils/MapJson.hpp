@@ -365,6 +365,319 @@ namespace app_helpers::map_json
     }
 
     template <typename T>
+    void setJsonExt(T &obj, Json::Value &root, bool logging = false)
+    {
+        if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>)
+        {
+            typename std::remove_reference<decltype(obj)>::type tmp;
+            constexpr auto names = boost::pfr::names_as_array<decltype(tmp)>();
+            // constexpr auto names = boost::pfr::names_as_array<T>();
+            boost::pfr::for_each_field(
+                obj,
+                [&names, &root, logging](auto &field, std::size_t idx)
+                {
+                    auto nameField = std::string(names[idx]);
+                    const std::string name = std::string(names[idx]);
+                    typename std::remove_reference<decltype(field)>::type tmp1;
+                    if constexpr (is_vector<decltype(tmp1)>::value)
+                    {
+                        auto size = field.size();
+                        using NonVectorType = remove_vector_t<decltype(tmp1)>;
+                        if constexpr (is_struct_v<NonVectorType> && !std::is_same<NonVectorType, std::string>::value)
+                        {
+                            if (logging)
+                                std::cout << idx << ": " << names[idx] << ":" << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(field)>>().pretty_name() << ", size: " << size << ", " << " = " << std::endl;
+                            for (auto o : field)
+                            {
+                                if (logging)
+                                    printObjectExt(o);
+
+                                Json::Value temp;
+                                setJsonExt(o, temp);
+                                root[names[idx]] = temp;
+                            }
+                        }
+                        else
+                        {
+                            if (logging)
+                                std::cout << idx << ": " << names[idx] << ":" << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(field)>>().pretty_name() << ", size: " << size << ", " << " = " << "[";
+                            int n = 0;
+                            for (auto o : field)
+                            {
+                                if (logging)
+                                    printField(std::cout, o);
+                                root[names[idx]] = o;
+                                n++;
+                                if (logging)
+                                {
+                                    if (n != field.size())
+                                    {
+                                        std::cout << ",";
+                                    }
+                                }
+                            }
+
+                            if (logging)
+                                std::cout << "]" << std::endl;
+                        }
+                    }
+                    else if constexpr (is_optional<decltype(tmp1)>::value)
+                    {
+                        if (field.has_value())
+                        {
+                            using BaseType = typename remove_optional<decltype(tmp1)>::type;
+                            if constexpr (is_struct_v<BaseType> && !std::is_same<BaseType, std::string>::value)
+                            {
+                                if (logging)
+                                    std::cout << idx << ": " << names[idx] << " = Optional" << ", value : " << std::endl;
+                                BaseType value = field.value();
+                                if (logging)
+                                    printObjectExt(value);
+
+                                Json::Value temp;
+                                setJsonExt(value, temp);
+                                root[names[idx]] = temp;
+                            }
+                            else
+                            {
+                                if (logging)
+                                    std::cout << idx << ": " << names[idx] << " = Optional" << ", value : ";
+                                if (logging)
+                                    printField(std::cout, field.value()) << '\n';
+                                root[nameField] = field.value();
+                            }
+                        }
+                        else
+                        {
+                            if (logging)
+                                std::cout << idx << ": " << names[idx] << " = " << "Optional: " << "not value!" << std::endl;
+                        }
+                    }
+                    else if constexpr (std::is_pointer<decltype(tmp1)>::value)
+                    {
+                        using NonPointerType = std::remove_pointer_t<decltype(tmp1)>;
+                        if constexpr (is_struct_v<NonPointerType> && !std::is_same<NonPointerType, std::string>::value)
+                        {
+                            if (logging)
+                                std::cout << idx << ": " << names[idx] << " = " << field << ", value : " << std::endl;
+                            NonPointerType value = *field;
+                            if (logging)
+                                printObjectExt(value);
+
+                            Json::Value temp;
+                            setJsonExt(value, temp);
+                            root[nameField] = temp;
+                        }
+                        else
+                        {
+                            if (field != nullptr)
+                            {
+                                if (logging)
+                                    std::cout << idx << ": " << names[idx] << " = " << field << ", value : " << *field << std::endl;
+                                root[nameField] = *field;
+                            }
+                            else
+                            {
+                                if (logging)
+                                    std::cout << idx << ": " << names[idx] << " = " << field << ", value : " << "nullptr" << std::endl;
+                                root[nameField] = nullptr;
+                            }
+                        }
+                    }
+                    else if constexpr (std::is_same<decltype(tmp1), std::string>::value)
+                    {
+                        if (logging)
+                            std::cout << idx << ": " << names[idx] << " = ";
+                        if (logging)
+                            printField(std::cout, field) << '\n';
+                        // auto nameField = std::string(names[idx]);
+                        root[nameField] = field;
+                    }
+
+                    else if constexpr (is_struct_v<decltype(tmp1)>)
+                    {
+                        if (logging)
+                            std::cout << idx << ": " << names[idx] << " = Class,Struct" << ", value : " << std::endl;
+                        if (logging)
+                            printObjectExt(field);
+
+                        Json::Value temp;
+                        setJsonExt(field, temp);
+                        root[nameField] = temp;
+                    }
+                    else
+                    {
+                        if (logging)
+                            std::cout << idx << ": " << names[idx] << " = ";
+                        if (logging)
+                            printField(std::cout, field) << '\n';
+
+                        root[nameField] = field;
+                    }
+                });
+        }
+    }
+
+    template <typename T>
+    Json::Value toJsonExt(T &obj, bool logging = false)
+    {
+        Json::Value root;
+        if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>)
+        {
+            typename std::remove_reference<decltype(obj)>::type tmp;
+            constexpr auto names = boost::pfr::names_as_array<decltype(tmp)>();
+            // constexpr auto names = boost::pfr::names_as_array<T>();
+            boost::pfr::for_each_field(
+                obj,
+                [&names, &root, logging](auto &field, std::size_t idx)
+                {
+                    auto nameField = std::string(names[idx]);
+                    const std::string name = std::string(names[idx]);
+                    typename std::remove_reference<decltype(field)>::type tmp1;
+                    if constexpr (is_vector<decltype(tmp1)>::value)
+                    {
+                        auto size = field.size();
+                        using NonVectorType = remove_vector_t<decltype(tmp1)>;
+                        if constexpr (is_struct_v<NonVectorType> && !std::is_same<NonVectorType, std::string>::value)
+                        {
+                            if (logging)
+                                std::cout << idx << ": " << names[idx] << ":" << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(field)>>().pretty_name() << ", size: " << size << ", " << " = " << std::endl;
+                            for (auto o : field)
+                            {
+                                if (logging)
+                                    printObjectExt(o);
+
+                                root[nameField] = toJsonExt(o);
+                            }
+                        }
+                        else
+                        {
+                            if (logging)
+                                std::cout << idx << ": " << names[idx] << ":" << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(field)>>().pretty_name() << ", size: " << size << ", " << " = " << "[";
+                            int n = 0;
+                            for (auto o : field)
+                            {
+                                if (logging)
+                                    printField(std::cout, o);
+
+                                root[nameField] = o;
+
+                                n++;
+                                if (logging)
+                                {
+                                    if (n != field.size())
+                                    {
+                                        std::cout << ",";
+                                    }
+                                }
+                            }
+
+                            if (logging)
+                                std::cout << "]" << std::endl;
+                        }
+                    }
+                    else if constexpr (is_optional<decltype(tmp1)>::value)
+                    {
+                        if (field.has_value())
+                        {
+                            using BaseType = typename remove_optional<decltype(tmp1)>::type;
+                            if constexpr (is_struct_v<BaseType> && !std::is_same<BaseType, std::string>::value)
+                            {
+                                if (logging)
+                                    std::cout << idx << ": " << names[idx] << " = Optional" << ", value : " << std::endl;
+                                BaseType value = field.value();
+                                if (logging)
+                                    printObjectExt(value);
+
+                                root[nameField] = toJsonExt(value);
+                            }
+                            else
+                            {
+                                if (logging)
+                                    std::cout << idx << ": " << names[idx] << " = Optional" << ", value : ";
+                                if (logging)
+                                    printField(std::cout, field.value()) << '\n';
+                                root[nameField] = field.value();
+                            }
+                        }
+                        else
+                        {
+                            if (logging)
+                                std::cout << idx << ": " << names[idx] << " = " << "Optional: " << "not value!" << std::endl;
+                        }
+                    }
+                    else if constexpr (std::is_pointer<decltype(tmp1)>::value)
+                    {
+                        using NonPointerType = std::remove_pointer_t<decltype(tmp1)>;
+                        if constexpr (is_struct_v<NonPointerType> && !std::is_same<NonPointerType, std::string>::value)
+                        {
+                            if (logging)
+                                std::cout << idx << ": " << names[idx] << " = " << field << ", value : " << std::endl;
+                            NonPointerType value = *field;
+                            if (logging)
+                                printObjectExt(value);
+
+                            root[nameField] = toJsonExt(value);
+                        }
+                        else
+                        {
+                            if (field != nullptr)
+                            {
+                                if (logging)
+                                    std::cout << idx << ": " << names[idx] << " = " << field << ", value : " << *field << std::endl;
+                                root[nameField] = *field;
+                            }
+                            else
+                            {
+                                if (logging)
+                                    std::cout << idx << ": " << names[idx] << " = " << field << ", value : " << "nullptr" << std::endl;
+                                root[nameField] = nullptr;
+                            }
+                        }
+                    }
+                    else if constexpr (std::is_same<decltype(tmp1), std::string>::value)
+                    {
+                        if (logging)
+                            std::cout << idx << ": " << names[idx] << " = ";
+                        if (logging)
+                            printField(std::cout, field) << '\n';
+                        // auto nameField = std::string(names[idx]);
+                        root[nameField] = field;
+                    }
+                    else if constexpr (std::is_same<decltype(tmp1), trantor::Date>::value)
+                    {
+                        if (logging)
+                            std::cout << idx << ": " << names[idx] << " = ";
+                        if (logging)
+                            printField(std::cout, field.toDbStringLocal()) << '\n';
+                        // auto nameField = std::string(names[idx]);
+                        root[nameField] = field.toDbStringLocal();
+                    }
+                    else if constexpr (is_struct_v<decltype(tmp1)>)
+                    {
+                        if (logging)
+                            std::cout << idx << ": " << names[idx] << " = Class,Struct" << ", value : " << std::endl;
+                        if (logging)
+                            printObjectExt(field);
+
+                        root[nameField] = toJsonExt(field);
+                    }
+                    else
+                    {
+                        if (logging)
+                            std::cout << idx << ": " << names[idx] << " = ";
+                        if (logging)
+                            printField(std::cout, field) << '\n';
+
+                        root[nameField] = field;
+                    }
+                });
+        }
+
+        return root;
+    }
+
+    template <typename T>
     std::optional<int> findIndex(std::vector<T> arrays, std::function<bool(T)> func)
     {
 
