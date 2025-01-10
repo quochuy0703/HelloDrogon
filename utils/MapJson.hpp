@@ -367,7 +367,50 @@ namespace app_helpers::map_json
     template <typename T>
     void setJsonExt(T &obj, Json::Value &root, bool logging = false)
     {
-        if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>)
+        if constexpr (is_vector<T>::value)
+        {
+
+            using NonVectorType = remove_vector_t<T>;
+            if constexpr (is_struct_v<NonVectorType> && !std::is_same<NonVectorType, std::string>::value)
+            {
+                // if (logging)
+                //     std::cout << idx << ": " << names[idx] << ":" << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(field)>>().pretty_name() << ", size: " << size << ", " << " = " << std::endl;
+
+                for (auto o : obj)
+                {
+                    // if (logging)
+                    //     printObjectExt(o);
+
+                    root.append(toJsonExt(o));
+                }
+            }
+            else
+            {
+                if (logging)
+                    std::cout << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(obj)>>().pretty_name() << ", size: " << obj.size() << ", " << " = " << "[";
+                int n = 0;
+                for (auto o : obj)
+                {
+                    if (logging)
+                        printField(std::cout, o);
+
+                    root.append(o);
+
+                    n++;
+                    if (logging)
+                    {
+                        if (n != obj.size())
+                        {
+                            std::cout << ",";
+                        }
+                    }
+                }
+
+                if (logging)
+                    std::cout << "]" << std::endl;
+            }
+        }
+        else if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>)
         {
             typename std::remove_reference<decltype(obj)>::type tmp;
             constexpr auto names = boost::pfr::names_as_array<decltype(tmp)>();
@@ -524,34 +567,32 @@ namespace app_helpers::map_json
         Json::Value root;
         if constexpr (is_vector<T>::value)
         {
-            root["vector"] = "vector";
-            // auto size = (std::vector<T>)obj.size();
+
             using NonVectorType = remove_vector_t<T>;
             if constexpr (is_struct_v<NonVectorType> && !std::is_same<NonVectorType, std::string>::value)
             {
                 // if (logging)
                 //     std::cout << idx << ": " << names[idx] << ":" << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(field)>>().pretty_name() << ", size: " << size << ", " << " = " << std::endl;
-                int n = 0;
+
                 for (auto o : obj)
                 {
                     // if (logging)
                     //     printObjectExt(o);
 
-                    root[n] = toJsonExt(o);
-                    n++;
+                    root.append(toJsonExt(o));
                 }
             }
             else
             {
-                // if (logging)
-                //     std::cout << idx << ": " << names[idx] << ":" << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(field)>>().pretty_name() << ", size: " << size << ", " << " = " << "[";
+                if (logging)
+                    std::cout << boost::typeindex::type_id_with_cvr<std::decay_t<decltype(obj)>>().pretty_name() << ", size: " << obj.size() << ", " << " = " << "[";
                 int n = 0;
                 for (auto o : obj)
                 {
                     if (logging)
                         printField(std::cout, o);
 
-                    root.insert(o);
+                    root.append(o);
 
                     n++;
                     if (logging)
