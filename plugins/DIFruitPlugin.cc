@@ -35,7 +35,7 @@ namespace drogon::plugin
         // sessions_[sessionId] = std::move(injector);
 
         sessions_.emplace(sessionId, std::move(injector));
-        std::cout << "Session start: " << sessionId << std::endl;
+        LOG_INFO << "Session start: " << sessionId << ". Total sessions_ current: " << sessions_.size();
         return true;
     }
     bool DIFruitPlugin::endSession(const std::string &sessionId)
