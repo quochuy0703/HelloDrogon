@@ -17,6 +17,10 @@ project(HelloDrogon CXX)
 set(CMAKE_CXX_STANDARD 20)
 include(CheckIncludeFileCXX)
 
+if(WIN32) # Điều kiện cho Windows
+    set(VCPKG_INSTALL_OPTIONS "--x-abi-tools-use-exact-versions")
+endif()
+
 check_include_file_cxx(any HAS_ANY)
 check_include_file_cxx(string_view HAS_STRING_VIEW)
 check_include_file_cxx(coroutine HAS_COROUTINE)
@@ -52,6 +56,7 @@ find_package(Boost REQUIRED COMPONENTS pfr)
 find_package(ftplib CONFIG REQUIRED)
 find_package(RdKafka CONFIG REQUIRED)
 find_package(unofficial-modern-cpp-kafka CONFIG REQUIRED)
+find_package(Libssh2 CONFIG REQUIRED)
 
 
 # target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -64,7 +69,7 @@ find_package(unofficial-modern-cpp-kafka CONFIG REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon fruit RdKafka::rdkafka unofficial::modern-cpp-kafka::modern-cpp-kafka Botan::Botan cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time Boost::pfr)
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon fruit RdKafka::rdkafka unofficial::modern-cpp-kafka::modern-cpp-kafka Botan::Botan cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time Boost::pfr $<IF:$<TARGET_EXISTS:Libssh2::libssh2_shared>,Libssh2::libssh2_shared,Libssh2::libssh2_static>)
 
 # ##############################################################################
 
