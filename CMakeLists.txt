@@ -56,7 +56,7 @@ find_package(Boost REQUIRED COMPONENTS pfr)
 find_package(ftplib CONFIG REQUIRED)
 find_package(RdKafka CONFIG REQUIRED)
 find_package(unofficial-modern-cpp-kafka CONFIG REQUIRED)
-find_package(Libssh2 CONFIG REQUIRED)
+find_package(libssh CONFIG REQUIRED)
 
 
 # target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -69,7 +69,7 @@ find_package(Libssh2 CONFIG REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-mingw-custom/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon fruit RdKafka::rdkafka unofficial::modern-cpp-kafka::modern-cpp-kafka Botan::Botan cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time Boost::pfr $<IF:$<TARGET_EXISTS:Libssh2::libssh2_shared>,Libssh2::libssh2_shared,Libssh2::libssh2_static>)
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon fruit RdKafka::rdkafka unofficial::modern-cpp-kafka::modern-cpp-kafka Botan::Botan cryptopp::cryptopp ftplib mailio Boost::system Boost::date_time Boost::pfr ssh)
 
 # ##############################################################################
 

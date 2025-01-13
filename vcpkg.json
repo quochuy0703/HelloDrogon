@@ -26,7 +26,7 @@
     },
     "fruit",
     "date",
-    "boost-pfr","inja", "libssh2"
+    "boost-pfr","inja", "libssh"
   ],
   "overrides": []
 }
