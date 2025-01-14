@@ -41,7 +41,8 @@ namespace drogon::plugin
     bool DIFruitPlugin::endSession(const std::string &sessionId)
     {
         sessions_.erase(sessionId);
-        std::cout << "Session end: " << sessionId << std::endl;
+        LOG_INFO << "Session end: " << sessionId << ". Total sessions_ current: " << sessions_.size();
+        ;
         return true;
     }
 
